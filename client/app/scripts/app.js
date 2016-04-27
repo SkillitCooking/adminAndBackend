@@ -2,14 +2,14 @@
 
 /**
  * @ngdoc overview
- * @name clientApp
+ * @name SkillitAdminApp
  * @description
- * # clientApp
+ * # SkillitAdminApp
  *
  * Main module of the application.
  */
 angular
-  .module('clientApp', [
+  .module('SkillitAdminApp', [
     'ngAnimate',
     'ngCookies',
     'ngResource',
@@ -20,14 +20,29 @@ angular
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'views/main.html',
-        controller: 'MainCtrl',
-        controllerAs: 'main'
+        templateUrl: 'views/recipes.html',
+        controller: 'RecipeCtrl',
+        controllerAs: 'recipe'
       })
-      .when('/about', {
-        templateUrl: 'views/about.html',
-        controller: 'AboutCtrl',
-        controllerAs: 'about'
+      .when('/recipes', {
+        templateUrl: 'views/recipes.html',
+        controller: 'RecipeCtrl',
+        controllerAs: 'recipe'
+      })
+      .when('/ingredients', {
+        templateUrl: 'views/ingredients.html',
+        controller: 'IngredientCtrl',
+        controllerAs: 'ingredient'
+      })
+      .when('/dishes', {
+        templateUrl: 'views/dishes.html',
+        controller: 'DishesCtrl',
+        controllerAs: 'dishes'
+      })
+      .when('/seasoningprofiles', {
+        templateUrl: 'views/seasoningprofiles.html',
+        controller: 'SeasoningprofilesCtrl',
+        controllerAs: 'seasoningprofiles'
       })
       .otherwise({
         redirectTo: '/'
