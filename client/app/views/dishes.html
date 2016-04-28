@@ -1,1 +1,19 @@
-<p>This is the dishes view.</p>
+<div>
+  <h2>Input Dish</h2>
+  <form novalidate name="dishForm">
+    Name: <input type="text" ng-model="dish.name" size="50" required name="nameInput" /><br /><br />
+    IngredientCapacity: <input type="text" ng-model="dish.ingredientCapacity" size="30" required name="capacityInput" ng-pattern="integerval"/>
+    <span ng-show="dishForm.capacityInput.$invalid">Please enter a number</span><br/><br/>
+    <input type="button" class="btn btn-md" ng-click="reset()" value="Reset" />
+    <input type="button" class="btn btn-md btn-success" ng-click="save(dish)" value="Save" ng-disabled="dishForm.$invalid"/>
+  </form>
+  <br />
+  <h2>Current Dishes</h2>
+  <ul>
+    <li ng-repeat="dish in dishes">
+      <p><b>Name</b>: {{dish.name}}</p>
+      <p><b>Capacity</b>: {{dish.ingredientCapacity}}</p>
+    </li>
+  </ul>
+  <pre>dish: {{dish | json}}</pre>
+</div>
