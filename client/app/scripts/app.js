@@ -15,9 +15,10 @@ angular
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch'
+    'ngTouch',
+    'restangular'
   ])
-  .config(function ($routeProvider) {
+  .config(function ($routeProvider, RestangularProvider) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/recipes.html',
@@ -47,4 +48,5 @@ angular
       .otherwise({
         redirectTo: '/'
       });
+    RestangularProvider.setBaseUrl("/api");   
   });

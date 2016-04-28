@@ -1,1 +1,20 @@
-<p>This is the seasoningProfiles view.</p>
+<div>
+<h2>Input Seasoning Profile</h2><br />
+  <form novalidate name="seasoningForm">
+    Name: <input type="text" ng-model="seasoningProfile.name" size="50" required name="nameInput"/><br /><br />
+    Spices: <input type="text" ng-model="seasoningProfile.spices" size="70" required name="spiceInput"><br />
+    <p>Comma separated values (e.g. spice1,spice2,spice3) </p><br />
+    <input type="button" class="btn btn-md" ng-click="reset()" value="Reset" />
+    <input type="button" class="btn btn-md btn-success" ng-click="save(seasoningProfile)" value="Save"/>
+  </form>
+  <br />
+  <h2>Current Seasoning Profiles</h2>
+  <ul>
+    <li ng-repeat="profile in profiles">
+      <p><b>Name</b>: {{profile.name}}</p>
+      <p><b>Spices</b>: {{profile.spices}}</p>
+    </li>
+  </ul>
+  <pre>seasoning: {{seasoningProfile | json}}</pre>
+  <pre>str: {{str}}</pre>
+</div>
