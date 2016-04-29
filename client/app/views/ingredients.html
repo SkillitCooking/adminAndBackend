@@ -1,1 +1,75 @@
-<p>This is the ingredients view.</p>
+<div>
+  <h2>Input Ingredient</h2>
+  <form novalidate name="ingredientForm">
+    Name: <input type="text" ng-model="ingredient.name" size="50" required name="nameInput"/><br /><br />
+    Ingredient Forms: <br />
+    <div ng-repeat="inForm in inForms" class="bg-warning" ng-form="formForm">
+      <ul>
+        <li>
+          Name: <input type="text" ng-model="inForm.name" size="50" required name="inFormName"/>
+        </li>
+        <li>
+          Cooking Times: <br />
+          <div ng-repeat="time in inForm.cookingTimes" class="bg-info" ng-form="cookingForm">
+            Cooking Method: <select name="cookingMethods" ng-model="time.cookingMethod" required>
+              <option value="">Select Cooking Method</option>
+              <option ng-repeat="method in cookingMethods">{{method}}</option>
+            </select> 
+            <span ng-show="cookingForm.cookingMethods.$invalid">select a cooking method</span><br />
+            Min Cook Time: <input type="text" ng-model="time.minTime" size="30" required name="minTime" ng-pattern="integerval"/>
+            Max Cook Time: <input type="text" ng-model="time.maxTime" size="30" required name="maxTime" ng-pattern="integerval"/>
+            <span ng-show="cookingForm.minTime.$invalid || cookingForm.maxTime.$invalid">Please enter a number</span>
+            <br />
+            Times Per Side?: <input type="checkbox" ng-model="time.timesArePerSide"/><br />
+            <button ng-click="removeCookingTime(inForm, $index)" class="btn btn-link btn-xs">Remove Cooking Time</button>
+            <br/><br/>
+          </div>
+        </li>
+        <button ng-click="addCookingTime(inForm)" class="btn btn-primary btn-xs">Add Cooking Time</button>
+        <button ng-click="removeIngredientForm($index)" class="btn btn-danger btn-xs">Remove Ingredient Form</button>
+      </ul>
+    </div>
+    <button ng-click="addIngredientForm()" class="btn btn-warning btn-sm">Add IngredientForm</button><br/><br/>
+    Ingredient Tips: <br />
+    <div ng-repeat="tip in ingredientTips" class="bg-info" ng-form="tipForm">
+      <ul>
+        <li>
+          StepType: <select name="stepTypeSelect" ng-model="tip.stepType" ng-change="setSubTypes(tip.stepType, $index)" required>
+            <option value="">Select StepType</option>
+            <option ng-repeat="stepType in stepTypes">{{stepType}}</option>
+          </select>
+          StepSubType: <select name="stepSubTypeSelect" ng-model="tip.stepSubType" ng-options="stepSubType for stepSubType in subTypes[$index]" required>
+          </select>
+        </li>
+        <li>
+          Step Tip: <br />
+          <div class="bg-warning">
+            Title: <input type="text" ng-model="tip.stepTip.title" size="50" required name="tipTitle"/><br />
+            Text: <textarea ng-model="tip.stepTip.text" rows="4" cols="50" required name="tipText"></textarea><br />
+            <span ng-show="tipForm.tipText.$invalid">Must enter text for the tip</span><br/>
+            PictureURL: <input type="url" ng-model="tip.stepTip.pictureURL" name="tipPic" size="70"/> <br />
+            <span ng-show="tipForm.tipPic.$invalid">PictureURL must be a URL</span><br/>
+            VideoTitle: <input type="text" ng-model="tip.stepTip.videoTitle" size="50" name="tipVidTitle"/><br />
+            VideoURL: <input type="url" ng-model="tip.stepTip.videoURL" name="tipVid"/> <br />
+            <span ng-show="tipForm.tipVid.$invalid">VideoURL must be a URL</span><br/>
+          </div>
+        </li>
+        <button ng-click="removeTip($index)" class="btn btn-danger btn-xs">Remove Tip</button>
+      </ul>
+    </div>
+    <button class="btn btn-warning btn-sm" ng-click="addIngredientTip()">Add Ingredient Tip</button><br/><br/>
+    <button class="btn btn-default" ng-click="reset()">Reset</button>
+    <button class="btn btn-info" ng-click="preview()">Preview Ingredient</button>
+    <button class="btn btn-success" ng-click="save()" ng-disabled="ingredientForm.$invalid || !ingredientSanityCheck()">Save</button>
+  </form>
+  <br />
+  <pre>Ingredient: {{ingredient | json}}</pre><br/>
+  <h2>Current Ingredients</h2>
+  <ul>
+    <li ng-repeat="ingredient in ingredients">
+      <p><b>Name</b>: {{ingredient.name}}</p>
+      <pre>Forms: {{ingredient.ingredientForms | json}}</pre>
+      <pre>Tips: {{ingredient.ingredientTips | json}}</pre>
+    </li>
+  </ul>
+</div>

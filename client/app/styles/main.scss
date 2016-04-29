@@ -89,7 +89,9 @@ body {
     border-bottom: 0;
   }
 
+  /*form input error coloration*/
   input.ng-invalid.ng-touched {
     background-color: #FA787E;
   }
+
 }
