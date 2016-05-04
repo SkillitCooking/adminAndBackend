@@ -18,6 +18,8 @@ angular
     'ngTouch',
     'restangular'
   ])
+  //lodash support
+  .constant('_', window._)
   .config(function ($routeProvider, RestangularProvider) {
     $routeProvider
       .when('/', {
@@ -44,6 +46,11 @@ angular
         templateUrl: 'views/seasoningprofiles.html',
         controller: 'SeasoningprofilesCtrl',
         controllerAs: 'seasoningprofiles'
+      })
+      .when('/viewAllRecipes', {
+        templateUrl: 'views/viewallrecipes.html',
+        controller: 'ViewallrecipesCtrl',
+        controllerAs: 'viewAllRecipes'
       })
       .otherwise({
         redirectTo: '/'

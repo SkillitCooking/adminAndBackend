@@ -1,0 +1,14 @@
+<div>
+  <b>Preheat Oven Step</b><br/>
+  <p>Step Duration: {{step.stepDuration}}</p>
+  <p>Oven Temperature: {{step.ovenTemperature}}</p>
+  <p>Product Name: {{step.productName}}</p>
+    <div ng-if="step.stepTip">
+    <p><b>Step Tip</b></p>
+    <p>Title: {{step.stepTip.title}}</p>
+    <p>Text: {{step.stepTip.text}}</p>
+    <p ng-if="step.stepTip.pictureURL">PictureURL: {{step.stepTip.pictureURL}}</p>
+    <p ng-if="step.stepTip.videoTitle">VideoTitle: {{step.stepTip.videoTitle}}</p>
+    <p ng-if="step.stepTip.videoURL">VideoURL:{{step.stepTip.videoURL}}</p>
+  </div>
+</div>

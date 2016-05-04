@@ -1,0 +1,28 @@
+<div ng-form="slowCookStepForm" class="bg-warning">
+  <b>SlowCook Step</b><br/>
+  Step Duration: <input type="text" ng-model="constructingStep.stepDuration" required name="stepDurationInput" size="30" ng-pattern="integerval"/><br/>
+  Slow Cook Duration: <input type="text" ng-model="constructingStep.slowCookDuration" required name="slowCookDurationInput" size="50" /><br/>
+  Temperature Setting: <input type="text" ng-model="constructingStep.tempSetting" required name="tempSettingInput" size="50" /><br/>
+  Ingredients Inputs (step or ingredient type): <step-input-form
+    constructing-step="constructingStep"
+    input-name="ingredientInputs"
+    is-multiple="true"
+    ingredient-list="ingredientList"
+    step-list="stepList"></step-input-form><br/>
+  ProductName: <input type="text" ng-model="constructingStep.productName" size="50" required name="productNameInput" /><br/>
+  <button ng-show="!tipAdded" class="btn btn-sm btn-primary" ng-click="addTip()">Add Tip</button><br/>
+  <div ng-if="tipAdded">
+    <b>Step Tip</b><br/>
+    Title: <input type="text" name="tipTitleInput" ng-model="constructingStep.stepTip.title" size="50" required /><br/>
+    Text: <textarea name="tipTextInput" ng-model="constructingStep.stepTip.text" rows="4" cols="50" required></textarea><br/>
+    PictureURL: <input type="url" ng-model="constructingStep.stepTip.pictureURL" size="70" name="tipPictureInput" /><br/>
+    VideoTitle: <input type="text" ng-model="constructingStep.stepTip.videoTitle" size="50" name="tipVideoTitleInput" /><br/>
+    VideoURL: <input type="url" ng-model="constructingStep.stepTip.videoURL" size="70" name="tipVideoUrlInput" /><br/>
+    <button class="btn btn-danger btn-xs" ng-click="removeTip()">Remove Tip</button>
+  </div>
+  Show Example Step Text: <input type="checkbox" ng-model="showExampleText" /><br/>
+  <div ng-show="showExampleText">
+    Example Text: <br/>
+    <pre>Slow cook the [members of ingredientInput1],..., and [members of ingredientInputN] on [temperatureSetting] for [slowCookDuration]</pre>
+  </div>
+</div>

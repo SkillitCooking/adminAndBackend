@@ -1,0 +1,22 @@
+<div>
+  <b>SlowCook Step</b><br/>
+  <p>Step Duration: {{step.stepDuration}}</p>
+  <p>SlowCook Duration: {{step.slowCookDuration}}</p>
+  <p>Temperature Setting: {{step.tempSetting}}</p>
+  <p><em>Ingredient Inputs</em></p>
+  <div ng-repeat="input in step.ingredientInputs">
+    <p>SourceType: {{input.sourceType}}</p>
+    <p>SourceId: {{input.sourceId}}</p>
+    <p>Key: {{input.key}}</p>
+    <br/>
+  </div>
+  <p>ProductName: {{step.productName}}</p>
+  <div ng-if="step.stepTip">
+    <p><b>Step Tip</b></p>
+    <p>Title: {{step.stepTip.title}}</p>
+    <p>Text: {{step.stepTip.text}}</p>
+    <p ng-if="step.stepTip.pictureURL">PictureURL: {{step.stepTip.pictureURL}}</p>
+    <p ng-if="step.stepTip.videoTitle">VideoTitle: {{step.stepTip.videoTitle}}</p>
+    <p ng-if="step.stepTip.videoURL">VideoURL:{{step.stepTip.videoURL}}</p>
+  </div>
+</div>

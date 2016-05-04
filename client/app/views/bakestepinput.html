@@ -1,0 +1,38 @@
+<div ng-form="bakeStepForm" class="bg-warning">
+  <b>Bake Step</b><br/>
+  Step Duration: <input type="text" ng-model="constructingStep.stepDuration" required name="stepDurationInput" size="30" ng-pattern="integerval"/><br/>
+  Baking Time: <input type="text" ng-model="constructingStep.bakingTime" required name="bakingTimeInput" size="50" /><br/>
+  Product Input (Expects a Step): <step-input-form
+    constructing-step="constructingStep"
+    input-name="productInput"
+    is-multiple="false"
+    ingredient-list="ingredientList"
+    step-list="stepList"></step-input-form><br/>
+  Product Name: <input type="text" ng-model="constructingStep.productName" size="50" required name="productNameInput"/><br/>
+  <b>Auxiliary Stir Steps:</b>
+  <div ng-repeat="auxStep in constructingStep.auxiliarySteps">
+    For IngredientType: <select ng-model="constructingStep.auxiliarySteps[$index].ingredientTypeName" ng-options="type.typeName as type.typeName for type in ingredientList.ingredientTypes" required></select><br/>
+    <stir-step-input is-aux-step="true"
+      constructing-step="constructingStep"
+      ingredient-list="ingredientList"
+      step-list="stepList"
+      aux-step-arr-index="$index"></stir-step-input>
+    <button class="btn btn-xs btn-danger" ng-click="removeAuxStep($index)">Remove Auxiliary Stir Step</button><br/><br/>
+  </div>
+  <button class="btn btn-sm btn-danger" ng-click="addAuxStep()">Add Auxiliary Stir Step</button><br/><br/>
+  <button ng-show="!tipAdded" class="btn btn-sm btn-primary" ng-click="addTip()">Add Tip</button><br/>
+  <div ng-if="tipAdded">
+    <b>Step Tip</b><br/>
+    Title: <input type="text" name="tipTitleInput" ng-model="constructingStep.stepTip.title" size="50" required /><br/>
+    Text: <textarea name="tipTextInput" ng-model="constructingStep.stepTip.text" rows="4" cols="50" required></textarea><br/>
+    PictureURL: <input type="url" ng-model="constructingStep.stepTip.pictureURL" size="70" name="tipPictureInput" /><br/>
+    VideoTitle: <input type="text" ng-model="constructingStep.stepTip.videoTitle" size="50" name="tipVideoTitleInput" /><br/>
+    VideoURL: <input type="url" ng-model="constructingStep.stepTip.videoURL" size="70" name="tipVideoUrlInput" /><br/>
+    <button class="btn btn-danger btn-xs" ng-click="removeTip()">Remove Tip</button>
+  </div>
+  Show Example Step Text: <input type="checkbox" ng-model="showExampleText" /><br/>
+  <div ng-show="showExampleText">
+    Example Text:<br/>
+    <pre>Bake [ingredient1] and [ingredient2] for [bakingTime]. [auxiliaryStep1] and [auxiliaryStep2]</pre>
+  </div>
+</div>

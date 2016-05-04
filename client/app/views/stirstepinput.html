@@ -1,0 +1,46 @@
+<div ng-form="stirStepForm">
+  <p ng-if="isAuxiliaryStep === 'true'"><b>Auxiliary Step</b></p>
+  <p ng-if="isAuxiliaryStep === 'false'"><b>Stir Step</b></p>
+  <div ng-if="isAuxiliaryStep === 'false'">
+    <p>Stir Object Input</p>
+    <step-input-form
+      constructing-step="constructingStep"
+      input-name="stirObjectInput"
+      is-multiple="false"
+      ingredient-list="ingredientList"
+      step-list="stepList"></step-input-form><br/>
+    Step Duration: <input type="text" ng-model="constructingStep.stepDuration" size="30" required ng-pattern="integerval"/><br/>
+    Product Name: <input type="text" ng-model="constructingStep.productName" size="50" required/><br/>
+    When to Stir: <input type="text" ng-model="constructingStep.whenToStir" size="50" required /><br/>
+    StirType: <select ng-model="constructingStep.stirType" ng-options="type for type in stirTypes" required></select><br/>
+    <!--Omitting the 'isAtSentenceBeginning' property - probably hard to determine that from this vantage point-->
+  </div>
+  <div ng-if="isAuxiliaryStep === 'true'">
+    <div ng-if="isAuxDictionary(constructingStep.stepType)">
+      When to Stir: <input type="text" ng-model="constructingStep.auxiliarySteps[auxStepArrIndex].whenToStir" size="50" required /><br/>
+      StirType: <select ng-model="constructingStep.auxiliarySteps[auxStepArrIndex].stirType" ng-options="type for type in stirTypes" required></select><br/>
+      <!--Omitting the 'isAtSentenceBeginning' property - probably hard to determine that from this vantage point-->
+    </div>
+    <div ng-if="!isAuxDictionary(constructingStep.stepType)">
+      When to Stir: <input type="text" ng-model="constructingStep.auxiliaryStep.whenToStir" size="50" required /><br/>
+      StirType: <select ng-model="constructingStep.auxiliaryStep.stirType" ng-options="type for type in stirTypes" required></select><br/>
+    </div>
+  </div>
+  <div ng-if="isAuxiliaryStep === 'false'">
+    <button ng-show="!tipAdded" class="btn btn-sm btn-primary" ng-click="addTip()">Add Tip</button><br/>
+    <div ng-if="tipAdded">
+      <b>Step Tip</b><br/>
+      Title: <input type="text" name="tipTitleInput" ng-model="constructingStep.stepTip.title" size="50" required /><br/>
+      Text: <textarea name="tipTextInput" ng-model="constructingStep.stepTip.text" rows="4" cols="50" required></textarea><br/>
+      PictureURL: <input type="url" ng-model="constructingStep.stepTip.pictureURL" size="70" name="tipPictureInput" /><br/>
+      VideoTitle: <input type="text" ng-model="constructingStep.stepTip.videoTitle" size="50" name="tipVideoTitleInput" /><br/>
+      VideoURL: <input type="url" ng-model="constructingStep.stepTip.videoURL" size="70" name="tipVideoUrlInput" /><br/>
+      <button class="btn btn-danger btn-xs" ng-click="removeTip()">Remove Tip</button>
+    </div>
+  </div>
+  Show Example Step Text: <input type="checkbox" ng-model="showExampleText" /> <br/>
+  <div ng-show="showExampleText">
+    Example Text:<br/>
+    <pre>[StirType] the [ingredient1], [ingredient2], and [ingredient3] [whenToStir]</pre>
+  </div>
+</div>

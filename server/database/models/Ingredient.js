@@ -21,6 +21,7 @@ var IngredientTipSchema = new mongoose.Schema({
 
 var IngredientSchema = new mongoose.Schema({
   name: String,
+  inputCategory: String,
   ingredientForms: [IngredientFormSchema],
   ingredientTips: [IngredientTipSchema]
 });

@@ -19,7 +19,8 @@ angular.module('SkillitAdminApp')
 
     $scope.inForms = [
     ];
-    $scope.cookingMethods = ["testMethod", "testTest", "hola"];
+    $scope.inputCategories = ["Protein", "Vegetables", "Starches", "Other"];
+    $scope.cookingMethods = ["Bake", "Sautee", "Boil", "Steam", "SlowCook"];
 
     $scope.addCookingTime = function(ingredientForm) {
       ingredientForm.cookingTimes.push({
@@ -53,21 +54,25 @@ angular.module('SkillitAdminApp')
     $scope.ingredientTips = [
     ];
 
-    $scope.stepTypes = ["type1", "type2", "type3"];
+    $scope.stepTypes = ["Bake", "Boil", "BringToBoil", "Cut", "Dry", "Heat", "Place", "PreheatOven", "Sautee", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir"];
     $scope.subTypes = [];
 
     $scope.setSubTypes = function(type, tipIndex) {
       switch(type) {
-        case "type1":
-          $scope.subTypes[tipIndex] = ["subType1A", "subType1B"];
+        case "Cut":
+          $scope.subTypes[tipIndex] = ["Cut", "Chop", "Dice", "Slice", "Mince", "all"];
           break;
-        case "type2":
-          $scope.subTypes[tipIndex] = ["subType2A", "subType2B"];
+        case "Dry":
+          $scope.subTypes[tipIndex] = ["Pat", "Rub", "all"];
           break;
-        case "type3":
-          $scope.subTypes[tipIndex] = ["subType3A", "subType3B"];
+        case "EquipmentPrep":
+          $scope.subTypes[tipIndex] = ["Grease", "Line", "all"];
+          break;
+        case "Stir":
+          $scope.subTypes[tipIndex] = ["Stir", "Flip", "all"];
           break;
         default:
+          $scope.subTypes[tipIndex] = ["all"];
           break;
       }
     };

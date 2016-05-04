@@ -1,0 +1,22 @@
+<!--Not including checkboxes for 'isDish' and 'isIngredient' I don't believe that they need to be set here... I think that they can be set automatically based on context-->
+<div ng-form="stepInputSingleForm" ng-if="isMultiple === 'false'" class="bg-info">
+  Source Type: <select name="sourceTypeSelect" ng-model="step[stepInputName].sourceType" ng-options="sourceType for sourceType in sourceTypes" required></select><br/>
+  <div ng-show="showStepId()">
+    SourceId: <select name="sourceIdSelect" ng-model="sourceIdStep" ng-options="step as getSourceIdSelectName(step, index) for (index, step) in stepList" ng-change="registerSourceId(sourceIdStep)" ng-required="showStepId()"></select>
+  </div>
+  Key: <select ng-if="step[stepInputName].sourceType === 'StepProduct'" name="stepKeySelect" ng-model="step[stepInputName].key" ng-options="product for product in getProductKeys(sourceIdStep)" ng-required="step[stepInputName].sourceType === 'StepProduct'"></select>
+  <select ng-if="step[stepInputName].sourceType === 'IngredientList'" name="ingredKeySelect" ng-model="step[stepInputName].key" ng-options="type.typeName as type.typeName for type in ingredientList.ingredientTypes" ng-required="step[stepInputName].sourceType === 'IngredientList'"></select>
+  <select ng-if="step[stepInputName].sourceType === 'EquipmentList'" name="equipKeySelect" ng-model="step[stepInputName].key" ng-options="dish.name as dish.name for dish in ingredientList.equipmentNeeded" ng-required="step[stepInputName].sourceType === 'EquipmentList'"></select>
+</div>
+
+<div ng-if="isMultiple === 'true'" ng-form="stepInputMultipleForm" class="bg-info" ng-repeat="input in step[stepInputName]">
+  Source Type: <select name="sourceTypeSelect" ng-model="input.sourceType" ng-options="sourceType for sourceType in sourceTypes" required></select><br/>
+  <div ng-if="showStepIdMultiple(input)">
+    SourceId: <select name="sourceIdSelect" ng-model="sourceIdStep[$index]" ng-options="getSourceIdSelectName(step, index) for (index, step) in stepList" ng-change="registerSourceIdMultiple(input, $index, sourceIdStep)" ng-required="showStepIdMultiple(input)"></select>
+  </div>
+  Key: <select ng-if="input.sourceType === 'StepProduct'" name="stepKeySelect" ng-model="input.key" ng-options="product for product in getProductKeys(sourceIdStep[$index])" ng-required="input.sourceType === 'StepProduct'"></select>
+  <select ng-if="input.sourceType === 'IngredientList'" name="ingredKeySelect" ng-model="input.key" ng-options="type.typeName as type.typeName for type in ingredientList.ingredientTypes" ng-required="input.sourceType === 'IngredientList'"></select>
+  <select ng-if="input.sourceType === 'EquipmentList'" name="equipKeySelect" ng-model="input.key" ng-options="dish.name as dish.name for dish in ingredientList.equipmentNeeded" ng-required="input.sourceType === 'EquipmentList'"></select>
+  <button class="btn btn-danger btn-xs" ng-click="removeInput($index)">Remove Input</button>
+</div>
+<button ng-if="isMultiple === 'true'" class="btn btn-info btn-sm" ng-click="addInput()">Add Input</button>

@@ -6,27 +6,30 @@ var Ingredient = require('./Ingredient');
 
 var StepSchema = new mongoose.Schema();
 StepSchema.add({
-  stepType: Number,
+  stepId: String,
+  stepType: String,
   stepTip: StepTip.schema,
   stepInputs: [{
     isDish: Boolean,
     isIngredient: Boolean,
     sourceType: String,
     sourceId: String,
-    key: String
+    key: String,
+    inputName: String
   }],
   productKeys: [String],
   stepModifiers: [{
     propName: String,
     val: String
   }],
+  stepDuration: String,
   auxiliarySteps: [StepSchema]
 });
 
 var IngredientTypeSchema = new mongoose.Schema({
   typeName: String,
   ingredients: [Ingredient.schema],
-  minNeeded: Number
+  minNeeded: String
 });
 
 var IngredientListSchema = new mongoose.Schema({
@@ -37,12 +40,12 @@ var IngredientListSchema = new mongoose.Schema({
 var RecipeSchema = new mongoose.Schema({
   name: String,
   description: String,
-  recipeType: Number,
-  recipeCategory: Number,
+  recipeType: String,
+  recipeCategory: String,
   ingredientList: IngredientListSchema,
   stepList: [StepSchema],
-  primaryCookingMethod: Number,
-  otherCookingMethods: [Number],
+  primaryCookingMethod: String,
+  otherCookingMethods: [String],
   canAddSeasoningProfile: Boolean,
   defaultSeasoningProfile: SeasoningProfile.schema,
   primaryIngredientType: String

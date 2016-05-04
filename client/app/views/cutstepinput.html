@@ -1,0 +1,30 @@
+<div ng-form="cutStepForm" class="bg-warning">
+  <b>Cut Step</b><br/>
+  CutActionType: <select name="actionTypeSelect" ng-model="constructingStep.actionType" ng-options="actionType for actionType in actionTypes" required></select><br/>
+  Step Duration: <input type="text" ng-model="constructingStep.stepDuration" required name="stepDurationInput" size="30" ng-pattern="integerval" /><br/>
+  Ingredient Input: <step-input-form 
+    constructing-step="constructingStep"
+    input-name="cutIngredientInput"
+    is-multiple="false"
+    ingredient-list="ingredientList"
+    step-list="stepList"
+    ></step-input-form> <br/>
+  ActionModifier: <input type="text" ng-model="constructingStep.actionModifier" size="50" name="actionModifierInput"/><br/>
+  ProductName: <input type="text" ng-model="constructingStep.productName" size="50" required name="productNameInput"/><br/>
+  <button ng-show="!tipAdded" class="btn btn-sm btn-primary" ng-click="addTip()">Add Tip</button><br/>
+  <div ng-if="tipAdded">
+    <b>Step Tip</b><br/>
+    Title: <input type="text" name="tipTitleInput" ng-model="constructingStep.stepTip.title" size="50" required /><br/>
+    Text: <textarea name="tipTextInput" ng-model="constructingStep.stepTip.text" rows="4" cols="50" required></textarea><br/>
+    PictureURL: <input type="url" ng-model="constructingStep.stepTip.pictureURL" size="70" name="tipPictureInput" /><br/>
+    VideoTitle: <input type="text" ng-model="constructingStep.stepTip.videoTitle" size="50" name="tipVideoTitleInput" /><br/>
+    VideoURL: <input type="url" ng-model="constructingStep.stepTip.videoURL" size="70" name="tipVideoUrlInput" /><br/>
+    <button class="btn btn-danger btn-xs" ng-click="removeTip()">Remove Tip</button>
+  </div>
+  Show Example Step Text: <input type="checkbox" ng-model="showExampleText" /> <br/>
+  <div ng-show="showExampleText">
+    Example Text:<br/>
+    <pre>1. [CutActionType] the [first ingredientToCut] [actionModifier]
+    2. [CutActionType] the [second ingredientToCut] [actionModifier] ... </pre>
+  </div>
+</div>

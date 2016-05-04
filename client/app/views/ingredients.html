@@ -2,6 +2,8 @@
   <h2>Input Ingredient</h2>
   <form novalidate name="ingredientForm">
     Name: <input type="text" ng-model="ingredient.name" size="50" required name="nameInput"/><br /><br />
+    Input Category: <select name="inputCategorySelect" ng-model="ingredient.inputCategory" ng-options=
+    "category for category in inputCategories" required></select><br/><br/>
     Ingredient Forms: <br />
     <div ng-repeat="inForm in inForms" class="bg-warning" ng-form="formForm">
       <ul>
