@@ -1,5 +1,4 @@
 var express = require('express');
-var cors = require('cors');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -7,7 +6,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var app = express();
-app.use(cors());
 app.use(logger('dev'));
 //order of declaration matters here...
 app.use(bodyParser.urlencoded({ extended: true }));
