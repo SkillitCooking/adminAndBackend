@@ -8,47 +8,39 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('RecipeCtrl', ['$scope', 'recipeService', '_', function ($scope, recipeService, _) {
+  .controller('RecipeCtrl', ['$scope', 'recipeService', 'seasoningService', 'ingredientService', 'dishService', '_', function ($scope, recipeService, seasoningService, ingredientService, dishService, _) {
     $scope.integerval = /^\d*$/;
 
+    seasoningService.getAllSeasonings().then(function(seasonings) {
+      $scope.seasoningProfiles = seasonings;
+    }, function(response) {
+      console.log("Server Error: ", response.message);
+      alert("Server Error: " + response.message);
+    });
+
+    ingredientService.getAllIngredients().then(function(ingredients) {
+      $scope.ingredients = ingredients;
+    }, function(response) {
+      console.log("Server Error: ", response.message);
+      alert("Server Error: " + response.message);
+    });
+
+    dishService.getAllDishes().then(function(dishes) {
+      $scope.dishes = dishes;
+    }, function(response) {
+      console.log("Server Error: ", response.message);
+      alert("Server Error: " + response.message);
+    });
+
     $scope.stepTypes = ["Bake", "Boil", "BringToBoil", "Cut", "Dry", "Heat", "Place", "PreheatOven", "Sautee", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir"];
-    $scope.recipeTypes = ["testType1", "testType2", "testType3"];
-    $scope.recipeCategories = ["testCategory1", "testCategory2", "testCategory3"];
+    $scope.recipeTypes = ["AlaCarte", "BYO", "Full"];
+    $scope.recipeCategories = ["Sautee", "Scramble", "Roast", "Pasta", "Hash"];
     $scope.cookingMethods = ["Bake", "Sautee", "Boil", "Steam", "SlowCook"];
-    $scope.seasoningProfiles = [
-      {
-        name: "testProfile1",
-        spices: ["spice1", "spice2"]
-      },
-      {
-        name: "testProfile2",
-        spices: ["spice3", "spice4"]
-      }
-    ];
-    $scope.ingredients = [
-      {
-        name: "ingredient1",
-        ingredientForms: [{name: "form1"},{name: "form2"}]
-      },
-      {
-        name: "ingredient2",
-        ingredientForms: [{name: "form3"},{name: "form4"}]
-      },
-      {
-        name: "ingredient3",
-        ingredientForms: [{name: "form5"},{name: "form6"}]
-      }
-    ];
-    $scope.dishes = [
-      {name: "dish1"}, {name: "dish2"}, {name: "dish3"}
-    ];
     $scope.selectedIngredientForms = [];
 
     $scope.ingredientList = {
-      ingredientTypes: [
-        {typeName: "fakeType", ingredients: [$scope.ingredients[0]], minNeeded: "1"}
-      ],
-      equipmentNeeded: [$scope.dishes[0]]
+      ingredientTypes: [],
+      equipmentNeeded: []
     };
 
     $scope.stepList = [];
@@ -142,6 +134,9 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.addDish = function() {
+      if(!$scope.ingredientList.equipmentNeeded){
+        $scope.ingredientList.equipmentNeeded = [];
+      }
       if($scope.ingredientList.equipmentNeeded.indexOf($scope.typeDish) === -1){
         $scope.ingredientList.equipmentNeeded.push($scope.typeDish);
       }
@@ -158,6 +153,66 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.removeStep = function() {
+      $scope.stepList = _.dropRight($scope.stepList);
+    };
 
+    $scope.recipeSanityCheck = function() {
+      if (!$scope.recipe.stepList || $scope.recipe.stepList.length === 0) {
+        return false;
+      }
+      if(!$scope.recipe.ingredientList){
+        return false;
+      }
+      if(!$scope.recipe.ingredientList.ingredientTypes || $scope.recipe.ingredientList.ingredientTypes.length === 0){
+        return false;
+      } 
+      if(!$scope.recipe.ingredientList.equipmentNeeded){
+        return false;
+      }
+      return true;
+    };
+
+    $scope.reset = function() {
+      $scope.constructingStep = angular.copy({});
+      $scope.stepList = angular.copy([]);
+      $scope.ingredientList = angular.copy({});
+      $scope.recipe = angular.copy({});
+      $scope.recipeForm.$setPristine();
+      $scope.recipeForm.$setUntouched();
+    };
+
+    $scope.save = function() {
+      $scope.recipe.ingredientList = $scope.ingredientList;
+      $scope.recipe.stepList = $scope.stepList;
+      if(!$scope.recipe.canAddSeasoningProfile){
+        $scope.recipe.canAddSeasoningProfile = false;
+      }
+      recipeService.addNewRecipe({ 
+        recipe:{
+          name: $scope.recipe.name,
+          description: $scope.recipe.description,
+          recipeType: $scope.recipe.recipeType,
+          recipeCategory: $scope.recipe.recipeCategory,
+          ingredientList: $scope.recipe.ingredientList,
+          stepList: $scope.recipe.stepList,
+          primaryCookingMethod: $scope.recipe.primaryCookingMethod,
+          otherCookingMethods: $scope.recipe.otherCookingMethods,
+          canAddSeasoningProfile: $scope.recipe.canAddSeasoningProfile,
+          defaultSeasoningProfile: $scope.recipe.defaultSeasoningProfile,
+          primaryIngredientType: $scope.recipe.primaryIngredientType
+        }
+      }).then(function(recipe){
+        var alertMsg = "Success! Recipe " + recipe.name + " was saved!";
+        alert(alertMsg);
+      }, function(response) {
+        console.log("Server Error: ", response.message);
+        alert("Server Error: " + response.message);
+      });
+      $scope.reset();
+    };
+
+    $scope.preview = function() {
+      $scope.recipe.ingredientList = $scope.ingredientList;
+      $scope.recipe.stepList = $scope.stepList;
     };
   }]);

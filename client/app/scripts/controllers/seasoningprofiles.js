@@ -15,6 +15,7 @@ angular.module('SkillitAdminApp')
       $scope.profiles = seasonings;
     }, function(response) {
       console.log("Server Error: ", response.message);
+      alert("Server Error: " + response.message);
     });
     
     //reset the form
@@ -38,6 +39,7 @@ angular.module('SkillitAdminApp')
         $scope.profiles.push(seasoning);
       }, function(response) {
         console.log("Server Error: ", response.message);
+        alert("Server Error: " + response.message);
       });
       $scope.seasoningProfile = angular.copy({});
       $scope.seasoningForm.nameInput.$setUntouched();

@@ -47,10 +47,12 @@
         <pre>{{dish.name}}</pre><button class="btn btn-danger btn-xs" ng-click="removeDish($index)"> - </button>
       </div>
 
+      Primary Ingredient Type: <select name="primaryIngredientTypeSelect" ng-model="recipe.primaryIngredientType" ng-options="type.typeName as type.typeName for type in ingredientList.ingredientTypes" required></select><br/><br/>
+
       <h4>Step List</h4>
       <div ng-form="stepForm">
         <b>Add New Step: </b><br/><br/>
-        StepType <select name="stepTypeSelect" ng-model="constructingStep.stepType" ng-options="stepType for stepType in stepTypes" required></select>
+        StepType <select name="stepTypeSelect" ng-model="constructingStep.stepType" ng-options="stepType for stepType in stepTypes" ng-required="!recipeSanityCheck()"></select>
         <cut-step-input ng-if="constructingStep.stepType === 'Cut'"></cut-step-input>
         <bake-step-input ng-if="constructingStep.stepType === 'Bake'"></bake-step-input>
         <boil-step-input ng-if="constructingStep.stepType === 'Boil'"></boil-step-input>
@@ -91,11 +93,11 @@
         <stir-step-item ng-if="step.stepType === 'Stir'"></stir-step-item>
         <equipmentprep-step-item ng-if="step.stepType === 'EquipmentPrep'"></equipmentprep-step-item>
         <button ng-if="$last" ng-click="removeStep()">Remove Step</button>
-      </div>
+      </div><br/><br/>
+      <button class="btn btn-large btn-default" ng-click="reset()">Reset Recipe Form</button>
+      <button class="btn btn-large btn-info" ng-click="preview()">Preview Recipe</button>
+      <button class="btn btn-large btn-success" ng-click="save()" ng-disabled="recipeForm.$invalid || !recipeSanityCheck()">Save Recipe</button>
   </form>
   <h3>Current Recipe Being Built</h3>
   <pre>{{recipe | json}}</pre>
-  <pre>{{ingredientList | json}}</pre>
-  <pre>{{constructingStep | json}}</pre>
-  <pre>{{stepList | json}}</pre>
 </div>

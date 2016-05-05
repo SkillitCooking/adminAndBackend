@@ -15,6 +15,7 @@ angular.module('SkillitAdminApp')
       $scope.dishes = dishes;
     }, function(response) {
       console.log("Server Error: ", response.message);
+      alert("Server Error: " + response.message);
     });
 
     $scope.reset = function() {
@@ -33,6 +34,7 @@ angular.module('SkillitAdminApp')
         $scope.dishes.push(dish);
       }, function(response){
         console.log("Server Error: ", response.message);
+        alert("Server Error: " + response.message);
       });
       $scope.dish = angular.copy({});
       $scope.dishForm.nameInput.$setUntouched();

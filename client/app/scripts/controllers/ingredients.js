@@ -15,6 +15,7 @@ angular.module('SkillitAdminApp')
       $scope.ingredients = ingredients;
     }, function(response) {
       console.log("Server Error: ", response.message);
+      alert("Server Error: " + response.message);
     });
 
     $scope.inForms = [
@@ -119,6 +120,7 @@ angular.module('SkillitAdminApp')
         $scope.ingredients.push(ingredient);
       }, function(response) {
         console.log("Server Error: ", response.message);
+        alert("Server Error: " + response.message);
       });
       $scope.reset();
     };

@@ -8,16 +8,19 @@
  * Factory for recipe API access in the SkillitAdminApp.
  */
 angular.module('SkillitAdminApp')
-  .factory('recipeService', function () {
+  .factory('recipeService', function (Restangular) {
     // Service logic
     // ...
 
-    var meaningOfLife = 42;
+    var baseRecipes = Restangular.all('recipes');
 
     // Public API here
     return {
-      someMethod: function () {
-        return meaningOfLife;
+      getAllRecipes: function () {
+        return baseRecipes.getList();
+      },
+      addNewRecipe: function(newRecipe) {
+        return baseRecipes.post(newRecipe);
       }
     };
   });
