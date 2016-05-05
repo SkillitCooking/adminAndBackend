@@ -28,7 +28,7 @@ angular.module('SkillitAdminApp')
     //save the input
     $scope.save = function() {
       //break up on basis of commas, eliminate trailing whitespace from each resultant term
-      let spicesArr = $scope.seasoningProfile.spices.split(",");
+      var spicesArr = $scope.seasoningProfile.spices.split(",");
       for (var i = spicesArr.length - 1; i >= 0; i--) {
         spicesArr[i] = spicesArr[i].trim();
       }
