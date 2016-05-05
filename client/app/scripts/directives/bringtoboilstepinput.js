@@ -9,7 +9,7 @@
 angular.module('SkillitAdminApp')
   .directive('bringToBoilStepInput', function () {
     return {
-      templateUrl: '../views/bringtoboilstepinput.html',
+      templateUrl: 'views/bringtoboilstepinput.html',
       restrict: 'E',
       transclude: false,
       scope: true,

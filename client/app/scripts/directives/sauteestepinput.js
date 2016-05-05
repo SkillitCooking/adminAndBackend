@@ -9,7 +9,7 @@
 angular.module('SkillitAdminApp')
   .directive('sauteeStepInput', function () {
     return {
-      templateUrl: '../views/sauteestepinput.html',
+      templateUrl: 'views/sauteestepinput.html',
       restrict: 'E',
       scope: true,
       transclude: false,

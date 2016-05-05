@@ -9,7 +9,7 @@
 angular.module('SkillitAdminApp')
   .directive('dryStepInput', function () {
     return {
-      templateUrl: '../views/drystepinput.html',
+      templateUrl: 'views/drystepinput.html',
       restrict: 'E',
       scope: true,
       transclude: false,

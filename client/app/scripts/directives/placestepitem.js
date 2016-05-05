@@ -9,7 +9,7 @@
 angular.module('SkillitAdminApp')
   .directive('placeStepItem', function () {
     return {
-      templateUrl: '../views/placestepitem.html',
+      templateUrl: 'views/placestepitem.html',
       restrict: 'E',
       transclude: false,
       scope: false

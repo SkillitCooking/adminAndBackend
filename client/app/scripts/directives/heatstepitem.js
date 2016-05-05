@@ -9,7 +9,7 @@
 angular.module('SkillitAdminApp')
   .directive('heatStepItem', function () {
     return {
-      templateUrl: '../views/heatstepitem.html',
+      templateUrl: 'views/heatstepitem.html',
       restrict: 'E',
       transclude: false,
       scope: false

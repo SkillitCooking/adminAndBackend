@@ -46,8 +46,8 @@
         <li>
           Step Tip: <br />
           <div class="bg-warning">
-            Title: <input type="text" ng-model="tip.stepTip.title" size="50" required name="tipTitle"/><br />
-            Text: <textarea ng-model="tip.stepTip.text" rows="4" cols="50" required name="tipText"></textarea><br />
+            Title: <input type="text" ng-model="tip.stepTip.title" size="50" name="tipTitle"/><br />
+            Text: <textarea ng-model="tip.stepTip.text" rows="4" cols="50" name="tipText"></textarea><br />
             <span ng-show="tipForm.tipText.$invalid">Must enter text for the tip</span><br/>
             PictureURL: <input type="url" ng-model="tip.stepTip.pictureURL" name="tipPic" size="70"/> <br />
             <span ng-show="tipForm.tipPic.$invalid">PictureURL must be a URL</span><br/>

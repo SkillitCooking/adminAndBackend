@@ -9,7 +9,7 @@
 angular.module('SkillitAdminApp')
   .directive('seasonStepItem', function () {
     return {
-      templateUrl: '../views/seasonstepitem.html',
+      templateUrl: 'views/seasonstepitem.html',
       restrict: 'E',
       scope: false,
       transclude: false

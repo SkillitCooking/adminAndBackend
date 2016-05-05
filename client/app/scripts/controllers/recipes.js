@@ -34,7 +34,7 @@ angular.module('SkillitAdminApp')
 
     $scope.stepTypes = ["Bake", "Boil", "BringToBoil", "Cut", "Dry", "Heat", "Place", "PreheatOven", "Sautee", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir"];
     $scope.recipeTypes = ["AlaCarte", "BYO", "Full"];
-    $scope.recipeCategories = ["Sautee", "Scramble", "Roast", "Pasta", "Hash"];
+    $scope.recipeCategories = ["Sautee", "Scramble", "Roast", "Pasta", "Hash", "Rice", "Quinoa"];
     $scope.cookingMethods = ["Bake", "Sautee", "Boil", "Steam", "SlowCook"];
     $scope.selectedIngredientForms = [];
 

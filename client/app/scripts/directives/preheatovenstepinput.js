@@ -9,7 +9,7 @@
 angular.module('SkillitAdminApp')
   .directive('preheatOvenStepInput', function () {
     return {
-      templateUrl: '../views/preheatovenstepinput.html',
+      templateUrl: 'views/preheatovenstepinput.html',
       restrict: 'E',
       transclude: false,
       scope: true,

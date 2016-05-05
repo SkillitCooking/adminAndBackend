@@ -9,7 +9,7 @@
 angular.module('SkillitAdminApp')
   .directive('slowCookStepItem', function () {
     return {
-      templateUrl: '../views/slowcookstepitem.html',
+      templateUrl: 'views/slowcookstepitem.html',
       restrict: 'E',
       scope: false,
       transclude: false

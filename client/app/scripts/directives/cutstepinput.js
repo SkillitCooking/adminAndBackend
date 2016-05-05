@@ -11,7 +11,7 @@
 angular.module('SkillitAdminApp')
   .directive('cutStepInput', function () {
     return {
-      templateUrl: '../views/cutstepinput.html',
+      templateUrl: 'views/cutstepinput.html',
       scope: true,
       transclude: false,
       restrict: 'E',

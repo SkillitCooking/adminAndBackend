@@ -9,7 +9,7 @@
 angular.module('SkillitAdminApp')
   .directive('bakeStepInput', function () {
     return {
-      templateUrl: '../views/bakestepinput.html',
+      templateUrl: 'views/bakestepinput.html',
       restrict: 'E',
       transclude: false,
       scope: true,

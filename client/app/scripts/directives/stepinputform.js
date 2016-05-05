@@ -9,7 +9,7 @@
 angular.module('SkillitAdminApp')
   .directive('stepInputForm', function () {
     return {
-      templateUrl: '../views/stepinputform.html',
+      templateUrl: 'views/stepinputform.html',
       restrict: 'E',
       scope: {
         step: "=constructingStep",

@@ -9,7 +9,7 @@
 angular.module('SkillitAdminApp')
   .directive('cutStepItem', function () {
     return {
-      templateUrl: '../views/cutstepitem.html',
+      templateUrl: 'views/cutstepitem.html',
       restrict: 'E',
       scope: false,
       transclude: false
