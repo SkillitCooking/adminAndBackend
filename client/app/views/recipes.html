@@ -5,8 +5,8 @@
     Name: <input type="text" ng-model="recipe.name" size="50" required name="nameInput"/> 
     <span ng-show="recipeForm.nameInput.$invalid">give the recipe a name</span><br /> <br />
     Description: <textarea ng-model="recipe.description" rows="4" cols="50" required name="descInput"></textarea>
-    <span ng-show="recipeForm.descInput.$invalid">give the recipe a description</span>
-    Main Picture URL: <input type="url" ng-model="recipe.mainPictureURL" size="70" name="mainPicInput" required/>
+    <span ng-show="recipeForm.descInput.$invalid">give the recipe a description</span><br/>
+    Main Picture URL: <input type="url" ng-model="recipe.mainPictureURL" size="70" name="mainPicInput" required/><br/><br/>
     RecipeType: <select name="typeSelect" ng-model="recipe.recipeType" ng-options="recipeType for recipeType in recipeTypes" required></select>
     <span ng-show="recipeForm.typeSelect.$invalid">select a recipe type</span><br/><br/>
     RecipeCategory: <select name="categorySelect" ng-model="recipe.recipeCategory" ng-options="recipeCategory for recipeCategory in recipeCategories" required></select>
