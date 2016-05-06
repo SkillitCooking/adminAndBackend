@@ -14,15 +14,9 @@ var IngredientFormSchema = new mongoose.Schema({
 });
 
 var IngredientTipSchema = new mongoose.Schema({
-  stepType: Number,
+  stepType: String,
   stepSubType: String,
-  stepTip: {
-    title: String,
-    text: String,
-    pictureURL: String,
-    videoURL: String,
-    videoTitle: String
-  }
+  stepTip: stepTip.schema
 });
 
 var IngredientSchema = new mongoose.Schema({
