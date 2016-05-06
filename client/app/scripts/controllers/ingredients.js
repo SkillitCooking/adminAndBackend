@@ -50,7 +50,7 @@ angular.module('SkillitAdminApp')
 
     $scope.removeIngredientForm = function(index) {
       $scope.inForms.splice(index, 1);
-    }
+    };
 
     $scope.ingredientTips = [
     ];
