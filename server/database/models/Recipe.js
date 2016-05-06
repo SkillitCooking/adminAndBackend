@@ -48,7 +48,8 @@ var RecipeSchema = new mongoose.Schema({
   otherCookingMethods: [String],
   canAddSeasoningProfile: Boolean,
   defaultSeasoningProfile: SeasoningProfile.schema,
-  primaryIngredientType: String
+  primaryIngredientType: String,
+  mainPictureURL: String
 });
 
 module.exports.model = mongoose.model('Recipe', RecipeSchema);

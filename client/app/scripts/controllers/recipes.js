@@ -199,7 +199,8 @@ angular.module('SkillitAdminApp')
           otherCookingMethods: $scope.recipe.otherCookingMethods,
           canAddSeasoningProfile: $scope.recipe.canAddSeasoningProfile,
           defaultSeasoningProfile: $scope.recipe.defaultSeasoningProfile,
-          primaryIngredientType: $scope.recipe.primaryIngredientType
+          primaryIngredientType: $scope.recipe.primaryIngredientType,
+          mainPictureURL: $scope.recipe.mainPictureURL
         }
       }).then(function(recipe){
         var alertMsg = "Success! Recipe " + recipe.name + " was saved!";
