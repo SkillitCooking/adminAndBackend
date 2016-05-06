@@ -114,7 +114,8 @@ angular.module('SkillitAdminApp')
         ingredient: {
           name: $scope.ingredient.name,
           ingredientForms: $scope.ingredient.ingredientForms,
-          ingredientTips: $scope.ingredient.ingredientTips
+          ingredientTips: $scope.ingredient.ingredientTips,
+          inputCategory: $scope.inputCategory
         }
       }).then(function(ingredient) {
         $scope.ingredients.push(ingredient);
