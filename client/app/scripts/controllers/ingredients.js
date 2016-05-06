@@ -121,6 +121,7 @@ angular.module('SkillitAdminApp')
         $scope.ingredients.push(ingredient);
       }, function(response) {
         console.log("Server Error: ", response.message);
+        console.log(response);
         alert("Server Error: " + response.message);
       });
       $scope.reset();
