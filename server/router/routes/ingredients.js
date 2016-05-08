@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var mongoose = require('mongoose');
+var underscore = require('underscore');
 var db = require('../../database');
 var Ingredient = db.ingredients;
 
@@ -14,6 +15,16 @@ router.get('/', function(req, res, next) {
   Ingredient.model.find(function (err, ingredients) {
     if(err) return next(err);
     res.json(ingredients);
+  });
+});
+
+/* GET getIngredientsForSelection */
+/* Organizes ingredients by inputCategory*/
+router.get('/getIngredientsForSelection', function(req, res, next) {
+  Ingredient.model.find(function (err, ingredients) {
+    if(err) return next(err);
+    var ingredientSets = underscore.groupBy(ingredients, "inputCategory");
+    res.json(ingredientSets);
   });
 });
 
