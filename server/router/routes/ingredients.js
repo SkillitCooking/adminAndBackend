@@ -24,7 +24,10 @@ router.get('/getIngredientsForSelection', function(req, res, next) {
   Ingredient.model.find(function (err, ingredients) {
     if(err) return next(err);
     var ingredientSets = underscore.groupBy(ingredients, "inputCategory");
-    res.json(ingredientSets);
+    var retData = {
+      data: ingredientSets
+    };
+    res.json(retData);
   });
 });
 
