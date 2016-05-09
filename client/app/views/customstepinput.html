@@ -1,6 +1,6 @@
 <div ng-form="customStepForm" class="bg-warning">
   Step Duration: <input type="text" ng-model="constructingStep.stepDuration" required name="stepDurationInput" size="30" ng-pattern="integerval"/><br/>
-  Custom Step Text: <textarea name="customTextInput" required ng-model="constructingStep.customStepText" rows="4" cols="50"></textarea><br/>
+  Custom Step Text: <textarea name="customTextInput" required ng-model="constructingStep.stepSpecifics[0].val" rows="4" cols="50"></textarea><br/>
   Ingredient Inputs: <step-input-form 
     constructing-step="constructingStep"
     input-name="ingredientInputs"

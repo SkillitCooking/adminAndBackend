@@ -19,6 +19,11 @@ angular.module('SkillitAdminApp')
         scope.tipAdded = false;
         scope.showExampleText = false;
 
+        scope.constructingStep.stepSpecifics = [{
+          propName: "dryMethod",
+          val: ""
+        }];
+
         scope.addTip = function() {
           scope.tipAdded = !scope.tipAdded;
         };

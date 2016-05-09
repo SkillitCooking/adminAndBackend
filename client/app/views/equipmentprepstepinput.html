@@ -1,8 +1,8 @@
 <div ng-form="equipmentPrepStepForm" class="bg-warning">
   <b>Equipment Prep Step</b><br/>
   Step Duration: <input type="text" ng-model="constructingStep.stepDuration" required name="stepDurationInput" size="30" ng-pattern="integerval"/><br/>
-  Prep Action: <select name="prepActionSelect" ng-model="constructingStep.prepActionType" ng-options="prepAction for prepAction in prepActionTypes" required></select>
-  Prep Modifier: <input type="text" ng-model="constructingStep.prepModifier" name="prepModifierInput" size="50" /><br/>
+  Prep Action: <select name="prepActionSelect" ng-model="constructingStep.stepSpecifics[0].val" ng-options="prepAction for prepAction in prepActionTypes" required></select>
+  Prep Modifier: <input type="text" ng-model="constructingStep.stepSpecifics[1].val" name="prepModifierInput" size="50" /><br/>
   Dish Inputs (expects dish): <step-input-form 
     constructing-step="constructingStep"
     input-name="dishInputs"

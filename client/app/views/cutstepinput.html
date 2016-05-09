@@ -1,6 +1,6 @@
 <div ng-form="cutStepForm" class="bg-warning">
   <b>Cut Step</b><br/>
-  CutActionType: <select name="actionTypeSelect" ng-model="constructingStep.actionType" ng-options="actionType for actionType in actionTypes" required></select><br/>
+  CutActionType: <select name="actionTypeSelect" ng-model="constructingStep.stepSpecifics[0].val" ng-options="actionType for actionType in actionTypes" required></select><br/>
   Step Duration: <input type="text" ng-model="constructingStep.stepDuration" required name="stepDurationInput" size="30" ng-pattern="integerval" /><br/>
   Ingredient Input: <step-input-form 
     constructing-step="constructingStep"
@@ -9,7 +9,7 @@
     ingredient-list="ingredientList"
     step-list="stepList"
     ></step-input-form> <br/>
-  ActionModifier: <input type="text" ng-model="constructingStep.actionModifier" size="50" name="actionModifierInput"/><br/>
+  ActionModifier: <input type="text" ng-model="constructingStep.stepSpecifics[1].val" size="50" name="actionModifierInput"/><br/>
   ProductName: <input type="text" ng-model="constructingStep.productName" size="50" required name="productNameInput"/><br/>
   <button ng-show="!tipAdded" class="btn btn-sm btn-primary" ng-click="addTip()">Add Tip</button><br/>
   <div ng-if="tipAdded">

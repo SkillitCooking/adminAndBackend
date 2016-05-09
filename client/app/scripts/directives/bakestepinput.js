@@ -17,6 +17,10 @@ angular.module('SkillitAdminApp')
         scope.integerval = /^\d*$/;
 
         scope.auxiliaryStepTypeNames = [];
+        scope.constructingStep.stepSpecifics = [{
+          propName: "bakingTime",
+          val: ""
+        }];
 
         scope.showExampleText = false;
         scope.tipAdded = false;
@@ -29,7 +33,15 @@ angular.module('SkillitAdminApp')
           if(!scope.constructingStep.auxiliarySteps){
             scope.constructingStep.auxiliarySteps = [];
           }
-          scope.constructingStep.auxiliarySteps.push({});
+          scope.constructingStep.auxiliarySteps.push({
+            stepSpecifics: [{
+              propName: "whenToStir",
+              val: ""
+            }, {
+              propName: "stirType",
+              val: ""
+            }]
+          });
         };
 
         scope.addTip = function() {

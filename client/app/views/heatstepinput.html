@@ -1,8 +1,8 @@
 <div ng-form="heatStepForm" class="bg-warning">
   <b>Heat Step</b><br/>
   Step Duration: <input type="text" ng-model="constructingStep.stepDuration" required name="stepDurationInput" size="30" ng-pattern="integerval" /> <br/>
-  Heats Oil: <input type="checkbox" ng-model="constructingStep.heatsOil" name="heatsOilInput"/><br/>
-  Heat Setting: <input type="text" ng-model="constructingStep.heatSetting" size="50" required name="heatSettingInput"/><br/>
+  Heats Oil: <input type="checkbox" ng-model="constructingStep.stepSpecifics[0].val" name="heatsOilInput"/><br/>
+  Heat Setting: <input type="text" ng-model="constructingStep.stepSpecifics[1].val" size="50" required name="heatSettingInput"/><br/>
   Dish Input (Expects a Dish): <step-input-form
     constructing-step="constructingStep"
     input-name="dishInput"

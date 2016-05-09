@@ -26,6 +26,20 @@ angular.module('SkillitAdminApp')
         scope.stirTypes = ["Stir","Flip"];
         scope.tipAdded = false;
 
+        if(scope.auxStepArrIndex){
+          scope.auxStepArrIndex = parseInt(scope.auxStepArrIndex, 10);
+        }
+
+        if(scope.isAuxiliaryStep === 'false'){
+          scope.constructingStep.stepSpecifics = [{
+            propName: "whenToStir",
+            val: ""
+          }, {
+            propName: "stirType",
+            val: ""
+          }];
+        }
+
         scope.isAuxDictionary = function(stepType){
           switch(stepType) {
             case "Bake":

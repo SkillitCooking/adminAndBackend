@@ -21,6 +21,14 @@ angular.module('SkillitAdminApp')
         scope.tipAdded = false;
         scope.actionTypes = ["Cut", "Chop", "Dice", "Slice", "Mince"];
 
+        scope.constructingStep.stepSpecifics = [{
+          propName: "actionType",
+          val: ""
+        }, {
+          propName: "actionModifier",
+          val: ""
+        }];
+
         scope.addTip = function() {
           scope.tipAdded = !scope.tipAdded;
         };

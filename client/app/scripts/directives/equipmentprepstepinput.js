@@ -20,6 +20,15 @@ angular.module('SkillitAdminApp')
 
         scope.prepActionTypes = ["Grease", "Line"];
 
+        scope.constructingStep.stepSpecifics = [{
+          propName: "prepActionType",
+          val: ""
+        },
+        {
+          propName: "prepModifier",
+          val: ""
+        }];
+
         scope.addTip = function() {
           scope.tipAdded = !scope.tipAdded;
         };

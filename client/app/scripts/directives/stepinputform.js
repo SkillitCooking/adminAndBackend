@@ -22,10 +22,10 @@ angular.module('SkillitAdminApp')
       link: function(scope, elem, attrs) {
         scope.sourceTypes = ["EquipmentList", "StepProduct", "IngredientList"];
         scope.showStepId = function() {
-          if(!scope.step[scope.stepInputName] || !scope.step[scope.stepInputName].sourceType){
+          if(!scope.step.stepInputs[scope.stepInputName] || !scope.step.stepInputs[scope.stepInputName].sourceType){
             return false;
           }
-          if(scope.step[scope.stepInputName].sourceType === 'StepProduct'){
+          if(scope.step.stepInputs[scope.stepInputName].sourceType === 'StepProduct'){
             return true;
           } else {
             return false;
@@ -51,7 +51,7 @@ angular.module('SkillitAdminApp')
         };
 
         scope.registerSourceId = function(sourceIdStep) {
-          scope.step[scope.stepInputName].sourceId = sourceIdStep.stepId;
+          scope.step.stepInputs[scope.stepInputName].sourceId = sourceIdStep.stepId;
         };
 
         scope.registerSourceIdMultiple = function(input, index, sourceIdStep) {
@@ -59,14 +59,14 @@ angular.module('SkillitAdminApp')
         };
 
         scope.removeInput = function(index) {
-          scope.step[scope.stepInputName].splice(index,1);
+          scope.step.stepInputs[scope.stepInputName].splice(index,1);
         };
 
         scope.addInput = function() {
-          if(!scope.step[scope.stepInputName]){
-            scope.step[scope.stepInputName] = [];
+          if(!scope.step.stepInputs[scope.stepInputName]){
+            scope.step.stepInputs[scope.stepInputName] = [];
           }
-          scope.step[scope.stepInputName].push({
+          scope.step.stepInputs[scope.stepInputName].push({
             sourceType: "",
             sourceId: "",
             key: "",

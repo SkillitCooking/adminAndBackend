@@ -11,19 +11,19 @@
       step-list="stepList"></step-input-form><br/>
     Step Duration: <input type="text" ng-model="constructingStep.stepDuration" size="30" required ng-pattern="integerval"/><br/>
     Product Name: <input type="text" ng-model="constructingStep.productName" size="50" required/><br/>
-    When to Stir: <input type="text" ng-model="constructingStep.whenToStir" size="50" required /><br/>
-    StirType: <select ng-model="constructingStep.stirType" ng-options="type for type in stirTypes" required></select><br/>
+    When to Stir: <input type="text" ng-model="constructingStep.stepSpecifics[0].val" size="50" required /><br/>
+    StirType: <select ng-model="constructingStep.stepSpecifics[1].val" ng-options="type for type in stirTypes" required></select><br/>
     <!--Omitting the 'isAtSentenceBeginning' property - probably hard to determine that from this vantage point-->
   </div>
   <div ng-if="isAuxiliaryStep === 'true'">
     <div ng-if="isAuxDictionary(constructingStep.stepType)">
-      When to Stir: <input type="text" ng-model="constructingStep.auxiliarySteps[auxStepArrIndex].whenToStir" size="50" required /><br/>
-      StirType: <select ng-model="constructingStep.auxiliarySteps[auxStepArrIndex].stirType" ng-options="type for type in stirTypes" required></select><br/>
+      When to Stir: <input type="text" ng-model="constructingStep.auxiliarySteps[auxStepArrIndex].stepSpecifics[0].val" size="50" required /><br/>
+      StirType: <select ng-model="constructingStep.auxiliarySteps[auxStepArrIndex].stepSpecifics[1].val" ng-options="type for type in stirTypes" required></select><br/>
       <!--Omitting the 'isAtSentenceBeginning' property - probably hard to determine that from this vantage point-->
     </div>
     <div ng-if="!isAuxDictionary(constructingStep.stepType)">
-      When to Stir: <input type="text" ng-model="constructingStep.auxiliaryStep.whenToStir" size="50" required /><br/>
-      StirType: <select ng-model="constructingStep.auxiliaryStep.stirType" ng-options="type for type in stirTypes" required></select><br/>
+      When to Stir: <input type="text" ng-model="constructingStep.auxiliarySteps[0].stepSpecifics[0].val" size="50" required /><br/>
+      StirType: <select ng-model="constructingStep.auxiliarySteps[0].stepSpecifics[1].val" ng-options="type for type in stirTypes" required></select><br/>
     </div>
   </div>
   <div ng-if="isAuxiliaryStep === 'false'">

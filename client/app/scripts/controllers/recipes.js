@@ -38,6 +38,10 @@ angular.module('SkillitAdminApp')
     $scope.cookingMethods = ["Bake", "Sautee", "Boil", "Steam", "SlowCook"];
     $scope.selectedIngredientForms = [];
 
+    //initialize constructingStep and it's stepInputs object
+    $scope.constructingStep = {};
+    $scope.constructingStep.stepInputs = {};
+
     $scope.ingredientList = {
       ingredientTypes: [],
       equipmentNeeded: []
@@ -147,13 +151,20 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.addStep = function() {
-      $scope.constructingStep.stepId = _.uniqueId($scope.constructingStep.stepType);
+      if(!$scope.squishedRecipeName){
+        var nameTokens = $scope.recipe.name.split(" ");
+        $scope.squishedRecipeName = nameTokens.join("");
+      }
+      $scope.constructingStep.stepId = $scope.squishedRecipeName + _.uniqueId($scope.constructingStep.stepType);
+      $scope.constructingStep.productKeys = [$scope.constructingStep.productName];
+      $scope.constructingStep.productName = undefined;
       $scope.stepList.push($scope.constructingStep);
-      $scope.constructingStep = undefined;
+      $scope.constructingStep = {};
+      $scope.constructingStep.stepInputs = {};
     };
 
     $scope.removeStep = function() {
-      $scope.stepList = _.dropRight($scope.stepList);
+      $scope.stepList = $scope.recipe.stepList = _.dropRight($scope.stepList);
     };
 
     $scope.recipeSanityCheck = function() {
@@ -200,7 +211,8 @@ angular.module('SkillitAdminApp')
           canAddSeasoningProfile: $scope.recipe.canAddSeasoningProfile,
           defaultSeasoningProfile: $scope.recipe.defaultSeasoningProfile,
           primaryIngredientType: $scope.recipe.primaryIngredientType,
-          mainPictureURL: $scope.recipe.mainPictureURL
+          mainPictureURL: $scope.recipe.mainPictureURL,
+          mainVideoURL: $scope.recipe.mainVideoURL
         }
       }).then(function(recipe){
         var alertMsg = "Success! Recipe " + recipe.name + " was saved!";

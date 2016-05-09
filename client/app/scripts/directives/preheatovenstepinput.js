@@ -18,6 +18,11 @@ angular.module('SkillitAdminApp')
         scope.tipAdded = false;
         scope.showExampleText = false;
 
+        scope.constructingStep.stepSpecifics = [{
+          propName: "ovenTemperature",
+          val: ""
+        }];
+
         scope.addTip = function() {
           scope.tipAdded = !scope.tipAdded;
         };

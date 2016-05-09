@@ -1,7 +1,7 @@
 <div ng-form="sauteeStepForm" class="bg-warning">
   <b>Sautee Step</b><br/>
   Step Duration: <input type="text" ng-model="constructingStep.stepDuration" required name="stepDurationInput" size="30" ng-pattern="integerval" /><br/>
-  Sautee Duration: <input type="text" ng-model="constructingStep.sauteeDuration" required name="sauteeDurationInput" size="50" /><br/>
+  Sautee Duration: <input type="text" ng-model="constructingStep.stepSpecifics[0].val" required name="sauteeDurationInput" size="50" /><br/>
   Ingredient Inputs (step or ingredient type): <step-input-form
     constructing-step="constructingStep"
     input-name="ingredientInputs"

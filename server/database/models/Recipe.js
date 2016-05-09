@@ -9,18 +9,11 @@ StepSchema.add({
   stepId: String,
   stepType: String,
   stepTip: StepTip.schema,
-  stepInputs: [{
-    isDish: Boolean,
-    isIngredient: Boolean,
-    sourceType: String,
-    sourceId: String,
-    key: String,
-    inputName: String
-  }],
+  stepInputs: {},
   productKeys: [String],
-  stepModifiers: [{
+  stepSpecifics: [{
     propName: String,
-    val: String
+    val: mongoose.Schema.Types.Mixed
   }],
   stepDuration: String,
   auxiliarySteps: [StepSchema]
@@ -50,7 +43,7 @@ var RecipeSchema = new mongoose.Schema({
   defaultSeasoningProfile: SeasoningProfile.schema,
   primaryIngredientType: String,
   mainPictureURL: String,
-  customStepText: String
+  mainVideoURL: String
 });
 
 module.exports.model = mongoose.model('Recipe', RecipeSchema);

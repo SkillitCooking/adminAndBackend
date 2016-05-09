@@ -17,6 +17,11 @@ angular.module('SkillitAdminApp')
         scope.integerval = /^\d*$/;
         scope.tipAdded = false;
 
+        scope.constructingStep.stepSpecifics = [{
+          propName: "customStepText",
+          val: ""
+        }];
+
         scope.addTip = function() {
           scope.tipAdded = !scope.tipAdded;
         };

@@ -19,6 +19,11 @@ angular.module('SkillitAdminApp')
         scope.showExampleText = false;
         scope.auxStepAdded = false;
 
+        scope.constructingStep.stepSpecifics = [{
+          propName: "sauteeDuration",
+          val: ""
+        }];
+
         scope.addTip = function() {
           scope.tipAdded = !scope.tipAdded;
         };
@@ -30,11 +35,28 @@ angular.module('SkillitAdminApp')
 
         scope.addAuxStep = function() {
           scope.auxStepAdded = !scope.auxStepAdded;
+          scope.constructingStep.auxiliarySteps = [{
+            stepSpecifics: [{
+              propName: "whenToStir",
+              val: ""
+            }, {
+              propName: "stirType",
+              val: ""
+            }]
+          }];
         };
 
         scope.removeAuxStep = function() {
           scope.auxStepAdded = !scope.auxStepAdded;
-          scope.constructingStep.auxiliaryStep = undefined;
+          scope.constructingStep.auxiliarySteps = [{
+            stepSpecifics: [{
+              propName: "whenToStir",
+              val: ""
+            }, {
+              propName: "stirType",
+              val: ""
+            }]
+          }];
         };
       }
     };

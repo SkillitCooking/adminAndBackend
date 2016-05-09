@@ -18,7 +18,13 @@ angular.module('SkillitAdminApp')
         scope.showExampleText = false;
         scope.tipAdded = false;
 
-        scope.constructingStep.cookAccordingToInstructions = false;
+        scope.constructingStep.stepSpecifics = [{
+          propName: "cookAccordingToInstructions",
+          val: false
+        }, {
+          propName: "boilingDuration",
+          val: ""
+        }]
 
         scope.addTip = function() {
           scope.tipAdded = !scope.tipAdded;

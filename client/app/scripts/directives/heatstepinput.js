@@ -17,7 +17,15 @@ angular.module('SkillitAdminApp')
         scope.integerval = /^\d*$/;
         scope.tipAdded = false;
         scope.showExampleText = false;
-        scope.constructingStep.heatsOil = false;
+
+        scope.constructingStep.stepSpecifics = [{
+          propName: "heatsOil",
+          val: false
+        },
+        {
+          propName: "heatSetting",
+          val: ""
+        }];
 
         scope.addTip = function() {
           scope.tipAdded = !scope.tipAdded;
