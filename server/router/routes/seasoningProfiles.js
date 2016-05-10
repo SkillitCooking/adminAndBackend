@@ -19,25 +19,22 @@ router.get('/', function(req, res, next) {
 
 /* POST /seasoningProfiles */
 router.post('/', function(req, res, next) {
-  if(req.body.seasoningProfile){
-    var query = {'name': req.body.seasoningProfile.name};
-    SeasoningProfile.model.findOneAndUpdate(query, 
-      req.body.seasoningProfile, {upsert: true}, 
-      function(err, profile) {
-        if (err) return next(err);
-        if(profile === null) {
-          //then inserted, and need it to return
-          SeasoningProfile.model.findOne(query, function(err, profile) {
-            if(err) return next(err);
-            res.json(profile);
-          });
-        } else {
-          //then updated
+  var query = {'name': req.body.seasoningProfile.name};
+  SeasoningProfile.model.findOneAndUpdate(query, 
+    req.body.seasoningProfile, {upsert: true}, 
+    function(err, profile) {
+      if (err) return next(err);
+      if(profile === null) {
+        //then inserted, and need it to return
+        SeasoningProfile.model.findOne(query, function(err, profile) {
+          if(err) return next(err);
           res.json(profile);
-        }
-    });
-  }
-  res.json({});
+        });
+      } else {
+        //then updated
+        res.json(profile);
+      }
+  });
 });
 
 /* GET /seasoningProfiles/id */

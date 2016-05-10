@@ -22,7 +22,6 @@ router.get('/', function(req, res, next) {
 /* check for same dish name */
 router.post('/', function(req, res, next) {
   var query = {'name': req.body.dish.name};
-  console.log('dishes post');                           
   Dish.model.findOneAndUpdate(query, req.body.dish, {upsert: true},function(err, dish) {
     if (err) return next(err);
     if(dish === null){
