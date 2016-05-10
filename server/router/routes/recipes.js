@@ -36,15 +36,14 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
     if(err) return next(err);
     var retRecipes = [];
     var ingredientNames = req.body.ingredientNames;
-    console.log(ingredientNames);
     for (var k = recipes.length - 1; k >= 0; k--) {
       var ingredientTypes = recipes[k].ingredientList.ingredientTypes;
       var flag = true;
       for (var i = ingredientTypes.length - 1; i >= 0; i--) {
         var count = 0;
         for (var j = ingredientTypes[i].ingredients.length - 1; j >= 0; j--) {
+          //console.log(ingredientTypes[i].ingredients[j].name);
           if(ingredientNames.indexOf(ingredientTypes[i].ingredients[j].name) !== -1){
-            console.log(ingredientTypes[i].ingredients[j].name);
             count++;
           }
         }
@@ -53,10 +52,11 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
         }
       }
       if(flag){
-        console.log(recipes[k]._id);
-        retRecipes.push(recipes[k]);
+        var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL');
+        retRecipes.push(pickedRecipe);
       }
     }
+    retRecipes = underscore.groupBy(retRecipes, "recipeType");
     res.json(retRecipes);
   });
 });
