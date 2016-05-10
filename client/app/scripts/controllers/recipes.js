@@ -73,7 +73,7 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.isAFormSelected = function() {
-      if($scope.selectedIngredientForms.length == 0){
+      if($scope.selectedIngredientForms.length === 0){
         return false;
       }
       for (var i = $scope.selectedIngredientForms.length - 1; i >= 0; i--) {
@@ -198,6 +198,7 @@ angular.module('SkillitAdminApp')
       if(!$scope.recipe.canAddSeasoningProfile){
         $scope.recipe.canAddSeasoningProfile = false;
       }
+      $scope.getGlobalCookTimes();
       recipeService.addNewRecipe({ 
         recipe:{
           name: $scope.recipe.name,
@@ -212,7 +213,9 @@ angular.module('SkillitAdminApp')
           defaultSeasoningProfile: $scope.recipe.defaultSeasoningProfile,
           primaryIngredientType: $scope.recipe.primaryIngredientType,
           mainPictureURL: $scope.recipe.mainPictureURL,
-          mainVideoURL: $scope.recipe.mainVideoURL
+          mainVideoURL: $scope.recipe.mainVideoURL,
+          prepTime: $scope.recipe.prepTime,
+          totalTime: $scope.recipe.totalTime
         }
       }).then(function(recipe){
         var alertMsg = "Success! Recipe " + recipe.name + " was saved!";
@@ -222,6 +225,21 @@ angular.module('SkillitAdminApp')
         alert("Server Error: " + response.message);
       });
       $scope.reset();
+    };
+
+    $scope.isPrepStep = function(stepType) {
+      return ["BringToBoil", "Custom", "Cut", "Dry", "Heat", "Place", "PreheatOven", "Season", "EquipmentPrep", "Stir"].includes(stepType);
+    }
+
+    $scope.getGlobalCookTimes = function() {
+      $scope.recipe.prepTime = 0;
+      $scope.recipe.totalTime = 0;
+      for (var i = $scope.recipe.stepList.length - 1; i >= 0; i--) {
+        $scope.recipe.totalTime += parseInt($scope.recipe.stepList[i].stepDuration, 10);
+        if($scope.isPrepStep($scope.recipe.stepList[i].stepType)){
+          $scope.recipe.prepTime += parseInt($scope.recipe.stepList[i].stepDuration, 10);
+        }
+      }
     };
 
     $scope.preview = function() {

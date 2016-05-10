@@ -43,7 +43,9 @@ var RecipeSchema = new mongoose.Schema({
   defaultSeasoningProfile: SeasoningProfile.schema,
   primaryIngredientType: String,
   mainPictureURL: String,
-  mainVideoURL: String
+  mainVideoURL: String,
+  prepTime: Number,
+  totalTime: Number
 });
 
 module.exports.model = mongoose.model('Recipe', RecipeSchema);
