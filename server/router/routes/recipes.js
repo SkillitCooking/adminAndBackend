@@ -51,7 +51,7 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
         }
       }
       if(flag){
-        var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL');
+        var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime');
         retRecipes.push(pickedRecipe);
       }
     }
