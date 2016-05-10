@@ -34,22 +34,25 @@ router.get('/getIngredientsForSelection', function(req, res, next) {
 /* POST /ingredients */
 /* Check for same ingredient name*/
 router.post('/', function(req, res, next) {
-  var query = {'name': req.body.ingredient.name};
-  Ingredient.model.findOneAndUpdate(query, req.body.ingredient,
-    {upsert: true}, function(err, ingredient) {
-    if (err) return next(err);
-    if(ingredient === null){
-      //then inserted, and need it to return
-      Ingredient.model.findOne({'name': req.body.ingredient.name},
-        function(err, ingredient) {
-          if(err) return next(err);
-          res.json(ingredient);
-        });
-    } else {
-      //then updated
-      res.json(ingredient);
-    }
-  });
+  if(req.body.ingredient){
+    var query = {'name': req.body.ingredient.name};
+    Ingredient.model.findOneAndUpdate(query, req.body.ingredient,
+      {upsert: true}, function(err, ingredient) {
+      if (err) return next(err);
+      if(ingredient === null){
+        //then inserted, and need it to return
+        Ingredient.model.findOne({'name': req.body.ingredient.name},
+          function(err, ingredient) {
+            if(err) return next(err);
+            res.json(ingredient);
+          });
+      } else {
+        //then updated
+        res.json(ingredient);
+      }
+    });
+  }
+  res.json({});
 });
 
 /* GET /ingredients/id */
