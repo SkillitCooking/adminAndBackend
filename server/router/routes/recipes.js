@@ -21,6 +21,7 @@ router.get('/', function(req, res, next) {
 /* get recipes with ids */
 /* expects req.body to wrap the array... */
 router.post('/getRecipesWithIds', function(req, res, next) {
+  console.log(req.body.recipeIds);
   Recipe.model.find({
     '_id': { $in: req.body.recipeIds }
   }, function(err, recipes) {
