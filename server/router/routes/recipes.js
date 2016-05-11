@@ -25,7 +25,10 @@ router.post('/getRecipesWithIds', function(req, res, next) {
     '_id': { $in: req.body.recipeIds }
   }, function(err, recipes) {
     if(err) return next(err);
-    res.json(recipes);
+    var retVal = {
+      data: recipes
+    };
+    res.json(retVal);
   });
 });
 
