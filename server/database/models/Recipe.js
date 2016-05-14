@@ -16,6 +16,7 @@ StepSchema.add({
     val: mongoose.Schema.Types.Mixed
   }],
   stepDuration: String,
+  ingredientTypeName: String,
   auxiliarySteps: [StepSchema]
 });
 
