@@ -13,7 +13,10 @@ var SeasoningProfile = db.seasoningProfiles;
 router.get('/', function(req, res, next) {
   SeasoningProfile.model.find(function (err, profiles) {
     if(err) return next(err);
-    res.json(profiles);
+    var retVal = {
+      data: profiles
+    };
+    res.json(retVal);
   });
 });
 
