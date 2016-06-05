@@ -1,5 +1,7 @@
 <div ng-form="placeStepForm" class="bg-warning">
   <b>Place Step</b><br/>
+  PlaceType: <select name="placeTypeSelect" ng-model="constructingStep.stepSpecifics[1].val" ng-options="placeType for placeType in placeTypes" required></select><br/>
+  PlaceModifier: <input type="text" ng-model="constructingStep.stepSpecifics[0].val" size="50" name="placeModifierInput"/><br/>
   Step Duration: <input type="text" ng-model="constructingStep.stepDuration" required name="stepDurationInput" size="30" ng-pattern="integerval"/><br/>
   Ingredient Inputs (step or ingredient type): <step-input-form
     constructing-step="constructingStep"

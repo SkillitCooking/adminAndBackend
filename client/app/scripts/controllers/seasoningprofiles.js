@@ -12,7 +12,7 @@ angular.module('SkillitAdminApp')
    function ($scope, seasoningService) {
 
     seasoningService.getAllSeasonings().then(function(seasonings){
-      $scope.profiles = seasonings;
+      $scope.profiles = seasonings.data;
     }, function(response) {
       console.log("Server Error: ", response.message);
       alert("Server Error: " + response.message);

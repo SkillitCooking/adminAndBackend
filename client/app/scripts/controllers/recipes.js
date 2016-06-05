@@ -12,7 +12,7 @@ angular.module('SkillitAdminApp')
     $scope.integerval = /^\d*$/;
 
     seasoningService.getAllSeasonings().then(function(seasonings) {
-      $scope.seasoningProfiles = seasonings;
+      $scope.seasoningProfiles = seasonings.data;
     }, function(response) {
       console.log("Server Error: ", response.message);
       alert("Server Error: " + response.message);

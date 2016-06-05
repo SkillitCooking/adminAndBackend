@@ -17,6 +17,15 @@ angular.module('SkillitAdminApp')
         scope.integerval = /^\d*$/;
         scope.showExampleText = false;
         scope.tipAdded = false;
+        scope.placeTypes = ["Place", "Add", "Combine", "Mix"];
+
+        scope.constructingStep.stepSpecifics = [{
+          propName: "placeModifier",
+          val: ""
+        }, {
+          propName: "placeType",
+          val: ""
+        }];
 
         scope.addTip = function() {
           console.log(scope.stepList);

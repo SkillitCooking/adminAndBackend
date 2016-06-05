@@ -17,7 +17,7 @@ angular.module('SkillitAdminApp')
     // Public API here
     return {
       getAllSeasonings: function () {
-        return baseSeasonings.getList();
+        return baseSeasonings.customGET('/');
       },
       addNewSeasoning: function (newSeasoning) {
         return baseSeasonings.post(newSeasoning);
