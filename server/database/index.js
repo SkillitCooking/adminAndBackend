@@ -8,7 +8,12 @@ var fs = require('fs');
 var dishes = require('./models/Dish.js');
 var ingredients = require('./models/Ingredient.js');
 var recipes = require('./models/Recipe.js');
-var seasoningProfiles = require('./models/SeasoningProfile');
+var seasoningProfiles = require('./models/SeasoningProfile.js');
+var dailyTips = require('./models/DailyTip.js');
+var glossaryEntries = require('./models/GlossaryEntry.js');
+var howToShopEntries = require('./models/HowToShopEntry.js');
+var itemCollections = require('./models/ItemCollection.js');
+var trainingVideos = require('./models/TrainingVideo.js');
 
 // connections
 // may need to change the devDB to a compose devDB...
@@ -50,3 +55,8 @@ exports.dishes = dishes;
 exports.ingredients = ingredients;
 exports.recipes = recipes;
 exports.seasoningProfiles = seasoningProfiles;
+exports.dailyTips = dailyTips;
+exports.glossaryEntries = glossaryEntries;
+exports.howToShopEntries = howToShopEntries;
+exports.itemCollections = itemCollections;
+exports.trainingVideos = trainingVideos;
