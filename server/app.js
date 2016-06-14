@@ -6,6 +6,9 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+//set daily content on a daily basis
+var dailyContentJobs = require('./jobs/setDailyContent');
+
 var app = express();
 app.use(logger('dev'));
 //order of declaration matters here...
@@ -16,6 +19,8 @@ app.use(cookieParser());
 app.use(cors());
 
 var router = require('./router')(app);
+
+
 
 
 /**

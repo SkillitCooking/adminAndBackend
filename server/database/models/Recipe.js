@@ -46,7 +46,10 @@ var RecipeSchema = new mongoose.Schema({
   mainPictureURL: String,
   mainVideoURL: String,
   prepTime: Number,
-  totalTime: Number
+  totalTime: Number,
+  hasBeenRecipeOfTheDay: Boolean,
+  datesUsedAsRecipeOfTheDay: [Date],
+  isRecipeOfTheDay: Boolean
 });
 
 module.exports.model = mongoose.model('Recipe', RecipeSchema);

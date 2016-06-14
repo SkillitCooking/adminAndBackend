@@ -98,6 +98,23 @@ router.get('/:id', function(req, res, next) {
   });
 });
 
+/* GET recipe of the day with given date */
+router.post('/getRecipeOfTheDay', function(req, res, next) {
+  //choose 'random' recipe from set returned that has not been used as a recipe of the day
+  Recipe.model.count().exec(function(err, count) {
+    if(err) return next(err);
+    var random = Math.floor(Math.random() * count);
+    Recipe.model.findOne({isRecipeOfTheDay: true}).exec(function(err, recipe) {
+      if(err) return next(err);
+      //return recipe
+      var retVal = {
+        data: recipe
+      };
+      res.json(retVal);
+    });
+  });
+});
+
 /* PUT /recipes/:id */
 router.put('/:id', function(req, res, next) {
   Recipe.model.findByIdAndUpdate(req.params.id, req.body, function(err, recipe) {

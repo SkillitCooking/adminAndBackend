@@ -215,7 +215,10 @@ angular.module('SkillitAdminApp')
           mainPictureURL: $scope.recipe.mainPictureURL,
           mainVideoURL: $scope.recipe.mainVideoURL,
           prepTime: $scope.recipe.prepTime,
-          totalTime: $scope.recipe.totalTime
+          totalTime: $scope.recipe.totalTime,
+          hasBeenRecipeOfTheDay: false,
+          datesUsedAsRecipeOfTheDay: [],
+          isRecipeOfTheDay: false
         }
       }).then(function(recipe){
         var alertMsg = "Success! Recipe " + recipe.name + " was saved!";
