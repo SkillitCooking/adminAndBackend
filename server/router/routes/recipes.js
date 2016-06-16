@@ -55,7 +55,7 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
       }
       if(flag){
         if(recipes[k].recipeType === "AlaCarte") {
-          var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'ingredientTypes');
+          var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'ingredientList');
           retRecipes.push(pickedRecipe);
         } else {
           var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime');
