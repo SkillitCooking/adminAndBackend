@@ -127,7 +127,7 @@ function setDailyTipOfTheDay() {
 }
 
 //make this run every 24 hours at midnight
-var job = new CronJob('* * * * * *', function() {
+var job = new CronJob('00 00 00 * * *', function() {
   setRecipeOfTheDay();
   setDailyTipOfTheDay();
 }, null, true, 'America/Los_Angeles');
