@@ -56,7 +56,7 @@ function setRecipeOfTheDay() {
             console.log("ERROR in setRecipeOfTheDay: ", err);
           }
         });
-        Recipe.model.findOne({recipeType: 'Full'})./*skip(random).*/eexec(function(err, secondRecipe) {
+        Recipe.model.findOne({recipeType: 'Full'})./*skip(random).*/exec(function(err, secondRecipe) {
           if(err) {
             //need production error handling/logging here
             console.log("ERROR in setRecipeOfTheDay: ", err);
