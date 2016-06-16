@@ -54,8 +54,13 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
         }
       }
       if(flag){
-        var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime');
-        retRecipes.push(pickedRecipe);
+        if(recipes[k].recipeType === "AlaCarte") {
+          var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'ingredientTypes');
+          retRecipes.push(pickedRecipe);
+        } else {
+          var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime');
+          retRecipes.push(pickedRecipe);
+        }
       }
     }
     retRecipes = underscore.groupBy(retRecipes, "recipeType");
