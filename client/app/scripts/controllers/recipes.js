@@ -109,7 +109,8 @@ angular.module('SkillitAdminApp')
         var ingredient = {
           name: typeIngredient.name,
           ingredientForms: chosenForms,
-          ingredientTips: typeIngredient.ingredientTips
+          ingredientTips: typeIngredient.ingredientTips,
+          inputCategory: typeIngredient.inputCategory
         };
         if(!$scope.ingredientList.ingredientTypes[typeIndex].ingredients){
           $scope.ingredientList.ingredientTypes[typeIndex].ingredients = [];

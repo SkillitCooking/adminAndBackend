@@ -9,6 +9,7 @@ var DailyTipSchema = new mongoose.Schema({
   dateModified: Date,
   dateFeatured: Date,
   hasBeenDailyTip: Boolean,
+  isTipOfTheDay: Boolean,
   picture: {
     url: String,
     caption: String

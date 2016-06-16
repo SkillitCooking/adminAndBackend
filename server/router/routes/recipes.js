@@ -80,7 +80,6 @@ router.post('/', function(req, res, next) {
       };
       res.json(retVal);
     } else {
-      console.log("beginning of create");
       Recipe.model.create(req.body.recipe, function(err, recipe) {
         if(err) return next(err);
         console.log("before response");

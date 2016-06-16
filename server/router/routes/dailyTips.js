@@ -35,8 +35,14 @@ router.post('/', function(req, res, next) {
       res.json(retVal);
     } else {
       //will need to set the applicable dates first here, which will require the use of moment.js library
-      DailyTip.model.create(req.body.dailyTip, function(err, dailyTip) {
-
+      var postedTip = req.body.dailyTip;
+      postedTip.dateAdded = Date.now();
+      postedTip.dateModified = Date.now();
+      //null date
+      postedTip.dateFeatured = new Date(0);
+      DailyTip.model.create(postedTip, function(err, dailyTip) {
+        if(err) return next(err);
+        res.json(dailyTip);
       });
     }
   });
