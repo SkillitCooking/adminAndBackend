@@ -27,6 +27,8 @@
     <div ng-repeat="type in ingredientList.ingredientTypes" class="bg-warning" ng-form="typeForm">
       TypeName: <input type="text" ng-model="type.typeName" size="50" required name="typeNameInput"/>
       <span ng-show="typeForm.typeName.$invalid">give a type name</span><br/><br/>
+      DisplayName: <input type="text" ng-model="type.displayName" size="50" required name="displayNameInput"/>
+      <span ng-show="typeForm.displayName.$invalid">give a display name</span><br/><br/>
       Ingredients: <select name="ingredientSelect" ng-model="typeIngredient" ng-options="ingredient.name for ingredient in ingredients" ng-init="setSelectedIngredientForms(typeIngredient)" ng-change="setSelectedIngredientForms(typeIngredient)"></select>
       <span ng-show="type.ingredients.length === 0">there must be at least one ingredient in a type</span>
       <div ng-repeat="form in typeIngredient.ingredientForms">

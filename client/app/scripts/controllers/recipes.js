@@ -133,6 +133,7 @@ angular.module('SkillitAdminApp')
       }
       $scope.ingredientList.ingredientTypes.push({
         typeName: "",
+        displayName: "",
         ingredients: [],
         minNeeded: ""
       });

@@ -22,6 +22,7 @@ StepSchema.add({
 
 var IngredientTypeSchema = new mongoose.Schema({
   typeName: String,
+  displayName: String,
   ingredients: [Ingredient.schema],
   minNeeded: String
 });
