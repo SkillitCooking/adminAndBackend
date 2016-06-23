@@ -128,11 +128,16 @@ router.put('/:id', function(req, res, next) {
 });
 
 /* DELETE /recipes/:id */
-router.delete(':/id', function(req, res, next) {
+router.delete('/:id', function(req, res, next) {
   Recipe.model.findByIdAndRemove(req.params.id, req.body, function(err, recipe) {
     if(err) return next(err);
     res.json(recipe);
   });
+});
+
+/* dummy test route */
+router.post('/dummy', function(req, res, next) {
+  res.json({message: 'I am a dummy route'});
 });
 
 module.exports = router;

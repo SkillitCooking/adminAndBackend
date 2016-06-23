@@ -48,6 +48,9 @@ router.post('/', function(req, res, next) {
   });
 });
 
-/*  */
+/* dummy route */
+router.post('/dummy', function(req, res, next) {
+  res.json({message: 'I am a dummy route'});
+});
 
 module.exports = router;

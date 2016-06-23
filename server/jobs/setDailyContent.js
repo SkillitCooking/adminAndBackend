@@ -12,7 +12,6 @@ function setRecipeOfTheDay() {
     }
     //reset previous recipe of the day
     if(recipe) {
-      console.log("previous dailyRecipe: ", recipe.name);
       if(!recipe.datesUsedAsRecipeOfTheDay) {
         recipe.datesUsedAsRecipeOfTheDay = [];
       }
@@ -33,13 +32,13 @@ function setRecipeOfTheDay() {
       console.log("ERROR in setRecipeOfTheDay: ", err);
     }
     var random = Math.floor(Math.random() * count);
-    Recipe.model.findOne({hasBeenRecipeOfTheDay: false, recipeType: 'Full'}).skip(random).exec(function(err, recipe) {
+    Recipe.model.find({hasBeenRecipeOfTheDay: false, recipeType: 'Full'}).skip(random).limit(1).exec(function(err, recipe) {
       if(err) {
         //need production error handling/logging here
         console.log("ERROR in setRecipeOfTheDay: ", err);
       }
       if(recipe) {
-        console.log("recipe initial find: ", recipe.name);
+        recipe = recipe[0];
         recipe.isRecipeOfTheDay = true;
         recipe.hasBeenRecipeOfTheDay = true;
         recipe.save(function(err, recipe, numAffected) {
@@ -56,14 +55,14 @@ function setRecipeOfTheDay() {
             console.log("ERROR in setRecipeOfTheDay: ", err);
           }
         });
-        Recipe.model.findOne({recipeType: 'Full'})./*skip(random).*/exec(function(err, secondRecipe) {
+        Recipe.model.find({recipeType: 'Full'}).skip(random).limit(1).exec(function(err, secondRecipe) {
           if(err) {
             //need production error handling/logging here
             console.log("ERROR in setRecipeOfTheDay: ", err);
           }
           //could use a better random number below...
           if(secondRecipe) {
-            console.log("recipe secondary find: ", secondRecipe.name);
+            secondRecipe = secondRecipe[0];
             secondRecipe.isRecipeOfTheDay = true;
             secondRecipe.hasBeenRecipeOfTheDay = true;
             secondRecipe.save(function(err, result, numAffected) {
@@ -107,11 +106,12 @@ function setDailyTipOfTheDay() {
       console.log("ERROR in setDailyTipOfTheDay: ", err);
     }
     var random = Math.floor(count * Math.random());
-    DailyTip.model.findOne({hasBeenDailyTip: false}).skip(random).exec(function(err, tip) {
-      if(tip) {
+    DailyTip.model.find({hasBeenDailyTip: false}).skip(random).limit(1).exec(function(err, tip) {
+      if(tip && tip.length > 0) {
+        tip = tip[0];
         tip.hasBeenDailyTip = true;
         tip.isTipOfTheDay = true;
-        dateFeatured = Date.now();
+        tip.dateFeatured = Date.now();
         tip.save(function(err, tip, numAffected) {
           if(err) {
             //need production error handling/logging here
@@ -120,7 +120,7 @@ function setDailyTipOfTheDay() {
         });
       } else {
         //then no tip found - error - always expect tip
-        console.log("ERROR in setDailyTipOfTheDay: no tip found wiht hasBeenDailyTip set to false");
+        console.log("ERROR in setDailyTipOfTheDay: no tip found with hasBeenDailyTip set to false");
       }
     });
   });
