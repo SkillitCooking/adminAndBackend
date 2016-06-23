@@ -2,38 +2,41 @@
 
 /**
  * @ngdoc directive
- * @name SkillitAdminApp.directive:placeStepInput
+ * @name SkillitAdminApp.directive:cookstepinput
  * @description
- * # placeStepInput
+ * # cookstepinput
  */
 angular.module('SkillitAdminApp')
-  .directive('placeStepInput', function () {
+  .directive('cookStepInput', function () {
     return {
-      templateUrl: 'views/placestepinput.html',
-      restrict: 'E',
+      templateUrl: 'views/cookstepinput.html',
       scope: true,
       transclude: false,
+      restrict: 'E',
       link: function (scope, element, attrs) {
         scope.integerval = /^\d*$/;
-        scope.showExampleText = false;
         scope.tipAdded = false;
-        scope.placeTypes = ["Place", "Add", "Combine", "Mix"];
+        scope.showExampleText = false;
+        scope.cookTypes = ["Cook"];
 
         scope.constructingStep.stepSpecifics = [{
-          propName: "placeModifier",
+          propName: "cookType",
           val: ""
         }, {
-          propName: "placeType",
+          propName: "cookDuration",
           val: ""
+        }, {
+          propName: "cookAccordingToInstructions",
+          val: false
         }];
 
         scope.addTip = function() {
           scope.tipAdded = !scope.tipAdded;
         };
-        scope.removeTip = function() {
+        scope.removeTip = function () {
           scope.tipAdded = !scope.tipAdded;
           scope.constructingStep.stepTip = undefined;
-        }
+        };
       }
     };
   });

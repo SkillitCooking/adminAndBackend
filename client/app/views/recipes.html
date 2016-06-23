@@ -58,6 +58,7 @@
         <b>Add New Step: </b><br/><br/>
         StepType <select name="stepTypeSelect" ng-model="constructingStep.stepType" ng-options="stepType for stepType in stepTypes" ng-required="!recipeSanityCheck()"></select>
         <cut-step-input ng-if="constructingStep.stepType === 'Cut'"></cut-step-input>
+        <cook-step-input ng-if="constructingStep.stepType === 'Cook'"></cook-step-input>
         <bake-step-input ng-if="constructingStep.stepType === 'Bake'"></bake-step-input>
         <boil-step-input ng-if="constructingStep.stepType === 'Boil'"></boil-step-input>
         <bring-to-boil-step-input ng-if="constructingStep.stepType === 'BringToBoil'"></bring-to-boil-step-input>
@@ -83,6 +84,7 @@
       <div ng-repeat="step in stepList" class="bg-info" ng-form="stepFormList">
         <em>Step {{$index}}:</em>
         <cut-step-item ng-if="step.stepType === 'Cut'"></cut-step-item>
+        <cook-step-item ng-if="step.stepType === 'Cook'"></cook-step-item>
         <custom-step-item ng-if="step.stepType === 'Custom'"></custom-step-item>
         <bake-step-item ng-if="step.stepType === 'Bake'"></bake-step-item>
         <boil-step-item ng-if="step.stepType === 'Boil'"></boil-step-item>
