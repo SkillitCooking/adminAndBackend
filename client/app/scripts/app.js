@@ -52,6 +52,31 @@ angular
         controller: 'ViewallrecipesCtrl',
         controllerAs: 'viewAllRecipes'
       })
+      .when('/itemCollections', {
+        templateUrl: 'views/itemcollections.html',
+        controller: 'ItemcollectionsCtrl',
+        controllerAs: 'itemCollections'
+      })
+      .when('/glossaryEntries', {
+        templateUrl: 'views/glossaryentries.html',
+        controller: 'GlossaryentriesCtrl',
+        controllerAs: 'glossaryEntries'
+      })
+      .when('/trainingVideos', {
+        templateUrl: 'views/trainingvideos.html',
+        controller: 'TrainingvideosCtrl',
+        controllerAs: 'trainingVideos'
+      })
+      .when('/howToShopEntry', {
+        templateUrl: 'views/howtoshopentry.html',
+        controller: 'HowtoshopentryCtrl',
+        controllerAs: 'howToShopEntry'
+      })
+      .when('/dailyTips', {
+        templateUrl: 'views/dailytips.html',
+        controller: 'DailytipsCtrl',
+        controllerAs: 'dailyTips'
+      })
       .otherwise({
         redirectTo: '/'
       });
