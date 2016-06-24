@@ -30,7 +30,7 @@ router.post('/', function(req, res, next) {
       //then found
       var retVal = {
         name: "DailyTip Title",
-        message: "Daily with title " + query.title + " already exists!"
+        message: "DailyTip with title " + query.title + " already exists!"
       };
       res.json(retVal);
     } else {
@@ -42,7 +42,10 @@ router.post('/', function(req, res, next) {
       postedTip.dateFeatured = new Date(0);
       DailyTip.model.create(postedTip, function(err, dailyTip) {
         if(err) return next(err);
-        res.json(dailyTip);
+        var retVal = {
+          data: dailyTip
+        };
+        res.json(retVal);
       });
     }
   });

@@ -87,7 +87,6 @@ router.post('/', function(req, res, next) {
     } else {
       Recipe.model.create(req.body.recipe, function(err, recipe) {
         if(err) return next(err);
-        console.log("before response");
         res.json(recipe);
       });
     }
