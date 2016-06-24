@@ -40,7 +40,6 @@ angular.module('SkillitAdminApp')
           isTipOfTheDay: false
         }
       }).then(function(tip) {
-        console.log("tip: ", tip);
         var alertMsg = "Success! Tip " + tip.data.title + " was saved!";
         alert(alertMsg);
       }, function(response) {
