@@ -19,5 +19,5 @@ angular.module('SkillitAdminApp')
       addNewDailyTip: function (newDailyTip) {
         return baseDailyTips.post(newDailyTip);
       }
-    }
+    };
   });

@@ -1,1 +1,17 @@
-<p>This is the glossaryEntries view.</p>
+<div>
+  <h2>Input Glossary Entries</h2><br/>
+  <form novalidate name="glossaryEntryForm">
+    Title: <input type="text" ng-model="glossaryEntry.title" size="50" required name="titleInput"/><br /><br />
+    Text: <textarea ng-model="glossaryEntry.text" rows="4" cols="50" required name="textInput"></textarea><br/><br/>
+    Picture: <input type="url" ng-model="glossaryEntry.picture.url" size="60" name="pictureURLInput" placeholder="URL" />
+    <input type="text" ng-model="glossaryEntry.picture.caption" size="100" name="pictureCaptionInput" placeholder="Caption"/><br/><br/>
+    Video: <input type="url" ng-model="glossaryEntry.video.url" size="60" name="videoURLInput" placeholder="URL" />
+    <input type="text" ng-model="glossaryEntry.video.caption" size="100" name="videoCaptionInput" placeholder="Caption"/><br/><br/>
+    Collection: <select name="itemCollectionSelect" ng-model="glossaryEntry.collectionId" ng-options="collection._id as collection.name for collection in glossaryCollections" required></select><br/><br/>
+    <button class="btn btn-large btn-default" ng-click="reset()">Reset Form</button>
+    <button class="btn btn-large btn-success" ng-click="save()" ng-disabled="glossaryEntryForm.$invalid || !glossaryEntrySanityCheck()">Save Entry</button>
+  </form>
+  <pre>
+    {{glossaryEntry | json}}
+  </pre>
+</div>
