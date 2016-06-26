@@ -1,1 +1,14 @@
-<p>This is the trainingVideos view.</p>
+<div>
+  <h2>Input Training Videos</h2>
+  <form novalidate name="trainingVideoForm">
+    Title: <input type="text" ng-model="trainingVideo.title" size="50" required name="titleInput"/><br /><br />
+    Video: <input type="url" ng-model="trainingVideo.video.url" size="60" name="videoURLInput" placeholder="URL" />
+    <input type="text" ng-model="trainingVideo.video.caption" size="100" name="videoCaptionInput" placeholder="Caption"/><br/><br/> 
+    Collection: <select name="itemCollectionSelect" ng-model="trainingVideo.collectionId" ng-options="collection._id as collection.name for collection in trainingVideoCollections" required></select><br/><br/>
+    <button class="btn btn-large btn-default" ng-click="reset()">Reset Form</button>
+    <button class="btn btn-large btn-success" ng-click="save()" ng-disabled="trainingVideoForm.$invalid || !trainingVideoSanityCheck()">Save Entry</button>
+  </form>
+  <pre>
+    {{trainingVideo | json}}
+  </pre>
+</div>
