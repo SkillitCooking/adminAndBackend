@@ -117,7 +117,6 @@ router.post('/getRecipesOfTheDay', function(req, res, next) {
   .sort('-isRecipeOfTheDay -dateFeatured')
   .exec(function(err, recipes) {
     if(err) return next(err);
-    console.log(recipes);
     var retVal = {
       data: recipes
     };

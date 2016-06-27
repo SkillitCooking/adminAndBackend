@@ -51,6 +51,21 @@ router.post('/', function(req, res, next) {
   });
 });
 
+/* get tips of the day */
+router.post('/getTipsOfTheDay', function(req, res, next) {
+  DailyTip.model.find()
+  .or([{hasBeenDailyTip: true}, {isTipOfTheDay: true}])
+  .sort('-isTipOfTheDay -dateFeatured')
+  .select('_id title text dateFeatured picture video')
+  .exec(function(err, tips) {
+    if(err) return next(err);
+    var retVal = {
+      data: tips
+    };
+    res.json(retVal);
+  });
+});
+
 /* dummy route */
 router.post('/dummy', function(req, res, next) {
   res.json({message: 'I am a dummy route'});
