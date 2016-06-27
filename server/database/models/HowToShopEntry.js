@@ -11,7 +11,7 @@ var HowToShopEntrySchema = new mongoose.Schema({
     url: String,
     caption: String
   }],
-  collectionId: ObjectId
+  collectionIds: [ObjectId]
 });
 
 module.exports.model = mongoose.model('HowToShopEntry', HowToShopEntrySchema);

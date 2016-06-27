@@ -11,7 +11,14 @@
     <button class="btn btn-large btn-info" ng-click="addPicture()">Add a Picture</button>
     <button class="btn btn-large btn-warning" ng-disabled="!howToShopEntry.pictures || howToShopEntry.pictures.length === 0" ng-click="removePicture()">Remove Picture</button>
     <br/><br/>
-    Collection: <select name="itemCollectionSelect" ng-model="howToShopEntry.collectionId" ng-options="collection._id as collection.name for collection in howToShopCollections" required></select><br/><br/>
+    Collections: <select name="itemCollectionSelect" ng-model="curCollectionId" ng-options="collection._id as collection.name for collection in howToShopCollections"></select><br/>
+    <ul>
+      <div ng-repeat="collectionID in howToShopEntry.collectionIds">
+        <li>{{collectionID}}</li>
+        <button ng-click="removeCollection($index)">Remove</button>
+      </div>
+    </ul>
+    <button ng-click="addCollection()">Add Collection</button><br/><br/>
     <button class="btn btn-large btn-default" ng-click="reset()">Reset Form</button>
     <button class="btn btn-large btn-success" ng-click="save()" ng-disabled="howToShopEntryForm.$invalid || !howToShopEntrySanityCheck()">Save Entry</button>
   </form>

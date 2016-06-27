@@ -7,7 +7,14 @@
     <input type="text" ng-model="dailyTip.picture.caption" size="100" name="pictureCaptionInput" placeholder="Caption"/><br/><br/>
     Video: <input type="url" ng-model="dailyTip.video.url" size="60" name="videoURLInput" placeholder="URL" />
     <input type="text" ng-model="dailyTip.video.caption" size="100" name="videoCaptionInput" placeholder="Caption"/><br/><br/>
-    Collection: <select name="itemCollectionSelect" ng-model="dailyTip.collectionId" ng-options="collection._id as collection.name for collection in tipCollections" required></select><br/><br/>
+    Collections: <select name="itemCollectionSelect" ng-model="curCollectionId" ng-options="collection._id as collection.name for collection in tipCollections"></select><br/>
+    <ul>
+      <div ng-repeat="collectionID in dailyTip.collectionIds">
+        <li>{{collectionID}}</li>
+        <button ng-click="removeCollection($index)">Remove</button>
+      </div>
+    </ul>
+    <button ng-click="addCollection()">Add Collection</button><br/><br/>
     <button class="btn btn-large btn-default" ng-click="reset()">Reset Form</button>
     <button class="btn btn-large btn-success" ng-click="save()" ng-disabled="dailyTipsForm.$invalid || !dailyTipSanityCheck()">Save Tip</button>
   </form>

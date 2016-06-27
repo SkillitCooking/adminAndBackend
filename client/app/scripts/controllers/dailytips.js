@@ -19,11 +19,24 @@ angular.module('SkillitAdminApp')
 
     $scope.dailyTip = {
       picture: {},
-      video: {}
+      video: {},
+      collectionIds: []
+    };
+    $scope.curCollectionId = "";
+
+    $scope.removeCollection = function(index) {
+      $scope.dailyTip.collectionIds.splice(index, 1);
+    };
+
+    $scope.addCollection = function() {
+      if($scope.curCollectionId && $scope.curCollectionId !== "") {
+        $scope.dailyTip.collectionIds.push($scope.curCollectionId);
+        $scope.curCollectionId = "";
+      }
     };
 
     $scope.reset = function() {
-      $scope.dailyTip = angular.copy({picture:{}, video: {}});
+      $scope.dailyTip = angular.copy({picture:{}, video: {}, collectionIds: []});
       $scope.dailyTipsForm.$setPristine();
       $scope.dailyTipsForm.$setUntouched();
     };
@@ -35,7 +48,7 @@ angular.module('SkillitAdminApp')
           text: $scope.dailyTip.text,
           picture: $scope.dailyTip.picture,
           video: $scope.dailyTip.video,
-          collectionId: $scope.dailyTip.collectionId,
+          collectionIds: $scope.dailyTip.collectionIds,
           hasBeenDailyTip: false,
           isTipOfTheDay: false
         }
@@ -50,27 +63,31 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.dailyTipSanityCheck = function() {
-      if($scope.dailyTip.picture.url && $scope.dailyTip.video.url) {
-        return true;
-      } else if($scope.dailyTip.picture.url) {
-        if($scope.dailyTip.video.caption && $scope.dailyTip.video.caption !== ""){
-          return false;
-        } else {
+      if($scope.dailyTip.collectionIds && $scope.dailyTip.collectionIds.length > 0) {
+        if($scope.dailyTip.picture.url && $scope.dailyTip.video.url) {
           return true;
-        }
-      } else if($scope.dailyTip.video.url) {
-        if($scope.dailyTip.picture.caption && $scope.dailyTip.picture.caption !== "") {
-          return false;
+        } else if($scope.dailyTip.picture.url) {
+          if($scope.dailyTip.video.caption && $scope.dailyTip.video.caption !== ""){
+            return false;
+          } else {
+            return true;
+          }
+        } else if($scope.dailyTip.video.url) {
+          if($scope.dailyTip.picture.caption && $scope.dailyTip.picture.caption !== "") {
+            return false;
+          } else {
+            return true;
+          }
         } else {
-          return true;
+          if(($scope.dailyTip.video.caption && $scope.dailyTip.video.caption !== "") || 
+            ($scope.dailyTip.picture.caption && $scope.dailyTip.picture.caption !== "")){
+            return false;
+          } else {
+            return true;
+          }
         }
       } else {
-        if(($scope.dailyTip.video.caption && $scope.dailyTip.video.caption !== "") || 
-          ($scope.dailyTip.picture.caption && $scope.dailyTip.picture.caption !== "")){
-          return false;
-        } else {
-          return true;
-        }
+        return false;
       }
     };
 

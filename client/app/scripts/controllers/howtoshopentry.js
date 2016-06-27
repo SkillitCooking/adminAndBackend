@@ -17,12 +17,26 @@ angular.module('SkillitAdminApp')
       alert("Server Error: " + response.message);
     });
 
-    $scope.howToShopEntry = {};
+    $scope.howToShopEntry = {
+    };
+    $scope.curCollectionId = "";
+
+    $scope.removeCollection = function(index) {
+      $scope.howToShopEntry.collectionIds.splice(index, 1);
+    };
+
+    $scope.addCollection = function() {
+      if(!$scope.howToShopEntry.collectionIds) {
+        $scope.howToShopEntry.collectionIds = [];
+      }
+      if($scope.curCollectionId && $scope.curCollectionId !== "") {
+        $scope.howToShopEntry.collectionIds.push($scope.curCollectionId);
+        $scope.curCollectionId = "";
+      }
+    };
 
     $scope.addPicture = function() {
-      console.log("entry: ", $scope.howToShopEntry);
       if(!$scope.howToShopEntry.pictures) {
-        console.log("no pics");
         $scope.howToShopEntry.pictures = [];
       }
       $scope.howToShopEntry.pictures.push({
@@ -38,7 +52,7 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.reset = function() {
-      $scope.howToShopEntry = angular.copy({pictures: []});
+      $scope.howToShopEntry = angular.copy({pictures: [], collectionIds: []});
       $scope.howToShopEntryForm.$setPristine();
       $scope.howToShopEntryForm.$setUntouched();
     };
@@ -49,7 +63,7 @@ angular.module('SkillitAdminApp')
           title: $scope.howToShopEntry.title,
           text: $scope.howToShopEntry.text,
           pictures: $scope.howToShopEntry.pictures,
-          collectionId: $scope.howToShopEntry.collectionId
+          collectionIds: $scope.howToShopEntry.collectionIds
         }
       }).then(function(entry) {
         var alertMsg = "Success! Entry " + entry.data.title + " was saved!";
@@ -63,11 +77,15 @@ angular.module('SkillitAdminApp')
 
     $scope.howToShopEntrySanityCheck = function() {
       //for each of pictures, make sure at least url
-      for (var i = $scope.howToShopEntry.pictures.length - 1; i >= 0; i--) {
-        if(!$scope.howToShopEntry.pictures[i].url || $scope.howToShopEntry.pictures[i].url === "") {
-          return false;
+      if($scope.howToShopEntry.collectionIds && $scope.howToShopEntry.collectionIds.length > 0) {
+        for (var i = $scope.howToShopEntry.pictures.length - 1; i >= 0; i--) {
+          if(!$scope.howToShopEntry.pictures[i].url || $scope.howToShopEntry.pictures[i].url === "") {
+            return false;
+          }
         }
+        return true;
+      } else {
+        return false;
       }
-      return true;
     };
   }]);

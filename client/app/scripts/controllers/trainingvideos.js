@@ -18,11 +18,25 @@ angular.module('SkillitAdminApp')
     });
 
     $scope.trainingVideo = {
-      video: {}
+      video: {},
+      collectionIds: []
     };
 
+    $scope.removeCollection = function(index) {
+      $scope.trainingVideo.collectionIds.splice(index, 1);
+    };
+
+    $scope.addCollection = function() {
+      if($scope.curCollectionId && $scope.curCollectionId !== "") {
+        $scope.trainingVideo.collectionIds.push($scope.curCollectionId);
+        $scope.curCollectionId = "";
+      }
+    };
+
+    $scope.curCollectionId = "";
+
     $scope.reset = function() {
-      $scope.trainingVideo = angular.copy({video: {}});
+      $scope.trainingVideo = angular.copy({video: {}, collectionIds: []});
       $scope.trainingVideoForm.$setPristine();
       $scope.trainingVideoForm.$setUntouched();
     };
@@ -32,7 +46,7 @@ angular.module('SkillitAdminApp')
         trainingVideo: {
           title: $scope.trainingVideo.title,
           video: $scope.trainingVideo.video,
-          collectionId: $scope.trainingVideo.collectionId
+          collectionIds: $scope.trainingVideo.collectionIds
         }
       }).then(function(video) {
         var alertMsg = "Success! Video " + video.data.title + " was saved!";
@@ -47,7 +61,11 @@ angular.module('SkillitAdminApp')
     $scope.trainingVideoSanityCheck = function() {
       //if video caption, then must be url
       if($scope.trainingVideo.video.url && $scope.trainingVideo.video.url !== "") {
-        return true;
+        if($scope.trainingVideo.collectionIds && $scope.trainingVideo.collectionIds.length > 0) {
+          return true;
+        } else {
+          return false;
+        }
       } else {
         return false;
       }
