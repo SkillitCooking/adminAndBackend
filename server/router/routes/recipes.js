@@ -102,19 +102,26 @@ router.get('/:id', function(req, res, next) {
 });
 
 /* GET recipe of the day with given date */
-router.post('/getRecipeOfTheDay', function(req, res, next) {
-  //choose 'random' recipe from set returned that has not been used as a recipe of the day
-  Recipe.model.count().exec(function(err, count) {
+router.post('/getRecipesOfTheDay', function(req, res, next) {
+  Recipe.model.aggregate()
+  .match({$or: [{hasBeenRecipeOfTheDay: true}, {isRecipeOfTheDay: true}]})
+  .unwind('$datesUsedAsRecipeOfTheDay')
+  .group({_id: '$_id',
+          mainPictureURL: {$first: '$mainPictureURL'},
+          name: {$first: '$name'},
+          description: {$first: '$description'},
+          prepTime: {$first: '$prepTime'},
+          totalTime: {$first: '$totalTime'},
+          dateFeatured: {$last: '$datesUsedAsRecipeOfTheDay'},
+          isRecipeOfTheDay: {$first: '$isRecipeOfTheDay'}})
+  .sort('-isRecipeOfTheDay -dateFeatured')
+  .exec(function(err, recipes) {
     if(err) return next(err);
-    var random = Math.floor(Math.random() * count);
-    Recipe.model.findOne({isRecipeOfTheDay: true}).exec(function(err, recipe) {
-      if(err) return next(err);
-      //return recipe
-      var retVal = {
-        data: recipe
-      };
-      res.json(retVal);
-    });
+    console.log(recipes);
+    var retVal = {
+      data: recipes
+    };
+    res.json(retVal);
   });
 });
 
