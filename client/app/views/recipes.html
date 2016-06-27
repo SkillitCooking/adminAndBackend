@@ -6,6 +6,14 @@
     <span ng-show="recipeForm.nameInput.$invalid">give the recipe a name</span><br /> <br />
     Description: <textarea ng-model="recipe.description" rows="4" cols="50" required name="descInput"></textarea>
     <span ng-show="recipeForm.descInput.$invalid">give the recipe a description</span><br/>
+    Collections: <select name="itemCollectionSelect" ng-model="curCollectionId" ng-options="collection._id as collection.name for collection in recipeCollections"></select><br/>
+    <ul>
+      <div ng-repeat="collectionID in recipe.collectionIds">
+        <li>{{collectionID}}</li>
+        <button ng-click="removeCollection($index)">Remove</button>
+      </div>
+    </ul>
+    <button ng-click="addCollection()">Add Collection</button><br/><br/>    
     Main Picture URL: <input type="url" ng-model="recipe.mainPictureURL" size="70" name="mainPicInput" required/><br/>
     Main Video URL: <input type="url" ng-model="recipe.mainVideoURL" size="70" name="mainVidInput"/><br/><br/>
     RecipeType: <select name="typeSelect" ng-model="recipe.recipeType" ng-options="recipeType for recipeType in recipeTypes" required></select>

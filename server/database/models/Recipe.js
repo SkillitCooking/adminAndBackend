@@ -4,6 +4,8 @@ var Dish = require('./Dish');
 var StepTip = require('./StepTip');
 var Ingredient = require('./Ingredient');
 
+var ObjectId = mongoose.Schema.Types.ObjectId;
+
 var StepSchema = new mongoose.Schema();
 StepSchema.add({
   stepId: String,
@@ -50,7 +52,8 @@ var RecipeSchema = new mongoose.Schema({
   totalTime: Number,
   hasBeenRecipeOfTheDay: Boolean,
   datesUsedAsRecipeOfTheDay: [Date],
-  isRecipeOfTheDay: Boolean
+  isRecipeOfTheDay: Boolean,
+  collectionIds: [ObjectId]
 });
 
 module.exports.model = mongoose.model('Recipe', RecipeSchema);

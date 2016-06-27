@@ -11,7 +11,7 @@ angular.module('SkillitAdminApp')
   .controller('ItemcollectionsCtrl', ['$scope', 'itemCollectionService', function ($scope, itemCollectionService) {
     
     $scope.itemCollection = {};
-    $scope.itemTypes = ["dailyTip", "trainingVideo", "howToShop", "glossary"];
+    $scope.itemTypes = ["dailyTip", "trainingVideo", "howToShop", "glossary", "recipe"];
 
     $scope.reset = function() {
       $scope.itemCollection = angular.copy({});

@@ -8,8 +8,15 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('RecipeCtrl', ['$scope', 'recipeService', 'seasoningService', 'ingredientService', 'dishService', '_', function ($scope, recipeService, seasoningService, ingredientService, dishService, _) {
+  .controller('RecipeCtrl', ['$scope', 'recipeService', 'seasoningService', 'ingredientService', 'dishService', 'itemCollectionService', '_', function ($scope, recipeService, seasoningService, ingredientService, dishService, itemCollectionService, _) {
     $scope.integerval = /^\d*$/;
+
+    itemCollectionService.getItemCollectionsForType('recipe').then(function(collections) {
+      $scope.recipeCollections = collections.data;
+    }, function(response) {
+      console.log("Server Error: ", response.message);
+      alert("Server Error: " + response.message);
+    });
 
     seasoningService.getAllSeasonings().then(function(seasonings) {
       $scope.seasoningProfiles = seasonings.data;
@@ -169,6 +176,20 @@ angular.module('SkillitAdminApp')
       $scope.stepList = $scope.recipe.stepList = _.dropRight($scope.stepList);
     };
 
+    $scope.addCollection = function() {
+      if(!$scope.recipe.collectionIds) {
+        $scope.recipe.collectionIds = [];
+      }
+      if($scope.curCollectionId && $scope.curCollectionId !== "") {
+        $scope.recipe.collectionIds.push($scope.curCollectionId);
+        $scope.curCollectionId = "";
+      }
+    };
+
+    $scope.removeCollection = function(index) {
+      $scope.recipe.collectionIds.splice(index, 1);
+    };
+
     $scope.recipeSanityCheck = function() {
       if (!$scope.recipe.stepList || $scope.recipe.stepList.length === 0) {
         return false;
@@ -180,6 +201,9 @@ angular.module('SkillitAdminApp')
         return false;
       } 
       if(!$scope.recipe.ingredientList.equipmentNeeded){
+        return false;
+      }
+      if(!$scope.recipe.collectionIds || $scope.recipe.collectionIds.length === 0){
         return false;
       }
       return true;
@@ -206,6 +230,7 @@ angular.module('SkillitAdminApp')
           name: $scope.recipe.name,
           description: $scope.recipe.description,
           recipeType: $scope.recipe.recipeType,
+          collectionIds: $scope.recipe.collectionIds,
           recipeCategory: $scope.recipe.recipeCategory,
           ingredientList: $scope.recipe.ingredientList,
           stepList: $scope.recipe.stepList,
