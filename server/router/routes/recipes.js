@@ -101,7 +101,7 @@ router.get('/:id', function(req, res, next) {
   });
 });
 
-/* GET recipe of the day with given date */
+/* GET recipes of the day with given date */
 router.post('/getRecipesOfTheDay', function(req, res, next) {
   Recipe.model.aggregate()
   .match({$or: [{hasBeenRecipeOfTheDay: true}, {isRecipeOfTheDay: true}]})

@@ -37,7 +37,7 @@ function setRecipeOfTheDay() {
         //need production error handling/logging here
         console.log("ERROR in setRecipeOfTheDay: ", err);
       }
-      if(recipe) {
+      if(recipe && recipe.length > 0) {
         recipe = recipe[0];
         recipe.isRecipeOfTheDay = true;
         recipe.hasBeenRecipeOfTheDay = true;
@@ -61,7 +61,7 @@ function setRecipeOfTheDay() {
             console.log("ERROR in setRecipeOfTheDay: ", err);
           }
           //could use a better random number below...
-          if(secondRecipe) {
+          if(secondRecipe && secondRecipe.length > 0) {
             secondRecipe = secondRecipe[0];
             secondRecipe.isRecipeOfTheDay = true;
             secondRecipe.hasBeenRecipeOfTheDay = true;
