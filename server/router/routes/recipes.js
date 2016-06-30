@@ -33,7 +33,7 @@ router.post('/getRecipesWithIds', function(req, res, next) {
 });
 
 /* getRecipesOfType */
-router.post('getRecipesOfType', function(req, res, next) {
+router.post('/getRecipesOfType', function(req, res, next) {
   Recipe.model.find({recipeType: req.body.recipeType}, function(err, recipes) {
     if(err) return next(err);
     var retVal = {
