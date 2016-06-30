@@ -32,6 +32,28 @@ router.post('/getRecipesWithIds', function(req, res, next) {
   });
 });
 
+/* getRecipesOfType */
+router.post('getRecipesOfType', function(req, res, next) {
+  Recipe.model.find({recipeType: req.body.recipeType}, function(err, recipes) {
+    if(err) return next(err);
+    var retVal = {
+      data: recipes
+    };
+    res.json(retVal);
+  });
+});
+
+/* getRecipesForCollection */
+router.post('getRecipesForCollection', function(req, res, next) {
+  Recipe.model.find({collectionIds: {$in: [req.body.collectionId]}, recipeType: 'Full'}, function(err, recipes) {
+    if(err) return next(err);
+    var retVal = {
+      data: recipes
+    };
+    res.json(retVal);
+  });
+});
+
 /* this could get to be a bit of a load on the server as the number of recipes scales up... However, at the given moment, when we really are only going to be dealing with a number of recipes on the level of like 50-100 at max, we're probably OK, given the complexity of handling this full query on the Mongo side */
 /* A future iteration will probably have some Mongo query that will reduce the returned set while performing further processing on the server*/
 router.post('/getRecipesWithIngredients', function(req, res, next) {
