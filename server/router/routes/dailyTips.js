@@ -66,6 +66,18 @@ router.post('/getTipsOfTheDay', function(req, res, next) {
   });
 });
 
+/* getTipsForCollection */
+router.post('/getTipsForCollection', function(req, res, next) {
+  //find tips where collectionIds include collectionId
+  DailyTip.model.find({collectionIds: {$in: req.body.collectionId}}, function(err, tips) {
+    if(err) return next(err);
+    var retVal = {
+      data: tips
+    };
+    res.json(retVal);
+  });
+});
+
 /* dummy route */
 router.post('/dummy', function(req, res, next) {
   res.json({message: 'I am a dummy route'});

@@ -52,7 +52,6 @@ router.post('/', function(req, res, next) {
 
 /* get collections for itemType */
 router.post('/getCollectionsForItemType', function(req, res, next) {
-  console.log(req.body);
   ItemCollection.model.find({
     "itemType": req.body.itemType
   }, function(err, collections) {
