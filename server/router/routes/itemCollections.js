@@ -63,4 +63,21 @@ router.post('/getCollectionsForItemType', function(req, res, next) {
   });
 });
 
+/* get collections for itemTypes */
+router.post('/getCollectionsForItemTypes', function(req, res, next) {
+  var typeConditions = [];
+  for (var i = req.body.itemTypes.length - 1; i >= 0; i--) {
+    typeConditions.push({itemType: req.body.itemTypes[i]});
+  }
+  ItemCollection.model.find().or(typeConditions).exec(function(err, collections) {
+    var groupedCollections = underscore.groupBy(collections, function(collection) {
+      return collection.itemType;
+    });
+    var retVal = {
+      data: groupedCollections
+    };
+    res.json(retVal);
+  });
+});
+
 module.exports = router;
