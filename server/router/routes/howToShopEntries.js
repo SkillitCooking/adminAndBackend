@@ -42,4 +42,15 @@ router.post('/', function(req, res, next) {
   });
 });
 
+/* getHowToShopForCollection */
+router.post('/getHowToShopForCollection', function(req, res, next) {
+  HowToShopEntry.model.find({collectionIds: {$in: [req.body.collectionId]}}, function(err, entries) {
+    if(err) return next(err);
+    var retVal = {
+      data: entries
+    };
+    res.json(retVal);
+  });
+});
+
 module.exports = router;
