@@ -44,7 +44,7 @@ router.post('/getRecipesOfType', function(req, res, next) {
 });
 
 /* getRecipesForCollection */
-router.post('getRecipesForCollection', function(req, res, next) {
+router.post('/getRecipesForCollection', function(req, res, next) {
   Recipe.model.find({collectionIds: {$in: [req.body.collectionId]}, recipeType: 'Full'}, function(err, recipes) {
     if(err) return next(err);
     var retVal = {
