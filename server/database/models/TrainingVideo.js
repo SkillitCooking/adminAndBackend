@@ -10,6 +10,10 @@ var TrainingVideoSchema = new mongoose.Schema({
     url: String,
     caption: String
   },
+  picture: {
+    url: String,
+    caption: String
+  },
   collectionIds: [ObjectId]
 });
 

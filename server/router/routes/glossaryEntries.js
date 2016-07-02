@@ -43,4 +43,14 @@ router.post('/', function(req, res, next) {
   });
 });
 
+router.post('/getGlossarysForCollection', function(req, res, next) {
+  GlossaryEntry.model.find({collectionIds: {$in: [req.body.collectionId]}}, function(err, entries) {
+    if(err) return next(err);
+    retVal = {
+      data: entries
+    };
+    res.json(retVal);
+  });
+});
+
 module.exports = router;

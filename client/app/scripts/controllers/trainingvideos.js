@@ -19,6 +19,7 @@ angular.module('SkillitAdminApp')
 
     $scope.trainingVideo = {
       video: {},
+      picture: {},
       collectionIds: []
     };
 
@@ -36,7 +37,7 @@ angular.module('SkillitAdminApp')
     $scope.curCollectionId = "";
 
     $scope.reset = function() {
-      $scope.trainingVideo = angular.copy({video: {}, collectionIds: []});
+      $scope.trainingVideo = angular.copy({video: {}, picture: {}, collectionIds: []});
       $scope.trainingVideoForm.$setPristine();
       $scope.trainingVideoForm.$setUntouched();
     };
@@ -46,6 +47,7 @@ angular.module('SkillitAdminApp')
         trainingVideo: {
           title: $scope.trainingVideo.title,
           video: $scope.trainingVideo.video,
+          picture: $scope.trainingVideo.picture,
           collectionIds: $scope.trainingVideo.collectionIds
         }
       }).then(function(video) {
@@ -60,7 +62,8 @@ angular.module('SkillitAdminApp')
 
     $scope.trainingVideoSanityCheck = function() {
       //if video caption, then must be url
-      if($scope.trainingVideo.video.url && $scope.trainingVideo.video.url !== "") {
+      if(($scope.trainingVideo.video.url && $scope.trainingVideo.video.url !== "") && 
+        ($scope.trainingVideo.picture.url && $scope.trainingVideo.picture.url !== "")) {
         if($scope.trainingVideo.collectionIds && $scope.trainingVideo.collectionIds.length > 0) {
           return true;
         } else {

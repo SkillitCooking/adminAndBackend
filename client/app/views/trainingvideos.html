@@ -4,6 +4,8 @@
     Title: <input type="text" ng-model="trainingVideo.title" size="50" required name="titleInput"/><br /><br />
     Video: <input type="url" ng-model="trainingVideo.video.url" size="60" name="videoURLInput" placeholder="URL" />
     <input type="text" ng-model="trainingVideo.video.caption" size="100" name="videoCaptionInput" placeholder="Caption"/><br/><br/> 
+    Picture: <input type="url" ng-model="trainingVideo.picture.url" size="60" name="pictureURLInput" placeholder="URL" />
+    <input type="text" ng-model="trainingVideo.picture.caption" size="100" name="pictureCaptionInput" placeholder="Caption"/><br/><br/>
     Collections: <select name="itemCollectionSelect" ng-model="curCollectionId" ng-options="collection._id as collection.name for collection in trainingVideoCollections"></select><br/>
     <ul>
       <div ng-repeat="collectionID in trainingVideo.collectionIds">
