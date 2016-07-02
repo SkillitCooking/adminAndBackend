@@ -42,4 +42,14 @@ router.post('/', function(req, res, next) {
   });
 });
 
+router.post('/getTrainingVideosForCollection', function(req, res, next) {
+  TrainingVideo.model.find({collectionIds: {$in: [req.body.collectionId]}}, function(err, videos) {
+    if(err) return next(err);
+    retVal = {
+      data: videos
+    };
+    res.json(retVal);
+  });
+});
+
 module.exports = router;
