@@ -14,7 +14,7 @@ var dailyContentJobs = require('./jobs/setDailyContent');
 var app = express();
 
 var limiterClient = require('redis').createClient();
-var limiter = require('express-limiter')(app, client);
+var limiter = require('express-limiter')(app, limiterClient);
 
 app.use(logger('dev'));
 //order of declaration matters here...
