@@ -6,10 +6,16 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var limiterClient = require('redis').createClient();
+
 //set daily content on a daily basis
 var dailyContentJobs = require('./jobs/setDailyContent');
 
 var app = express();
+
+var limiterClient = require('redis').createClient();
+var limiter = require('express-limiter')(app, client);
+
 app.use(logger('dev'));
 //order of declaration matters here...
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -20,7 +26,20 @@ app.use(cors());
 
 var router = require('./router')(app);
 
-
+/**
+ * Global Rate Limiter settings
+ */
+//limit to 10 requests per second per IP
+limiter({
+  path: '*',
+  method: 'all',
+  lookup: 'connection.remoteAddress',
+  total: 10,
+  expire: 1000,
+  onRateLimited: function(req, res, next) {
+    next({ message: 'Rate limit exceeded', status: 429});
+  }
+});
 
 
 /**
