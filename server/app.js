@@ -5,6 +5,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var helmet = require('helmet');
 
 var limiterClient = require('redis').createClient();
 
@@ -16,6 +17,7 @@ var app = express();
 var limiterClient = require('redis').createClient();
 var limiter = require('express-limiter')(app, limiterClient);
 
+app.use(helmet());
 app.use(logger('dev'));
 //order of declaration matters here...
 app.use(bodyParser.urlencoded({ extended: true }));
