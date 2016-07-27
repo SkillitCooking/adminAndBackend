@@ -1,6 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
+var logger = require('winston');
+logger.add(logger.transports.File, { filename: 'logs/test.log' });
+
 var mongoose = require('mongoose');
 var db = require('../../database');
 var DailyTip = db.dailyTips;
@@ -11,6 +14,7 @@ var DailyTip = db.dailyTips;
 
 /* GET all DailyTips */
 router.get('/', function(req, res, next) {
+  logger.info('test log');
   DailyTip.model.find(function (err, tips) {
     if(err) return next(err);
     var retVal = {
