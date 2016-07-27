@@ -2,7 +2,9 @@ var express = require('express');
 var router = express.Router();
 
 var logger = require('winston');
+//change below...
 logger.add(logger.transports.File, { filename: 'logs/test.log' });
+logger.remove(logger.transports.Console);
 
 var mongoose = require('mongoose');
 var db = require('../../database');
@@ -14,13 +16,17 @@ var DailyTip = db.dailyTips;
 
 /* GET all DailyTips */
 router.get('/', function(req, res, next) {
-  logger.info('test log');
+  logger.info('START GET api/dailyTips');
   DailyTip.model.find(function (err, tips) {
-    if(err) return next(err);
+    if(err) {
+      logger.error('ERROR GET api/dailyTips', {error: err});
+      return next(err);
+    }
     var retVal = {
       data: tips
     };
     res.json(retVal);
+    logger.info('END GET api/dailyTips');
   });
 });
 

@@ -7,10 +7,9 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var helmet = require('helmet');
 
-var limiterClient = require('redis').createClient();
-
 //set daily content on a daily basis
 var dailyContentJobs = require('./jobs/setDailyContent');
+var testClient = require('./util/localStorage').localStorage;
 
 var app = express();
 
