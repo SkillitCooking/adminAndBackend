@@ -2,9 +2,8 @@ var moment = require('moment');
 var CronJob = require('cron').CronJob;
 var localStorage = require('../util/localStorage').localStorage;
 
-var formattedDate = moment().format('M+D+YYYY+s');
-
 function setFormattedDate() {
+  var formattedDate = moment().format('M+D+YYYY+s');
   localStorage.set('currentDateString', formattedDate);
   console.log('set formattedDate: ', formattedDate);
 }
