@@ -1,10 +1,38 @@
 var moment = require('moment');
 var CronJob = require('cron').CronJob;
 var localStorage = require('../util/localStorage').localStorage;
+var loggers = require('../util/logger');
+
+function reconfigureLoggers(dailyLogFileName) {
+  loggers.clientLogger.configure({
+    transports: [
+      new (winston.transports.File)({
+        name: 'client-error-logs',
+        filename: 'logs/client/' + dailyLogFileName,
+        level: 'error'
+      })
+    ]
+  });
+  loggers.serverLogger.configure({
+    transports: [
+      new (winston.transports.File)({
+        name: 'api-logs',
+        filename: 'logs/api/callLogs/' + dailyLogFileName,
+        level: 'info'
+      }),
+      new (winston.transports.File)({
+        name: 'server-error-logs',
+        filename: 'logs/api/errors/errors.log',
+        level: 'error'
+      })
+    ]
+  });
+}
 
 function setFormattedDate() {
   var formattedDate = moment().format('M+D+YYYY+s');
   localStorage.set('currentDateString', formattedDate);
+  reconfigureLoggers(formattedDate + '.log');
   console.log('set formattedDate: ', formattedDate);
 }
 

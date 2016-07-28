@@ -3,7 +3,8 @@ var localStorage = require('./localStorage').localStorage;
 
 //get current date (to day precison), set filename for api log file
 //may have to use CronJob to set the date... we'll see
-//could use redis to store current fileName...yes
+//may have to use CronJob to reinstantiate the logger for every cycle... any clean up needed?
+//^^in cronJob, edit the file name for the loggers on every cycle
 
 function getFileName() {
   var fileName;
