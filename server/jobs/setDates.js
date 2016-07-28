@@ -4,7 +4,7 @@ var localStorage = require('../util/localStorage').localStorage;
 
 var formattedDate = moment().format('M+D+YYYY');
 
-var job = new CronJob('00 00 00 00 00 *', function() {
+var job = new CronJob('00 00 00 00 00 00', function() {
   localStorage.set('currentDateString', formattedDate);
   console.log('set formattedDate: ', formattedDate);
 }, null, true, 'Etc/UTC');
