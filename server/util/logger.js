@@ -11,7 +11,6 @@ function getFileName() {
   localStorage.get('currentDateString', function(err, reply) {
     if(reply)
       fileName = reply.toString() + '.log';
-    console.log('new fileName: ', fileName);
   });
 }
 

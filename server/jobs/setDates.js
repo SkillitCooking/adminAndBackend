@@ -31,14 +31,13 @@ function reconfigureLoggers(dailyLogFileName) {
 }
 
 function setFormattedDate() {
-  var formattedDate = moment().format('M+D+YYYY+s');
+  var formattedDate = moment().format('M+D+YYYY');
   localStorage.set('currentDateString', formattedDate);
   reconfigureLoggers(formattedDate + '.log');
-  console.log('set formattedDate: ', formattedDate);
 }
 
 //run every 24 hours at midnight
-var job = new CronJob('* * * * * *', function() {
+var job = new CronJob('00 00 00 * * *', function() {
   setFormattedDate();
 }, null, true, 'Etc/UTC');
 /*
