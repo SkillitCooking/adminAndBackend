@@ -2,7 +2,7 @@ var moment = require('moment');
 var CronJob = require('cron').CronJob;
 var localStorage = require('../util/localStorage').localStorage;
 
-var formattedDate = moment().format('M+D+YYYY');
+var formattedDate = moment().format('M+D+YYYY+s');
 
 function setFormattedDate() {
   localStorage.set('currentDateString', formattedDate);
@@ -13,7 +13,6 @@ function setFormattedDate() {
 var job = new CronJob('* * * * * *', function() {
   setFormattedDate();
 }, null, true, 'Etc/UTC');
-//America/LosAngeles
 /*
   TODO:
   -create job that runs on UTC midnight that switches date value in localStorage

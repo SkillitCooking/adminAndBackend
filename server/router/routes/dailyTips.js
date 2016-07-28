@@ -1,10 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-var logger = require('winston');
-//change below...
-logger.add(logger.transports.File, { filename: 'logs/test.log' });
-logger.remove(logger.transports.Console);
+var logger = require('../../util/logger').serverLogger;
 
 var mongoose = require('mongoose');
 var db = require('../../database');
