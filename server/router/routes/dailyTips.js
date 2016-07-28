@@ -13,32 +13,37 @@ var DailyTip = db.dailyTips;
 
 /* GET all DailyTips */
 router.get('/', function(req, res, next) {
-  logger.info('START GET api/dailyTips');
+  logger.info('START GET api/dailyTips/');
   DailyTip.model.find(function (err, tips) {
     if(err) {
-      logger.error('ERROR GET api/dailyTips', {error: err});
+      logger.error('ERROR GET api/dailyTips/', {error: err});
       return next(err);
     }
     var retVal = {
       data: tips
     };
     res.json(retVal);
-    logger.info('END GET api/dailyTips');
+    logger.info('END GET api/dailyTips/');
   });
 });
 
 /* POST single DailyTip */
 router.post('/', function(req, res, next) {
   //need any existence checks? probably for title...
+  logger.info('START POST api/dailyTips/');
   var query = {'title': req.body.dailyTip.title};
   DailyTip.model.findOne(query, function(err, dailyTip) {
-    if(err) return next(err);
+    if(err) {
+      logger.error('ERROR POST api/dailyTips/', {error: err, body: req.body});
+      return next(err);
+    }
     if(dailyTip) {
       //then found
       var retVal = {
         name: "DailyTip Title",
         message: "DailyTip with title " + query.title + " already exists!"
       };
+      logger.info('END POST api/dailyTips/');
       res.json(retVal);
     } else {
       //will need to set the applicable dates first here, which will require the use of moment.js library
@@ -48,10 +53,14 @@ router.post('/', function(req, res, next) {
       //null date
       postedTip.dateFeatured = new Date(0);
       DailyTip.model.create(postedTip, function(err, dailyTip) {
-        if(err) return next(err);
+        if(err) {
+          logger.error('ERROR POST api/dailyTips/', {error: err, body: req.body});
+          return next(err);
+        }
         var retVal = {
           data: dailyTip
         };
+        logger.info('END POST api/dailyTips/');
         res.json(retVal);
       });
     }
@@ -60,15 +69,20 @@ router.post('/', function(req, res, next) {
 
 /* get tips of the day */
 router.post('/getTipsOfTheDay', function(req, res, next) {
+  logger.info('START POST api/dailyTips/getTipsOfTheDay');
   DailyTip.model.find()
   .or([{hasBeenDailyTip: true}, {isTipOfTheDay: true}])
   .sort('-isTipOfTheDay -dateFeatured')
   .select('_id title text dateFeatured picture video')
   .exec(function(err, tips) {
-    if(err) return next(err);
+    if(err) {
+      logger.error('ERROR POST api/dailyTips/getTipsOfTheDay', {error: err});
+      return next(err);
+    }
     var retVal = {
       data: tips
     };
+    logger.info('END POST api/dailyTips/getTipsOfTheDay');
     res.json(retVal);
   });
 });
@@ -76,11 +90,16 @@ router.post('/getTipsOfTheDay', function(req, res, next) {
 /* getTipsForCollection */
 router.post('/getTipsForCollection', function(req, res, next) {
   //find tips where collectionIds include collectionId
+  logger.info('START POST api/dailyTips/getTipsForCollection');
   DailyTip.model.find({collectionIds: {$in: [req.body.collectionId]}}, function(err, tips) {
-    if(err) return next(err);
+    if(err) {
+      logger.error('ERROR POST api/dailyTips/getTipsForCollection', {error: err, body: req.body});
+      return next(err);
+    }
     var retVal = {
       data: tips
     };
+    logger.info('END POST api/dailyTips/getTipsForCollection');
     res.json(retVal);
   });
 });
