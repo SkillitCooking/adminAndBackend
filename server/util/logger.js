@@ -8,7 +8,8 @@ var localStorage = require('./localStorage').localStorage;
 function getFileName() {
   var fileName;
   localStorage.get('currentDateString', function(err, reply) {
-    fileName = reply.toString() + '.log';
+    if(reply)
+      fileName = reply.toString() + '.log';
     console.log('new fileName: ', fileName);
   });
 }
