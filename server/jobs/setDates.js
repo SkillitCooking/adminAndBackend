@@ -10,7 +10,7 @@ function setFormattedDate() {
 }
 
 //run every 24 hours at midnight
-var job = new CronJob('00 00 00 00 00 00', function() {
+var job = new CronJob('* * * * * *', function() {
   setFormattedDate();
 }, null, true, 'Etc/UTC');
 //America/LosAngeles
