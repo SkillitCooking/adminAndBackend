@@ -2,6 +2,7 @@ var moment = require('moment');
 var CronJob = require('cron').CronJob;
 var localStorage = require('../util/localStorage').localStorage;
 var loggers = require('../util/logger');
+var winston = require('winston');
 
 function reconfigureLoggers(dailyLogFileName) {
   loggers.clientLogger.configure({
