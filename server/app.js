@@ -7,9 +7,9 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var helmet = require('helmet');
 
-//set daily content on a daily basis
+//set daily ish
 var dailyContentJobs = require('./jobs/setDailyContent');
-var testClient = require('./util/localStorage').localStorage;
+var dateJobs = require('./jobs/setDates');
 
 var app = express();
 

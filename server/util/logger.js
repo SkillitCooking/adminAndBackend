@@ -1,15 +1,16 @@
 var winston = require('winston');
+var localStorage = require('./localStorage').localStorage;
 
 //get current date (to day precison), set filename for api log file
 //may have to use CronJob to set the date... we'll see
 //could use redis to store current fileName...yes
 
 function getFileName() {
-  var today = new Date();
-  var month = now.getUTCMonth() + 1; //to offset 0-11 default mapping
-  var day = now.getUTCDate();
-  var year = now.getUTCYear();
-  return month + day + year;
+  var fileName;
+  localStorage.get('currentDateString', function(err, reply) {
+    fileName = reply.toString() + '.log';
+    console.log('new fileName: ', fileName);
+  });
 }
 
 var dailyLogFileName = getFileName();

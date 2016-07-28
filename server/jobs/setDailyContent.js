@@ -130,6 +130,6 @@ function setDailyTipOfTheDay() {
 var job = new CronJob('00 00 00 * * *', function() {
   setRecipeOfTheDay();
   setDailyTipOfTheDay();
-}, null, true, 'America/Los_Angeles');
+}, null, true, 'Etc/UTC');
 
 module.exports.job = job;
