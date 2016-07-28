@@ -10,6 +10,7 @@ var helmet = require('helmet');
 //set daily ish
 var dailyContentJobs = require('./jobs/setDailyContent');
 var dateJobs = require('./jobs/setDates');
+var logger = require('./util/logger');
 
 var app = express();
 
