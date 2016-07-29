@@ -7,6 +7,7 @@ function getFileName() {
     if(reply)
       fileName = reply.toString() + '.log';
   });
+  return fileName;
 }
 
 var dailyLogFileName = getFileName();
