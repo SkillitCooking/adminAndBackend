@@ -4,13 +4,16 @@ var localStorage = require('./localStorage').localStorage;
 function getFileName() {
   var fileName;
   localStorage.get('currentDateString', function(err, reply) {
-    if(reply)
+    if(reply) {
+      console.log('get currentDateString reply: ', reply);
       fileName = reply.toString() + '.log';
+    }
   });
   return fileName;
 }
 
 var dailyLogFileName = getFileName();
+console.log('logger dailyLogFileName: ', dailyLogFileName);
 
 var clientLogger = new (winston.Logger)({
   transports: [
