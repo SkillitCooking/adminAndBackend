@@ -4,6 +4,7 @@ var router = express.Router();
 var loggers = require('../../util/logger');
 
 router.post('/logError', function(req, res, next) {
+  console.log("errInfo: ", req.errInfo);
   loggers.serverLogger.info('START POST api/clientLogging/logError');
   //expect an 'errInfo' property of body, then just log that. The client will
   //be responsible for populating it with more specific information
