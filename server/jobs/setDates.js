@@ -42,11 +42,12 @@ var job = new CronJob('00 00 00 * * *', function() {
 }, null, true, 'Etc/UTC');
 /*
   TODO:
-  -Then: import logger to all API methods ==> in testing, make sure to simulate an error
   -Then: create new route for client side logging + test
+    -For now, will involve having potential for unprotected logging...
   -Then: call route at all points for client-side errors
     -Will want to include meta data of what exactly is causing the client-side error
     -Maybe want to include other contextual information... set up structure such that contextual information can be set and sent later on
+  -Then: create cronJob to delete week-old logs... or add to existing job
 
  */
 

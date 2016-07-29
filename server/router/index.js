@@ -14,4 +14,5 @@ module.exports = function (app) {
   app.use('/api/howToShopEntries', require('./routes/howToShopEntries'));
   app.use('/api/itemCollections', require('./routes/itemCollections'));
   app.use('/api/trainingVideos', require('./routes/trainingVideos'));
+  app.use('/api/clientLogging/logError', require('./routes/clientLogging'));
 };
