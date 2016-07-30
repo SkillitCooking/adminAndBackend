@@ -38,9 +38,16 @@ function setFormattedDate() {
 }
 
 //run every 24 hours at midnight
-var job = new CronJob('00 00 00 * * *', function() {
-  setFormattedDate();
-}, null, true, 'Etc/UTC');
+//May need to have this explicitly run at every app restart
+var job = new CronJob({
+  cronTime: '00 00 00 * * *', 
+  onTick: function() {
+    setFormattedDate();
+  }, 
+  start: true, 
+  timeZone: 'Etc/UTC', 
+  runOnInit: true
+});
 /*
   TODO:
   -Then: create new route for client side logging + test
@@ -48,6 +55,7 @@ var job = new CronJob('00 00 00 * * *', function() {
   -Then: call route at all points for client-side errors
     -Will want to include meta data of what exactly is causing the client-side error
     -Maybe want to include other contextual information... set up structure such that contextual information can be set and sent later on
+    -Simultaneously, do some kind of client side error *handling*
   -Then: create cronJob to delete week-old logs... or add to existing job
 
  */

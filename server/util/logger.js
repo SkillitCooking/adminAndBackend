@@ -7,9 +7,9 @@ function getFileName() {
     if(reply) {
       console.log('get currentDateString reply: ', reply);
       fileName = reply.toString() + '.log';
+      return fileName;
     }
   });
-  return fileName;
 }
 
 var dailyLogFileName = getFileName();
