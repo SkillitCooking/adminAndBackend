@@ -8,7 +8,7 @@ router.post('/logError', function(req, res, next) {
   //expect an 'errInfo' property of body, then just log that. The client will
   //be responsible for populating it with more specific information
   if(req.body.errInfo) {
-    loggers.clientLogger.error('ERROR: ' + req.body.errInfo.source, {err: req.body.errInfo});
+    loggers.clientLogger.error('ERROR: ', {err: req.body.errInfo});
     res.json({message: 'Error successfully logged'});
   } else {
     loggers.serverLogger.error('ERROR POST api/clientLogging/logError', {error: 'no "errInfo" property on req.body', body: req.body});
