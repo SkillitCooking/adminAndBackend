@@ -31,7 +31,6 @@ function reconfigureLoggers(dailyLogFileName) {
 }
 
 function setFormattedDate() {
-  console.log('in set formattedDate call');
   var formattedDate = moment().format('M+D+YYYY');
   localStorage.set('currentDateString', formattedDate);
   reconfigureLoggers(formattedDate + '.log');

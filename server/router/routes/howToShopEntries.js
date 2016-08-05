@@ -26,52 +26,62 @@ router.get('/', function(req, res, next) {
 /*POST single howToShopEntry*/
 router.post('/', function(req, res, next) {
   logger.info('START POST api/howToShopEntries/');
-  var query = {'title': req.body.howToShopEntry.title};
-  HowToShopEntry.model.findOne(query, function(err, entry) {
-    if(err) {
-      logger.error('ERROR POST api/howToShopEntries/', {error: err, body: req.body});
-      return next(err);
-    }
-    if(entry) {
-      var retVal = {
-        name: "HowToShopEntry",
-        message: "HowToShopEntry with title " + query.title + " already exists!"
-      };
-      logger.info('END POST api/howToShopEntries/');
-      res.json(retVal);
-    } else {
-      var howToShopEntry = req.body.howToShopEntry;
-      howToShopEntry.dateAdded = Date.now();
-      howToShopEntry.dateModified = Date.now();
-      HowToShopEntry.model.create(howToShopEntry, function(err, howToShopEntry) {
-        if(err) {
-          logger.error('ERROR POST api/howToShopEntries/', {error: err, body: req.body});
-          return next(err);
-        }
+  try {
+    var query = {'title': req.body.howToShopEntry.title};
+    HowToShopEntry.model.findOne(query, function(err, entry) {
+      if(err) {
+        logger.error('ERROR POST api/howToShopEntries/', {error: err, body: req.body});
+        return next(err);
+      }
+      if(entry) {
         var retVal = {
-          data: howToShopEntry
+          name: "HowToShopEntry",
+          message: "HowToShopEntry with title " + query.title + " already exists!"
         };
         logger.info('END POST api/howToShopEntries/');
-        res.json(howToShopEntry);
-      });
-    }
-  });
+        res.json(retVal);
+      } else {
+        var howToShopEntry = req.body.howToShopEntry;
+        howToShopEntry.dateAdded = Date.now();
+        howToShopEntry.dateModified = Date.now();
+        HowToShopEntry.model.create(howToShopEntry, function(err, howToShopEntry) {
+          if(err) {
+            logger.error('ERROR POST api/howToShopEntries/', {error: err, body: req.body});
+            return next(err);
+          }
+          var retVal = {
+            data: howToShopEntry
+          };
+          logger.info('END POST api/howToShopEntries/');
+          res.json(howToShopEntry);
+        });
+      }
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in POST api/howToShopEntries/', {error: error});
+    next(error);
+  }
 });
 
 /* getHowToShopForCollection */
 router.post('/getHowToShopForCollection', function(req, res, next) {
   logger.info('START POST api/howToShopEntries/getHowToShopForCollection');
-  HowToShopEntry.model.find({collectionIds: {$in: [req.body.collectionId]}}, function(err, entries) {
-    if(err) {
-      logger.error('ERROR POST api/howToShopEntries/getHowToShopForCollection', {error: err, body: req.body});
-      return next(err);
-    }
-    var retVal = {
-      data: entries
-    };
-    logger.info('END POST api/howToShopEntries/getHowToShopForCollection');
-    res.json(retVal);
-  });
+  try {
+    HowToShopEntry.model.find({collectionIds: {$in: [req.body.collectionId]}}, function(err, entries) {
+      if(err) {
+        logger.error('ERROR POST api/howToShopEntries/getHowToShopForCollection', {error: err, body: req.body});
+        return next(err);
+      }
+      var retVal = {
+        data: entries
+      };
+      logger.info('END POST api/howToShopEntries/getHowToShopForCollection');
+      res.json(retVal);
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in POST api/howToShopEntries/getHowToShopForCollection', {error: error});
+    next(error);
+  }
 });
 
 module.exports = router;

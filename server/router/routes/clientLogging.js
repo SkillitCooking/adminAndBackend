@@ -14,6 +14,7 @@ router.post('/logError', function(req, res, next) {
     loggers.serverLogger.error('ERROR POST api/clientLogging/logError', {error: 'no "errInfo" property on req.body', body: req.body});
     res.json({message: 'Unsuccessful call: did not have expected information'});
   }
+  loggers.serverLogger.info('END POST api/clientLogging/logError');
 });
 
 module.exports = router;

@@ -29,51 +29,66 @@ router.get('/', function(req, res, next) {
 /* expects req.body to wrap the array... */
 router.post('/getRecipesWithIds', function(req, res, next) {
   logger.info('START POST api/recipes/getRecipesWithIds');
-  Recipe.model.find({
-    '_id': { $in: req.body.recipeIds }
-  }, function(err, recipes) {
-    if(err) {
-      logger.error('ERROR POST api/recipes/getRecipesWithIds', {error: err, body: req.body});
-      return next(err);
-    }
-    var retVal = {
-      data: recipes
-    };
-    logger.info('END POST api/recipes/getRecipesWithIds');
-    res.json(retVal);
-  });
+  try {
+    Recipe.model.find({
+      '_id': { $in: req.body.recipeIds }
+    }, function(err, recipes) {
+      if(err) {
+        logger.error('ERROR POST api/recipes/getRecipesWithIds', {error: err, body: req.body});
+        return next(err);
+      }
+      var retVal = {
+        data: recipes
+      };
+      logger.info('END POST api/recipes/getRecipesWithIds');
+      res.json(retVal);
+    });
+  } catch(error) {
+    logger.error('ERROR - exception in POST api/recipes/getRecipesWithIds', {error: error});
+    next(error);
+  }
 });
 
 /* getRecipesOfType */
 router.post('/getRecipesOfType', function(req, res, next) {
   logger.info('START POST api/recipes/getRecipesOfType');
-  Recipe.model.find({recipeType: req.body.recipeType}, function(err, recipes) {
-    if(err) {
-      logger.error('ERROR POST api/recipes/getRecipesOfType', {error: err, body: req.body});
-      return next(err);
-    }
-    var retVal = {
-      data: recipes
-    };
-    logger.info('END POST api/recipes/getRecipesOfType');
-    res.json(retVal);
-  });
+  try {
+    Recipe.model.find({recipeType: req.body.recipeType}, function(err, recipes) {
+      if(err) {
+        logger.error('ERROR POST api/recipes/getRecipesOfType', {error: err, body: req.body});
+        return next(err);
+      }
+      var retVal = {
+        data: recipes
+      };
+      logger.info('END POST api/recipes/getRecipesOfType');
+      res.json(retVal);
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in POST api/recipes/getRecipesOfType', {error: error});
+    next(error);
+  }
 });
 
 /* getRecipesForCollection */
 router.post('/getRecipesForCollection', function(req, res, next) {
   logger.info('START POST api/recipes/getRecipesForCollection');
-  Recipe.model.find({collectionIds: {$in: [req.body.collectionId]}, recipeType: 'Full'}, function(err, recipes) {
-    if(err) {
-      logger.error('ERROR POST api/recipes/getRecipesForCollection', {error: err, body: req.body});
-      return next(err);
-    }
-    var retVal = {
-      data: recipes
-    };
-    logger.info('END POST api/recipes/getRecipesForCollection');
-    res.json(retVal);
-  });
+  try {
+    Recipe.model.find({collectionIds: {$in: [req.body.collectionId]}, recipeType: 'Full'}, function(err, recipes) {
+      if(err) {
+        logger.error('ERROR POST api/recipes/getRecipesForCollection', {error: err, body: req.body});
+        return next(err);
+      }
+      var retVal = {
+        data: recipes
+      };
+      logger.info('END POST api/recipes/getRecipesForCollection');
+      res.json(retVal);
+    });
+  } catch(error) {
+    logger.error('ERROR - exception in POST api/recipes/getRecipesForCollection', {error: error});
+    next(error);
+  }
 });
 
 /* this could get to be a bit of a load on the server as the number of recipes scales up... However, at the given moment, when we really are only going to be dealing with a number of recipes on the level of like 50-100 at max, we're probably OK, given the complexity of handling this full query on the Mongo side */
@@ -85,38 +100,43 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
       logger.error('ERROR POST api/recipes/getRecipesWithIngredients', {error: err, body: req.body});
       return next(err);
     }
-    var retRecipes = [];
-    var ingredientNames = req.body.ingredientNames;
-    for (var k = recipes.length - 1; k >= 0; k--) {
-      var ingredientTypes = recipes[k].ingredientList.ingredientTypes;
-      var flag = true;
-      for (var i = ingredientTypes.length - 1; i >= 0; i--) {
-        var count = 0;
-        for (var j = ingredientTypes[i].ingredients.length - 1; j >= 0; j--) {
-          if(ingredientNames && ingredientNames.indexOf(ingredientTypes[i].ingredients[j].name) !== -1){
-            count++;
+    try {
+      var retRecipes = [];
+      var ingredientNames = req.body.ingredientNames;
+      for (var k = recipes.length - 1; k >= 0; k--) {
+        var ingredientTypes = recipes[k].ingredientList.ingredientTypes;
+        var flag = true;
+        for (var i = ingredientTypes.length - 1; i >= 0; i--) {
+          var count = 0;
+          for (var j = ingredientTypes[i].ingredients.length - 1; j >= 0; j--) {
+            if(ingredientNames && ingredientNames.indexOf(ingredientTypes[i].ingredients[j].name) !== -1){
+              count++;
+            }
+          }
+          if(count < ingredientTypes[i].minNeeded){
+            flag = false;
           }
         }
-        if(count < ingredientTypes[i].minNeeded){
-          flag = false;
+        if(flag){
+          if(recipes[k].recipeType === "AlaCarte") {
+            var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'ingredientList');
+            retRecipes.push(pickedRecipe);
+          } else {
+            var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime');
+            retRecipes.push(pickedRecipe);
+          }
         }
       }
-      if(flag){
-        if(recipes[k].recipeType === "AlaCarte") {
-          var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'ingredientList');
-          retRecipes.push(pickedRecipe);
-        } else {
-          var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime');
-          retRecipes.push(pickedRecipe);
-        }
-      }
+      retRecipes = underscore.groupBy(retRecipes, "recipeType");
+      var retVal = {
+        data: retRecipes
+      };
+      logger.info('END POST api/recipes/getRecipesWithIngredients');
+      res.json(retVal);
+    } catch (error) {
+      logger.error('ERROR - exception in POST api/recipes/getRecipesWithIngredients', {error: error});
+      next(error);
     }
-    retRecipes = underscore.groupBy(retRecipes, "recipeType");
-    var retVal = {
-      data: retRecipes
-    };
-    logger.info('END POST api/recipes/getRecipesWithIngredients');
-    res.json(retVal);
   });
 });
 
@@ -125,30 +145,35 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
 /* Check for same recipe, but send back an an error and do noting if same name found */
 router.post('/', function(req, res, next) {
   logger.info('START POST api/recipes/');
-  var query = {'name': req.body.recipe.name};
-  Recipe.model.findOne(query, function(err, recipe) {
-    if (err) {
-      logger.error('ERROR POST api/recipes/', {error: err, body: req.body});
-      return next(err);
-    }
-    if (recipe) {
-      var retVal = {
-        name: "RecipeName",
-        message: "Recipe with name " + query.name + " already exists!"
-      };
-      logger.info('END POST api/recipes/');
-      res.json(retVal);
-    } else {
-      Recipe.model.create(req.body.recipe, function(err, recipe) {
-        if(err) {
-          logger.error('ERROR POST api/recipes/', {error: err, body: req.body});
-          return next(err);
-        }
+  try {
+    var query = {'name': req.body.recipe.name};
+    Recipe.model.findOne(query, function(err, recipe) {
+      if (err) {
+        logger.error('ERROR POST api/recipes/', {error: err, body: req.body});
+        return next(err);
+      }
+      if (recipe) {
+        var retVal = {
+          name: "RecipeName",
+          message: "Recipe with name " + query.name + " already exists!"
+        };
         logger.info('END POST api/recipes/');
-        res.json(recipe);
-      });
-    }
-  });
+        res.json(retVal);
+      } else {
+        Recipe.model.create(req.body.recipe, function(err, recipe) {
+          if(err) {
+            logger.error('ERROR POST api/recipes/', {error: err, body: req.body});
+            return next(err);
+          }
+          logger.info('END POST api/recipes/');
+          res.json(recipe);
+        });
+      }
+    });
+  } catch(error) {
+    logger.error('ERROR - exception in POST api/recipes/', {error: error});
+    next(error);
+  }
 });
 
 /* GET /recipes/:id */
@@ -195,27 +220,37 @@ router.post('/getRecipesOfTheDay', function(req, res, next) {
 /* PUT /recipes/:id */
 router.put('/:id', function(req, res, next) {
   logger.info('START PUT api/recipes/' + req.params.id);
-  Recipe.model.findByIdAndUpdate(req.params.id, req.body, function(err, recipe) {
-    if(err) {
-      logger.error('ERROR PUT api/recipes/' + req.params.id, {error: err, body: req.body});
-      return next(err);
-    }
-    logger.info('END PUT api/recipes/' + req.params.id);
-    res.json(recipe);
-  });
+  try {
+    Recipe.model.findByIdAndUpdate(req.params.id, req.body, function(err, recipe) {
+      if(err) {
+        logger.error('ERROR PUT api/recipes/' + req.params.id, {error: err, body: req.body});
+        return next(err);
+      }
+      logger.info('END PUT api/recipes/' + req.params.id);
+      res.json(recipe);
+    });
+  } catch(error) {
+    logger.error('ERROR - exception in PUT api/recipes/:id', {error: error});
+    next(error);
+  }
 });
 
 /* DELETE /recipes/:id */
 router.delete('/:id', function(req, res, next) {
   logger.info('START DELETE api/recipes/' + req.params.id);
-  Recipe.model.findByIdAndRemove(req.params.id, req.body, function(err, recipe) {
-    if(err) {
-      logger.error('ERROR DELETE api/recipes/' + req.params.id, {error: err, body: req.body});
-      return next(err);
-    }
-    logger.info('END DELETE api/recipes/' + req.params.id);
-    res.json(recipe);
-  });
+  try {
+    Recipe.model.findByIdAndRemove(req.params.id, req.body, function(err, recipe) {
+      if(err) {
+        logger.error('ERROR DELETE api/recipes/' + req.params.id, {error: err, body: req.body});
+        return next(err);
+      }
+      logger.info('END DELETE api/recipes/' + req.params.id);
+      res.json(recipe);
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in DELETE api/recipes/:id', {error: error});
+    next(error);
+  }
 });
 
 /* dummy test route */

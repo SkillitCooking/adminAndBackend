@@ -4,10 +4,14 @@ var localStorage = require('./localStorage').localStorage;
 function getFileName() {
   var fileName;
   localStorage.get('currentDateString', function(err, reply) {
-    if(reply) {
-      console.log('get currentDateString reply: ', reply);
-      fileName = reply.toString() + '.log';
-      return fileName;
+    if(err) {
+      console.log('Error in getting "currentDateString" from localStorage... cannot really log an error to the logging service...');
+    } else {
+      if(reply) {
+        console.log('get currentDateString reply: ', reply);
+        fileName = reply.toString() + '.log';
+        return fileName;
+      }
     }
   });
 }

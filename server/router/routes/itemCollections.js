@@ -33,78 +33,93 @@ router.get('/', function(req, res, next) {
 /* checks for same collection name of given itemType */
 router.post('/', function(req, res, next) {
   logger.info('START POST api/itemCollections/');
-  var query = {
-    'name': req.body.itemCollection.name,
-    'itemType': req.body.itemCollection.itemType
-  };
-  ItemCollection.model.findOneAndUpdate(query, req.body.itemCollection, {upsert: true}, function(err, collection) {
-    if(err) {
-      logger.error('ERROR POST api/itemCollections/', {error: err, body: req.body});
-      return next(err);
-    }
-    if(collection === null) {
-      //then inserted, and need to return it
-      ItemCollection.model.findOne(query, function(err, collection) {
-        if(err) {
-          logger.error('ERROR POST api/itemCollections/', {error: err, body: req.body});
-          return next(err);
-        }
-        var retVal = {
+  try {
+    var query = {
+      'name': req.body.itemCollection.name,
+      'itemType': req.body.itemCollection.itemType
+    };
+    ItemCollection.model.findOneAndUpdate(query, req.body.itemCollection, {upsert: true}, function(err, collection) {
+      if(err) {
+        logger.error('ERROR POST api/itemCollections/', {error: err, body: req.body});
+        return next(err);
+      }
+      if(collection === null) {
+        //then inserted, and need to return it
+        ItemCollection.model.findOne(query, function(err, collection) {
+          if(err) {
+            logger.error('ERROR POST api/itemCollections/', {error: err, body: req.body});
+            return next(err);
+          }
+          var retVal = {
+            data: collection
+          };
+          logger.info('END POST api/itemCollections/');
+          res.json(retVal);
+        });
+      } else {
+        //then updated
+        retVal = {
           data: collection
         };
         logger.info('END POST api/itemCollections/');
         res.json(retVal);
-      });
-    } else {
-      //then updated
-      retVal = {
-        data: collection
-      };
-      logger.info('END POST api/itemCollections/');
-      res.json(retVal);
-    }
-  });
+      }
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in POST api/itemCollections/', {error: error});
+    next(error);
+  }
 });
 
 /* get collections for itemType */
 router.post('/getCollectionsForItemType', function(req, res, next) {
   logger.info('START POST api/itemCollections/getCollectionsForItemType');
-  ItemCollection.model.find({
-    "itemType": req.body.itemType
-  }, function(err, collections) {
-    if(err) {
-      logger.error('ERROR POST api/itemCollections/getCollectionsForItemType', {error: err, body: req.body});
-      return next(err);
-    }
-    var retVal = {
-      data: collections
-    };
-    logger.info('END POST api/itemCollections/getCollectionsForItemType');
-    res.json(retVal);
-  });
+  try {
+    ItemCollection.model.find({
+      "itemType": req.body.itemType
+    }, function(err, collections) {
+      if(err) {
+        logger.error('ERROR POST api/itemCollections/getCollectionsForItemType', {error: err, body: req.body});
+        return next(err);
+      }
+      var retVal = {
+        data: collections
+      };
+      logger.info('END POST api/itemCollections/getCollectionsForItemType');
+      res.json(retVal);
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in POST api/itemCollections/getCollectionsForItemType', {error: error});
+    next(error);
+  }
 });
 
 /* get collections for itemTypes */
 router.post('/getCollectionsForItemTypes', function(req, res, next) {
   logger.info('START POST api/itemCollections/getCollectionsForItemTypes');
-  var typeConditions = [];
-  for (var i = req.body.itemTypes.length - 1; i >= 0; i--) {
-    typeConditions.push({itemType: req.body.itemTypes[i]});
-  }
-  ItemCollection.model.find().or(typeConditions).exec(function(err, collections) {
-    if(err) {
-      logger.error('ERROR POST api/itemCollections/getCollectionsForItemTypes', {error: err, body: req.body});
-      return next(err);
+  try {
+    var typeConditions = [];
+    for (var i = req.body.itemTypes.length - 1; i >= 0; i--) {
+      typeConditions.push({itemType: req.body.itemTypes[i]});
     }
-    var groupedCollections = underscore.groupBy(collections, function(collection) {
-      return collection.itemType;
+    ItemCollection.model.find().or(typeConditions).exec(function(err, collections) {
+      if(err) {
+        logger.error('ERROR POST api/itemCollections/getCollectionsForItemTypes', {error: err, body: req.body});
+        return next(err);
+      }
+      var groupedCollections = underscore.groupBy(collections, function(collection) {
+        return collection.itemType;
+      });
+      var retVal = {
+        data: groupedCollections
+      };
+      logger.info('END POST api.itemCollections/getCollectionsForItemTypes');
+      res.json(retVal);
     });
-    var retVal = {
-      data: groupedCollections
-    };
-    logger.info('END POST api.itemCollections/getCollectionsForItemTypes');
-    res.json(retVal);
-  });
+  } catch(error) {
+    logger.error('ERROR - exception in POST api/itemCollections/getCollectionsForItemTypes', {error: error});
+    next(error);
+  }
 });
 
 module.exports = router;

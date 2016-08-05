@@ -29,28 +29,33 @@ router.get('/', function(req, res, next) {
 /* check for same dish name */
 router.post('/', function(req, res, next) {
   logger.info('START POST api/dishes/');
-  var query = {'name': req.body.dish.name};
-  Dish.model.findOneAndUpdate(query, req.body.dish, {upsert: true},function(err, dish) {
-    if (err) {
-      logger.error('ERROR POST api/dishes/', {error: err, body: req.body});
-      return next(err);
-    }
-    if(dish === null){
-      //then inserted, and need it to return
-      Dish.model.findOne({'name': req.body.dish.name}, function(err, dish) {
-        if(err) {
-          logger.error('ERROR POST api/dishes/', {error: err, body: req.body});
-          return next(err);
-        }
+  try{
+    var query = {'name': req.body.dish.name};
+    Dish.model.findOneAndUpdate(query, req.body.dish, {upsert: true},function(err, dish) {
+      if (err) {
+        logger.error('ERROR POST api/dishes/', {error: err, body: req.body});
+        return next(err);
+      }
+      if(dish === null){
+        //then inserted, and need it to return
+        Dish.model.findOne({'name': req.body.dish.name}, function(err, dish) {
+          if(err) {
+            logger.error('ERROR POST api/dishes/', {error: err, body: req.body});
+            return next(err);
+          }
+          logger.info('END POST api/dishes/');
+          res.json(dish);
+        });
+      } else {
+        //then updated
         logger.info('END POST api/dishes/');
         res.json(dish);
-      });
-    } else {
-      //then updated
-      logger.info('END POST api/dishes/');
-      res.json(dish);
-    }
-  });
+      }
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in POST api/dishes/', {error: error});
+    next(error);
+  }
 });
 
 /* GET /dishes/id */
@@ -69,30 +74,40 @@ router.get('/:id', function(req, res, next) {
 /* PUT /dishes/:id */
 router.put('/:id', function(req, res, next) {
   logger.info('START PUT api/dishes/' + req.params.id);
-  Dish.model.findByIdAndUpdate(req.params.id, req.body.dish, 
-    {upsert: true}, function(err, dish) {
-    if (err) {
-      logger.error('ERROR PUT api/dishes/' + req.params.id, {error: err, body: req.body});
-      return next(err);
-    }
-    /* dish is previous value of document */
-    logger.info('END PUT api/dishes/' + req.params.id);
-    res.json(dish);
-  });
+  try {
+    Dish.model.findByIdAndUpdate(req.params.id, req.body.dish, 
+      {upsert: true}, function(err, dish) {
+      if (err) {
+        logger.error('ERROR PUT api/dishes/' + req.params.id, {error: err, body: req.body});
+        return next(err);
+      }
+      /* dish is previous value of document */
+      logger.info('END PUT api/dishes/' + req.params.id);
+      res.json(dish);
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in PUT api/dishes/:id', {error: error});
+    next(error);
+  }
 });
 
 /* DELETE /dishes/:id */
 router.delete('/:id', function(req, res, next) {
   logger.info('START DELETE api/dishes/' + req.params.id);
-  Dish.model.findByIdAndRemove(req.params.id, req.body.dish, function(err, dish) {
-    if (err) {
-      logger.error('ERROR DELETE api/dishes/' + req.params.id, {error: err, body: req.body});
-      return next(err);
-    }
-    /* dish is the value of just-deleted document */
-    logger.info('START DELETE api/dishes/' + req.params.id);
-    res.json(dish);
-  });
+  try {
+    Dish.model.findByIdAndRemove(req.params.id, req.body.dish, function(err, dish) {
+      if (err) {
+        logger.error('ERROR DELETE api/dishes/' + req.params.id, {error: err, body: req.body});
+        return next(err);
+      }
+      /* dish is the value of just-deleted document */
+      logger.info('START DELETE api/dishes/' + req.params.id);
+      res.json(dish);
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in DELETE api/dishes/:id', {error: error});
+    next(error);
+  }
 });
 
 module.exports = router;

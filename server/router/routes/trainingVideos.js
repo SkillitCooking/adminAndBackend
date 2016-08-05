@@ -26,51 +26,61 @@ router.get('/', function(req, res, next) {
 /*POST single trainingVideo*/
 router.post('/', function(req, res, next) {
   logger.info('START POST api/trainingVideos/');
-  var query = {'title': req.body.trainingVideo.title};
-  TrainingVideo.model.findOne(query, function(err, video) {
-    if(err) {
-      logger.error('ERROR POST api/trainingVideos/', {error: err, body: req.body});
-      return next(err);
-    }
-    if(video) {
-      var retVal = {
-        name: "TrainingVideo",
-        message: "TrainingVideo with title " + query.title + " already exists!"
-      };
-      logger.info('START POST api/trainingVideos/');
-      res.json(retVal);
-    } else {
-      var trainingVideo = req.body.trainingVideo;
-      trainingVideo.dateAdded = Date.now();
-      trainingVideo.dateModified = Date.now();
-      TrainingVideo.model.create(trainingVideo, function(err, trainingVideo) {
-        if(err) {
-          logger.error('ERROR POST api/trainingVideos/', {error: err, body: req.body});
-          return next(err);
-        }
+  try {
+    var query = {'title': req.body.trainingVideo.title};
+    TrainingVideo.model.findOne(query, function(err, video) {
+      if(err) {
+        logger.error('ERROR POST api/trainingVideos/', {error: err, body: req.body});
+        return next(err);
+      }
+      if(video) {
         var retVal = {
-          data: trainingVideo
+          name: "TrainingVideo",
+          message: "TrainingVideo with title " + query.title + " already exists!"
         };
         logger.info('START POST api/trainingVideos/');
         res.json(retVal);
-      });
-    }
-  });
+      } else {
+        var trainingVideo = req.body.trainingVideo;
+        trainingVideo.dateAdded = Date.now();
+        trainingVideo.dateModified = Date.now();
+        TrainingVideo.model.create(trainingVideo, function(err, trainingVideo) {
+          if(err) {
+            logger.error('ERROR POST api/trainingVideos/', {error: err, body: req.body});
+            return next(err);
+          }
+          var retVal = {
+            data: trainingVideo
+          };
+          logger.info('START POST api/trainingVideos/');
+          res.json(retVal);
+        });
+      }
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in POST api/trainingVideos/', {error: error});
+    next(error);
+  }
 });
 
 router.post('/getTrainingVideosForCollection', function(req, res, next) {
   logger.info('START POST api/trainingVideos/getTrainingVideosForCollection');
-  TrainingVideo.model.find({collectionIds: {$in: [req.body.collectionId]}}, function(err, videos) {
-    if(err) {
-      logger.error('ERROR POST api/trainingVideos/getTrainingVideosForCollection', {error: err, body: req.body});
-      return next(err);
-    }
-    retVal = {
-      data: videos
-    };
-    logger.info('END POST api/trainingVideos/getTrainingVideosForCollection');
-    res.json(retVal);
-  });
+  try {
+    TrainingVideo.model.find({collectionIds: {$in: [req.body.collectionId]}}, function(err, videos) {
+      if(err) {
+        logger.error('ERROR POST api/trainingVideos/getTrainingVideosForCollection', {error: err, body: req.body});
+        return next(err);
+      }
+      retVal = {
+        data: videos
+      };
+      logger.info('END POST api/trainingVideos/getTrainingVideosForCollection');
+      res.json(retVal);
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in POST api/trainingVideos/getTrainingVideosForCollection', {error: error});
+    next(error);
+  }
 });
 
 module.exports = router;

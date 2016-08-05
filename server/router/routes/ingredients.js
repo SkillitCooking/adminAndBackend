@@ -48,30 +48,35 @@ router.get('/getIngredientsForSelection', function(req, res, next) {
 router.post('/', function(req, res, next) {
   logger.info('START POST api/ingredients/');
   var query = {'name': req.body.ingredient.name};
-  Ingredient.model.findOneAndUpdate(query, req.body.ingredient,
-    {upsert: true}, function(err, ingredient) {
-    if (err) {
-      logger.error('ERROR POST api/ingredients/', {error: err, body: req.body});
-      return next(err);
-    }
-    if(ingredient === null){
-      //then inserted, and need it to return
-      Ingredient.model.findOne({'name': req.body.ingredient.name},
-        function(err, ingredient) {
-          if(err) {
-            logger.error('ERROR POST api/ingredients/', {error: err, body: req.body});
+  try {
+    Ingredient.model.findOneAndUpdate(query, req.body.ingredient,
+      {upsert: true}, function(err, ingredient) {
+      if (err) {
+        logger.error('ERROR POST api/ingredients/', {error: err, body: req.body});
+        return next(err);
+      }
+      if(ingredient === null){
+        //then inserted, and need it to return
+        Ingredient.model.findOne({'name': req.body.ingredient.name},
+          function(err, ingredient) {
+            if(err) {
+              logger.error('ERROR POST api/ingredients/', {error: err, body: req.body});
 
-            return next(err);
-          }
-          logger.info('END POST api/ingredients/');
-          res.json(ingredient);
-        });
-    } else {
-      //then updated
-      logger.info('END POST api/ingredients/');
-      res.json(ingredient);
-    }
-  });
+              return next(err);
+            }
+            logger.info('END POST api/ingredients/');
+            res.json(ingredient);
+          });
+      } else {
+        //then updated
+        logger.info('END POST api/ingredients/');
+        res.json(ingredient);
+      }
+    });
+  } catch(error) {
+    logger.error('ERROR - exception in POST api/ingredients/', {error: error});
+    next(error);
+  }
 });
 
 /* GET /ingredients/id */
@@ -90,29 +95,39 @@ router.get('/:id', function(req, res, next) {
 /* PUT /ingredients/:id */
 router.put('/:id', function(req, res, next) {
   logger.info('START PUT api/ingredients/' + req.params.id);
-  Ingredient.model.findByIdAndUpdate(req.params.id, req.body.ingredient, function(err, ingredient) {
-    if (err) {
-      logger.error('ERROR PUT api/ingredients', {error: err, body: req.body});
-      return next(err);
-    }
-    /* ingredient is previous value of document */
-    logger.info('END PUT api/ingredients/' + req.param.id);
-    res.json(ingredient);
-  });
+  try {
+    Ingredient.model.findByIdAndUpdate(req.params.id, req.body.ingredient, function(err, ingredient) {
+      if (err) {
+        logger.error('ERROR PUT api/ingredients', {error: err, body: req.body});
+        return next(err);
+      }
+      /* ingredient is previous value of document */
+      logger.info('END PUT api/ingredients/' + req.param.id);
+      res.json(ingredient);
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in PUT api/ingredients/:id', {error: error});
+    next(error);
+  }
 });
 
 /* DELETE /ingredients/:id */
 router.delete('/:id', function(req, res, next) {
   logger.info('START DELETE api/ingredients/' + req.params.id);
-  Ingredient.model.findByIdAndRemove(req.params.id, req.body.ingredient, function(err, ingredient) {
-    if (err) {
-      logger.error('ERROR DELETE api/ingredients/' + req.params.id, {error: err, body: req.body});
-      return next(err);
-    }
-    /* ingredient is the value of just-deleted document */
-    logger.info('END DELETE api/ingredients/' + req.params.id);
-    res.json(ingredient);
-  });
+  try {
+    Ingredient.model.findByIdAndRemove(req.params.id, req.body.ingredient, function(err, ingredient) {
+      if (err) {
+        logger.error('ERROR DELETE api/ingredients/' + req.params.id, {error: err, body: req.body});
+        return next(err);
+      }
+      /* ingredient is the value of just-deleted document */
+      logger.info('END DELETE api/ingredients/' + req.params.id);
+      res.json(ingredient);
+    });
+  } catch(error) {
+    logger.error('ERROR - exception in DELETE api/ingredients/:id', {error: error});
+    next(error);
+  }
 });
 
 module.exports = router;
