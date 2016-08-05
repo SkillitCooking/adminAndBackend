@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var db = require('../database');
 
-var logger = require('../../util/logger').serverLogger;
+var logger = require('../util/logger').serverLogger;
 
 var DailyTip = db.dailyTips;
 var Recipe = db.recipes;
