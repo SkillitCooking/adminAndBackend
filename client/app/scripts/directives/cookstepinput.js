@@ -17,6 +17,7 @@ angular.module('SkillitAdminApp')
         scope.integerval = /^\d*$/;
         scope.tipAdded = false;
         scope.showExampleText = false;
+        scope.auxStepAdded = false;
         scope.cookTypes = ["Cook"];
 
         scope.constructingStep.stepSpecifics = [{
@@ -36,6 +37,32 @@ angular.module('SkillitAdminApp')
         scope.removeTip = function () {
           scope.tipAdded = !scope.tipAdded;
           scope.constructingStep.stepTip = undefined;
+        };
+
+        scope.addAuxStep = function() {
+          scope.auxStepAdded = !scope.auxStepAdded;
+          scope.constructingStep.auxiliarySteps = [{
+            stepSpecifics: [{
+              propName: "whenToStir",
+              val: ""
+            }, {
+              propName: "stirType",
+              val: ""
+            }]
+          }];
+        };
+
+        scope.removeAuxStep = function() {
+          scope.auxStepAdded = !scope.auxStepAdded;
+          scope.constructingStep.auxiliarySteps = [{
+            stepSpecifics: [{
+              propName: "whenToStir",
+              val: ""
+            }, {
+              propName: "stirType",
+              val: ""
+            }]
+          }];
         };
       }
     };

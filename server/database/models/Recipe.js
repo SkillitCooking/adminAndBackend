@@ -45,6 +45,8 @@ var RecipeSchema = new mongoose.Schema({
   otherCookingMethods: [String],
   canAddSeasoningProfile: Boolean,
   defaultSeasoningProfile: SeasoningProfile.schema,
+  choiceSeasoningProfiles: [SeasonProfile.schema],
+  defaultServingSize: String,
   primaryIngredientType: String,
   mainPictureURL: String,
   mainVideoURL: String,

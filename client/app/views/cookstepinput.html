@@ -15,7 +15,16 @@
     input-name="dishInput"
     is-multiple="false"
     ingredient-list="ingredientList"
-    step-list="stepList"></step-input-form><br/>
+    step-list="stepList"></step-input-form>
+    <div ng-if="auxStepAdded">
+      <b>Auxiliary Stir Step:</b><br/>
+      <stir-step-input is-aux-step="true"\
+        constructing-step="constructingStep"
+        ingredient-list="ingredientList"
+        step-list="stepList"
+        aux-step-arr-index=""></stir-step-input>
+      <button class="btn btn-danger btn-xs" ng-click="removeAuxStep()">Remove Auxiliary Step</button>
+    </div><br/><br/>
   Product Name: <input type="text" ng-model="constructingStep.productName" size="50" required name="productNameInput" /><br/>
   <button ng-show="!tipAdded" class="btn btn-sm btn-primary" ng-click="addTip()">Add Tip</button><br/>
   <div ng-if="tipAdded">
