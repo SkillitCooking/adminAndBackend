@@ -4,6 +4,11 @@
     Name: <input type="text" ng-model="ingredient.name" size="50" required name="nameInput"/><br /><br />
     Input Category: <select name="inputCategorySelect" ng-model="ingredient.inputCategory" ng-options=
     "category for category in inputCategories" required></select><br/><br/>
+    Standard Name: <input type="text" ng-model="ingredient.standardForm" size="50" required  name="standardFormInput" /><br/>
+    Plural Name: <input type="text" ng-model="ingredient.pluralForm" size="50" required  name="pluralFormInput" /><br/>
+    Singular Name: <input type="text" ng-model="ingredient.singularForm" size="50" required name="singularFormInput" /><br/><br/>
+    Measuring Units: <input type="text" ng-model="ingredient.units" size="50" required name="unitsInput"><br/><br/>
+    Servings Per Unit: <input type="text" ng-model="ingredient.servingsPerUnit" size="50" required name="servingsPerUnitInput"/><br/><br/>
     Ingredient Forms: <br />
     <div ng-repeat="inForm in inForms" class="bg-warning" ng-form="formForm">
       <ul>

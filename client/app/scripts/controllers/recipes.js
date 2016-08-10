@@ -246,6 +246,7 @@ angular.module('SkillitAdminApp')
         recipe:{
           name: $scope.recipe.name,
           description: $scope.recipe.description,
+          defaultServingSize: $scope.recipe.defaultServingSize,
           recipeType: $scope.recipe.recipeType,
           collectionIds: $scope.recipe.collectionIds,
           recipeCategory: $scope.recipe.recipeCategory,
