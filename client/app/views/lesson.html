@@ -1,0 +1,21 @@
+<div>
+  <h2>Input Lesson</h2>
+  <form novalidate name="lessonForm">
+    Name: <input type="text" ng-model="lesson.name" size="50" required name="nameInput" /><br/><br/>
+    Time Estimate (minutes): <input type="text" ng-model="lesson.timeEstimate" size="50" required name="timeEstimateInput" /><br/><br/>
+    Description: <textarea ng-model="lesson.description" rows="4" cols="50" required name="descriptionInput"></textarea><br/><br/>
+    Is Article? <input type="checkbox" ng-model="lesson.isArticle" /><br/><br/>
+    Article: <select ng-disabled="!lesson.isArticle" name="articleSelect" ng-model="lesson.articleId" ng-options="article._id as article.title for article in lesson.articles"></select><br/><br/>
+    Item Type: <select ng-disabled="lesson.isArticle" name="itemTypeSelect" ng-model="itemType" ng-options="itemType for itemType in itemTypes"></select><br/><br/>
+    Item: <select ng-disabled="lesson.isArticle" name="itemSelect" ng-model="selectedItem" ng-options="item._id as item.title for item in getSelectedTypeItems()"></select><br/><br/>
+    <button class="btn btn-warning btn-sm" ng-click="addItem()">Add Item</button><br/><br/>
+    Added Items: <div ng-repeat="id in lesson.itemIds">
+      <p>{{id.itemType}}: {{id.id}}</p>
+      <button class="btn btn-xs btn-danger" ng-click="removeItemId($index)">Remove</button>
+    </div>
+    <button class="btn btn-primary btn-lg" ng-click="save()">Save</button>
+    <button class="btn btn-danger btn-lg" ng-click="reset()">Reset</button>
+  </form>
+  <h4>Preview</h4>
+  <pre>{{lesson | json}}</pre>
+</div>

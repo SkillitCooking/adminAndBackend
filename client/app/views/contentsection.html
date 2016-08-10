@@ -1,0 +1,51 @@
+<div ng-form="contentSectionForm" class="bg-success">
+  Subtitle: <input type="text" ng-model="contentSection.subTitle" name="subTitleInput" required /><br/><br/>
+  Content Type: <select name="contentTypeSelect" ng-model="contentType" ng-options="type for type in contentTypes"></select>
+  <div ng-switch on="contentType">
+    <div ng-switch-when="text">
+      <!--Needs to be multiple input available here; need to be able to remove/edit individual text chunks-->
+      <textchunk></textchunk><br/>
+      <button class="btn btn-default" ng-click="addTextChunk()">Add Text Chunk</button>
+      <p>Text Chunks:</p>
+      <div ng-repeat="chunk in textChunks">
+        <div ng-if="!textChunksIndicator[$index]">
+          <p>{{textChunks[$index].text}}</p>
+          <button class="btn btn-xs btn-info" ng-click="toggleTextChunk($index)">Maximize</button>
+          <button class="btn btn-xs btn-danger" ng-click="removeTextChunk($index)"> Remove </button>
+        </div>
+        <div ng-if="textChunksIndicator[$index]">
+          <p>Text: {{textChunks[$index].text}}</p>
+          <p>ItemType: {{textChunks[$index].itemType}}</p>
+          <p>Item Title: {{textChunks[$index].linkedItem}} ID: {{textChunks[$index].linkedItem._id}}</p>
+          <button class="btn btn-xs btn-info" ng-click="toggleTextChunk($index)">Minimize</button>
+          <button class="btn btn-xs btn-danger" ng-click="removeTextChunk($index)"> Remove </button>
+        </div>
+      </div>
+    </div>
+    <div ng-switch-when="picture">
+      URL: <input type="url" ng-model="pictureURL" size="60" name="pictureURLInput" placeholder="URL" />
+      Caption: <input type="text" ng-model="pictureCaption" size="100" name="pictureCaptionURLInput" placeholder="Caption" /><br/><br/>
+    </div>
+    <div ng-switch-when="video">
+      URL: <input type="url" ng-model="videoURL" size="60" name="videoURLInput" placeholder="URL" />
+      Caption: <input type="text" ng-model="videoCaption" size="100" name="videoCaptionURLInput" placeholder="Caption" />
+    </div>
+    <div ng-switch-default></div>
+  </div>
+  <button class="btn btn-primary" ng-click="addContent()">Add Content Piece</button>
+  <div>
+    <p>Content Pieces</p>
+    <div ng-repeat="piece in contentArray">
+      <div ng-if="contentIndicatorArray[$index]">
+        <contentitem item="piece"></contentitem>
+        <button class="btn btn-xs btn-info" ng-click="toggleContentPiece($index)">Maximize</button>
+        <button class="btn btn-xs btn-danger" ng-click="removeContent($index)">Remove</button>
+      </div>
+      <div ng-if="!contentIndicatorArray[$index]">
+        <p>Content Type: {{piece.type}}</p>
+        <button class="btn btn-xs btn-info" ng-click="toggleContentPiece($index)">Minimize</button>
+        <button class="btn btn-xs btn-danger" ng-click="removeContent($index)">Remove</button>
+      </div>
+    </div>
+  </div>
+</div>

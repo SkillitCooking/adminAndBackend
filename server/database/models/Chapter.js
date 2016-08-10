@@ -6,7 +6,7 @@ var ChapterSchema = new mongoose.Schema({
   name: String,
   description: String,
   timeEstimate: String,
-  LessonIds: [ObjectId]
+  lessonIds: [ObjectId]
 });
 
 module.exports.model = mongoose.model('Chapter', ChapterSchema);

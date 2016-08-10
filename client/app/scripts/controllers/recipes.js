@@ -11,6 +11,9 @@ angular.module('SkillitAdminApp')
   .controller('RecipeCtrl', ['$scope', 'recipeService', 'seasoningService', 'ingredientService', 'dishService', 'itemCollectionService', '_', function ($scope, recipeService, seasoningService, ingredientService, dishService, itemCollectionService, _) {
     $scope.integerval = /^\d*$/;
 
+    $scope.recipe = {};
+    $scope.recipe.canAddSeasoningProfile = true;
+
     itemCollectionService.getItemCollectionsForType('recipe').then(function(collections) {
       $scope.recipeCollections = collections.data;
     }, function(response) {
@@ -64,6 +67,7 @@ angular.module('SkillitAdminApp')
         length = 0;
       }
       $scope.selectedIngredientForms = new Array(length);
+      $scope.selectedIngredientForms.fill(true);
     };
 
     $scope.addCookingMethod = function() {
@@ -144,6 +148,19 @@ angular.module('SkillitAdminApp')
         ingredients: [],
         minNeeded: ""
       });
+    };
+
+    $scope.addSeasoning = function() {
+      if(!$scope.recipe.choiceSeasoningProfiles) {
+        $scope.recipe.choiceSeasoningProfiles = [];
+      }
+      if($scope.recipe.choiceSeasoningProfiles.indexOf($scope.availableSeasoning) === -1){
+        $scope.recipe.choiceSeasoningProfiles.push($scope.availableSeasoning);
+      }
+    };
+
+    $scope.removeSeasoning = function(index) {
+      $scope.choiceSeasoningProfiles.splice(index, 1);
     };
 
     $scope.addDish = function() {
@@ -238,6 +255,7 @@ angular.module('SkillitAdminApp')
           otherCookingMethods: $scope.recipe.otherCookingMethods,
           canAddSeasoningProfile: $scope.recipe.canAddSeasoningProfile,
           defaultSeasoningProfile: $scope.recipe.defaultSeasoningProfile,
+          choiceSeasoningProfiles: $scope.recipe.choiceSeasoningProfiles,
           primaryIngredientType: $scope.recipe.primaryIngredientType,
           mainPictureURL: $scope.recipe.mainPictureURL,
           mainVideoURL: $scope.recipe.mainVideoURL,

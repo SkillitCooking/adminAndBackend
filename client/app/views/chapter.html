@@ -1,0 +1,17 @@
+<div>
+  <h2>Input Chapter</h2>
+  <form novalidate name="chapterForm">
+    Name: <input type="text" ng-model="chapter.name" size="50" required name="nameInput"><br/><br/>
+    Description: <textarea ng-model="chapter.description" rows="4" cols="50" required name="descriptionInput"></textarea><br/><br/>
+    Select Lesson: <select name="lessonSelect" ng-model="selectedLesson" ng-options="lesson.name for lesson in lessons"></select><br/><br/>
+    <button class="btn btn-sm btn-warning" ng-click="addLesson()">Add Lesson</button><br/><br/>
+    Added Lesson Ids: <div ng-repeat="id in chapter.lessonIds">
+      <p>{{id}}</p>
+      <button class="btn btn-xs btn-danger" ng-click="removeLesson($index)">Remove</button>
+    </div>
+    <button class="btn btn-primary btn-lg" ng-click="save()">Save</button>
+    <button class="btn btn-danger btn-lg" ng-click="reset()">Reset</button>
+  </form>
+  <h4>Preview</h4>
+  <pre>{{chapter | json}}</pre>
+</div>

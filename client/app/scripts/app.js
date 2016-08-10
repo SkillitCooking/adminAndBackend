@@ -77,6 +77,21 @@ angular
         controller: 'DailytipsCtrl',
         controllerAs: 'dailyTips'
       })
+      .when('/article', {
+        templateUrl: 'views/article.html',
+        controller: 'ArticleCtrl',
+        controllerAs: 'article'
+      })
+      .when('/lesson', {
+        templateUrl: 'views/lesson.html',
+        controller: 'LessonCtrl',
+        controllerAs: 'lesson'
+      })
+      .when('/chapter', {
+        templateUrl: 'views/chapter.html',
+        controller: 'ChapterCtrl',
+        controllerAs: 'chapter'
+      })
       .otherwise({
         redirectTo: '/'
       });

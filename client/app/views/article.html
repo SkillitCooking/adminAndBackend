@@ -1,0 +1,17 @@
+<div>
+  <h2>Input Article</h2>
+  <form novalidate name="articleForm" >
+    Title: <input type="text" ng-model="article.title" size="50" required name="titleInput" /><br/><br/>
+    <div ng-form="contentForm">
+      <contentsection></contentsection>
+    </div>
+    <button class="btn btn-primary" ng-click="addContentSection()" ng-disabled="contentForm.$invalid">Add Content Section</button>
+    <div ng-repeat="section in article.contentSections">
+      <content-section-item section="section"></content-section-item>
+      <button class="btn btn-danger btn-sm" ng-click="removeContentSection($index)">Remove</button>
+    </div>
+    <button class="btn btn-success btn-large" ng-click="save()" ng-disabled="articleForm.$invalid">Save</button>
+    <button class="btn btn-warning btn-large" ng-click="reset()">Reset</button>
+  </form>
+  <button class="btn btn-info btn-large" ng-click="preview()">Preview Article</button>
+</div>

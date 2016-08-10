@@ -14,6 +14,9 @@ var glossaryEntries = require('./models/GlossaryEntry.js');
 var howToShopEntries = require('./models/HowToShopEntry.js');
 var itemCollections = require('./models/ItemCollection.js');
 var trainingVideos = require('./models/TrainingVideo.js');
+var articles = require('./models/Article.js');
+var lessons = require('./models/Lesson.js');
+var chapters = require('./models/Chapter.js');
 
 // connections
 // may need to change the devDB to a compose devDB...
@@ -60,3 +63,6 @@ exports.glossaryEntries = glossaryEntries;
 exports.howToShopEntries = howToShopEntries;
 exports.itemCollections = itemCollections;
 exports.trainingVideos = trainingVideos;
+exports.articles = articles;
+exports.lessons = lessons;
+exports.chapters = chapters;

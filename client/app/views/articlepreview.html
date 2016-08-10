@@ -1,0 +1,23 @@
+<div>
+  <h2>{{article.title}}</h2>
+  <div ng-repeat="section in article.contentSections">
+    {{section.subTitle}}
+    <div ng-repeat="piece in section.contentArray">
+      <div ng-switch on="piece.type">
+        <div ng-switch-when="'text'">
+          {{getText(piece)}}<br/>
+          {{getFootnotes(piece)}}
+        </div>
+        <div ng-switch-when="'picture'">
+          <img ng-src="picture.url"><br/>
+          <span>{{picture.caption}}</span>
+        </div>
+        <div ng-switch-when="'video'">
+          <iframe width="300" height="169" ng-src="{{video.url}}" frameborder="0" allowfullscreen></iframe>
+          <span>{{video.caption}}</span>
+        </div>
+        <div ng-switch-default></div>
+      </div>
+    </div>
+  </div>
+</div>  

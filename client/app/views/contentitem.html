@@ -1,0 +1,20 @@
+<div ng-switch on="item.type">
+  <div ng-switch-when="text">
+    <p>{{getText()}}</p>
+    <p>--------</p>
+    <div ng-repeat="footnote in getFootnotes()">
+      <p>{{$index}}: {{footnote.title}}</p>
+      <p>Type: {{footnote.itemType}}</p>
+      <p>Id: {{footnote.id}}</p>
+    </div>
+  </div>
+  <div ng-switch-when="picture">
+    URL: <span>{{item.url}}</span>
+    Caption: <span>{{item.caption}}</span>
+  </div>
+  <div ng-switch-when="video">
+    URL: <span>{{item.url}}</span>
+    Caption: <span>{{item.caption}}</span>
+  </div>
+  <div ng-switch-default></div>
+</div>
