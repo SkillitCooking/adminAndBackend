@@ -11,8 +11,9 @@ angular.module('SkillitAdminApp')
   .controller('RecipeCtrl', ['$scope', 'recipeService', 'seasoningService', 'ingredientService', 'dishService', 'itemCollectionService', '_', function ($scope, recipeService, seasoningService, ingredientService, dishService, itemCollectionService, _) {
     $scope.integerval = /^\d*$/;
 
-    $scope.recipe = {};
-    $scope.recipe.canAddSeasoningProfile = true;
+    $scope.recipe = {
+      canAddSeasoningProfile: true
+    };
 
     itemCollectionService.getItemCollectionsForType('recipe').then(function(collections) {
       $scope.recipeCollections = collections.data;
@@ -27,6 +28,10 @@ angular.module('SkillitAdminApp')
       console.log("Server Error: ", response.message);
       alert("Server Error: " + response.message);
     });
+
+    $scope.logShitttt = function() {
+      console.log("recipe: ", $scope.recipe);
+    };
 
     ingredientService.getAllIngredients().then(function(ingredients) {
       $scope.ingredients = ingredients;
@@ -160,7 +165,7 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.removeSeasoning = function(index) {
-      $scope.choiceSeasoningProfiles.splice(index, 1);
+      $scope.recipe.choiceSeasoningProfiles.splice(index, 1);
     };
 
     $scope.addDish = function() {

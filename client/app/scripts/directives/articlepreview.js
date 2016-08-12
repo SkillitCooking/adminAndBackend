@@ -14,7 +14,16 @@ angular.module('SkillitAdminApp')
       transclude: false,
       restrict: 'E',
       link: function (scope, element, attrs) {
+        scope.logArticle = function() {
+          console.log('article: ', scope.article);
+        };
+
+        scope.logSection = function(section) {
+          console.log('section: ', section);
+        };
+
         scope.getText = function(item) {
+          console.log("item: ", item);
           var count = 0;
           var textOutput = "";
           for (var i = item.textChunks.length - 1; i >= 0; i--) {
@@ -31,15 +40,19 @@ angular.module('SkillitAdminApp')
         };
 
         scope.getFootnotes = function(item) {
-          var footnotes = [];
-          for (var i = item.textChunks.length - 1; i >= 0; i--) {
-            footnotes.push({
-              title: item.textChunks[i].linkedItem.title,
-              type: item.textChunks[i].linkedItem.itemType,
-              id: item.textChunks[i].linkedItem._id
-            });
+          if(!scope.footnotes) {
+            scope.footnotes = [];
           }
-          return footnotes;
+          for (var i = item.textChunks.length - 1; i >= 0; i--) {
+            if(item.textChunks[i].linkedItem) {
+              scope.footnotes.push({
+                title: item.textChunks[i].linkedItem.title,
+                type: item.textChunks[i].linkedItem.itemType,
+                id: item.textChunks[i].linkedItem._id
+              });
+            }
+          }
+          return scope.footnotes;
         };
       }
     };

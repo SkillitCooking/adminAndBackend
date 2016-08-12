@@ -1,5 +1,5 @@
 <div ng-form="textChunkForm" class="bg-info">
-  Text: <textarea ng-model="textChunk.text" rows="4" cols="50" required name="textChunkText"></textarea>
+  Text: <textarea ng-model="textChunk.text" rows="4" cols="50" required name="textChunkText"></textarea><br/>
   Link (Optional): <br/>
   ItemType: <select name="itemTypeSelect" ng-model="textChunk.itemType" ng-options="itemType for itemType in itemTypes"></select> <br/>
   Item: <select name="itemSelect" ng-model="textChunk.linkedItem" ng-options="getTitle(item) for item in getItemsForType()"></select>

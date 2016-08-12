@@ -1,6 +1,6 @@
 <div>
   <h2>Recipe Input</h2>
-  <form novalidate name="recipeForm">
+  <form novalidate name="recipeForm" ng-controller="RecipeCtrl">
     
     Name: <input type="text" ng-model="recipe.name" size="50" required name="nameInput"/> 
     <span ng-show="recipeForm.nameInput.$invalid">give the recipe a name</span><br /> <br />
@@ -20,7 +20,7 @@
     <span ng-show="recipeForm.typeSelect.$invalid">select a recipe type</span><br/><br/>
     RecipeCategory: <select name="categorySelect" ng-model="recipe.recipeCategory" ng-options="recipeCategory for recipeCategory in recipeCategories" required></select>
     <span ng-show="recipeForm.categorySelect.$invalid">select a recipe category</span><br/><br/>
-    Default Serving Size: <select name="servingSizeSelect" ng-model="recipe.defaultServingSize" ng-options="size for size in servingSizes" required></select>
+    Default Serving Size: <select name="servingSizeSelect" ng-model="recipe.defaultServingSize" ng-options="size for size in servingSizes" required></select><br/>
     Primary Cooking Method: <select name="primaryCookingSelect" ng-model="recipe.primaryCookingMethod" ng-options="method for method in cookingMethods" required></select><br/>
     <span ng-show="recipeForm.primaryCookingSelect.$invalid">select a cooking method</span>
     Other Cooking Methods: <select name="otherCookingSelect" ng-options="method for method in cookingMethods" ng-model="otherCookingMethod"></select>
@@ -28,7 +28,7 @@
     <div ng-repeat="method in recipe.otherCookingMethods">
       {{method}}  <button class="btn btn-danger btn-xs" ng-click="removeCookingMethod($index)"> - </button>
     </div><br/><br/>
-    Can Add Seasoning: <input type="checkbox" ng-model="recipe.canAddSeasoningProfile"><br/><br/>
+    Can Add Seasoning: <input type="checkbox" ng-model="recipe.canAddSeasoningProfile" ng-init="logShitttt()" ng-click="logShitttt()"><br/><br/>
     Default Seasoning: <select name="seasoningSelect" ng-model="recipe.defaultSeasoningProfile" ng-options="profile.name for profile in seasoningProfiles" ng-disabled="!recipe.canAddSeasoningProfile"></select><br/><br/>
     Available Seasonings: <select name="availableSeasoningSelect" ng-model="availableSeasoning" ng-disabled="!recipe.canAddSeasoningProfile" ng-options="profile.name for profile in seasoningProfiles"></select>
     <button class="btn btn-primary btn-xs" ng-click="addSeasoning()">Add Seasoning</button>
@@ -119,7 +119,7 @@
       <button class="btn btn-large btn-default" ng-click="reset()">Reset Recipe Form</button>
       <button class="btn btn-large btn-info" ng-click="preview()">Preview Recipe</button>
       <button class="btn btn-large btn-success" ng-click="save()" ng-disabled="recipeForm.$invalid || !recipeSanityCheck()">Save Recipe</button>
+      <h3>Current Recipe Being Built</h3>
+      <pre>{{recipe | json}}</pre>
   </form>
-  <h3>Current Recipe Being Built</h3>
-  <pre>{{recipe | json}}</pre>
 </div>

@@ -13,8 +13,8 @@ var dateJobs = require('./jobs/setDates');
 
 var app = express();
 
-var limiterClient = require('redis').createClient();
-var limiter = require('express-limiter')(app, limiterClient);
+//var limiterClient = require('redis').createClient();
+//var limiter = require('express-limiter')(app, limiterClient);
 
 app.use(helmet());
 app.use(logger('dev'));
@@ -31,7 +31,7 @@ var router = require('./router')(app);
  * Global Rate Limiter settings
  */
 //limit to 10 requests per second per IP
-limiter({
+/*limiter({
   path: '*',
   method: 'all',
   lookup: 'connection.remoteAddress',
@@ -40,7 +40,7 @@ limiter({
   onRateLimited: function(req, res, next) {
     next({ message: 'Rate limit exceeded', status: 429});
   }
-});
+});*/
 
 
 /**

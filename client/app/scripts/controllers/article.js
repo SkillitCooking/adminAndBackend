@@ -13,34 +13,37 @@ angular.module('SkillitAdminApp')
     //need to get all various items from their respective services here...
     //make sure names are correct
     dailyTipsService.getAllDailyTips().then(function(data) {
-      $scope.tips = data.tips;
+      $scope.tips = data.data;
     }, function(response) {
       alert("Server Error - check console logs for details");
       console.log("error response: ", response);
     });
     glossaryService.getAllGlossaryEntries().then(function(data) {
-      $scope.glossaryEntries = data.entries;
+      $scope.glossaryEntries = data.data;
     }, function(response) {
       alert("Server Error - check console logs for details");
       console.log("error response: ", response);
     });
     trainingVideosService.getAllTrainingVideos().then(function(data) {
-      $scope.trainingVideos = data.videos;
+      $scope.trainingVideos = data.data;
     }, function(response) {
       alert("Server Error - check console logs for details");
       console.log("error response: ", response);
     });
     howToShopService.getAllHowToShopEntries().then(function(data) {
-      $scope.howToShopEntries = data.entries;
+      $scope.howToShopEntries = data.data;
     }, function(response) {
       alert("Server Error - check console logs for details");
       console.log("error response: ", response);
     });
+
+    $scope.contentSection = {};
     
     $scope.addContentSection = function() {
       if(!$scope.article.contentSections){
         $scope.article.contentSections = [];
       }
+      console.log("contentSection", angular.copy($scope.contentSection));
       $scope.article.contentSections.push($scope.contentSection);
       $scope.contentSection = angular.copy({});
     };
@@ -71,9 +74,8 @@ angular.module('SkillitAdminApp')
       $scope.articleForm.$setUntouched();
     };
 
-    $scope.preview = function() {
-      //go to new view
-      
+    $scope.togglePreview = function() {
+      $scope.showArticlePreview = !$scope.showArticlePreview;
     };
 
   }]);

@@ -1,7 +1,7 @@
 var winston = require('winston');
 var localStorage = require('./localStorage').localStorage;
 
-function getFileName() {
+/*function getFileName() {
   var fileName;
   localStorage.get('currentDateString', function(err, reply) {
     if(err) {
@@ -42,7 +42,16 @@ var serverLogger = new (winston.Logger)({
       level: 'error'
     })
   ]
-});
+});*/
 
+var serverLogger = {
+  info: function() {},
+  error: function() {}
+};
+
+var clientLogger = {
+  info: function() {},
+  error: function() {}
+};
 module.exports.serverLogger = serverLogger;
 module.exports.clientLogger = clientLogger;

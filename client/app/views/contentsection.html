@@ -23,11 +23,11 @@
       </div>
     </div>
     <div ng-switch-when="picture">
-      URL: <input type="url" ng-model="pictureURL" size="60" name="pictureURLInput" placeholder="URL" />
+      URL: <input type="url" ng-model="pictureURL" size="60" name="pictureURLInput" placeholder="URL" /><br/>
       Caption: <input type="text" ng-model="pictureCaption" size="100" name="pictureCaptionURLInput" placeholder="Caption" /><br/><br/>
     </div>
     <div ng-switch-when="video">
-      URL: <input type="url" ng-model="videoURL" size="60" name="videoURLInput" placeholder="URL" />
+      URL: <input type="url" ng-model="videoURL" size="60" name="videoURLInput" placeholder="URL" /><br/>
       Caption: <input type="text" ng-model="videoCaption" size="100" name="videoCaptionURLInput" placeholder="Caption" />
     </div>
     <div ng-switch-default></div>
@@ -35,15 +35,15 @@
   <button class="btn btn-primary" ng-click="addContent()">Add Content Piece</button>
   <div>
     <p>Content Pieces</p>
-    <div ng-repeat="piece in contentArray">
-      <div ng-if="contentIndicatorArray[$index]">
+    <div ng-repeat="piece in contentSection.contentArray">
+      <div ng-show="contentIndicatorArray[$index]">
         <contentitem item="piece"></contentitem>
-        <button class="btn btn-xs btn-info" ng-click="toggleContentPiece($index)">Maximize</button>
+        <button class="btn btn-xs btn-info" ng-click="toggleContentPiece($index)">Minimize</button>
         <button class="btn btn-xs btn-danger" ng-click="removeContent($index)">Remove</button>
       </div>
-      <div ng-if="!contentIndicatorArray[$index]">
+      <div ng-show="!contentIndicatorArray[$index]">
         <p>Content Type: {{piece.type}}</p>
-        <button class="btn btn-xs btn-info" ng-click="toggleContentPiece($index)">Minimize</button>
+        <button class="btn btn-xs btn-info" ng-click="toggleContentPiece($index)">Maximize</button>
         <button class="btn btn-xs btn-danger" ng-click="removeContent($index)">Remove</button>
       </div>
     </div>

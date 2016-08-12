@@ -33,7 +33,7 @@ function reconfigureLoggers(dailyLogFileName) {
 function setFormattedDate() {
   var formattedDate = moment().format('M+D+YYYY');
   localStorage.set('currentDateString', formattedDate);
-  reconfigureLoggers(formattedDate + '.log');
+  //reconfigureLoggers(formattedDate + '.log');
 }
 
 //run every 24 hours at midnight

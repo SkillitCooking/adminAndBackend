@@ -13,5 +13,7 @@
     <button class="btn btn-success btn-large" ng-click="save()" ng-disabled="articleForm.$invalid">Save</button>
     <button class="btn btn-warning btn-large" ng-click="reset()">Reset</button>
   </form>
-  <button class="btn btn-info btn-large" ng-click="preview()">Preview Article</button>
+  <button class="btn btn-info btn-large" ng-show="!showArticlePreview" ng-click="togglePreview()">Preview Article</button>
+  <button class="btn btn-info btn-large" ng-show="showArticlePreview" ng-click="togglePreview()">Minimize Preview</button>
+  <articlepreview ng-if="showArticlePreview"></articlepreview>
 </div>

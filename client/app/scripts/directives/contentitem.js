@@ -20,9 +20,9 @@ angular.module('SkillitAdminApp')
         scope.getText = function() {
           var count = 0;
           var textOutput = "";
-          for (var i = item.textChunks.length - 1; i >= 0; i--) {
-            textOutput += item.textChunks[i].text;
-            if(item.textChunks[i].linkedItem) {
+          for (var i = scope.item.textChunks.length - 1; i >= 0; i--) {
+            textOutput += scope.item.textChunks[i].text;
+            if(scope.item.textChunks[i].linkedItem) {
                 textOutput += '[' + count + ']';
             }
             if(i !== 0) {
@@ -34,15 +34,19 @@ angular.module('SkillitAdminApp')
         };
 
         scope.getFootnotes = function() {
-          var footnotes = [];
-          for (var i = item.textChunks.length - 1; i >= 0; i--) {
-            footnotes.push({
-              title: item.textChunks[i].linkedItem.title,
-              type: item.textChunks[i].linkedItem.itemType,
-              id: item.textChunks[i].linkedItem._id
-            });
+          if(!scope.footnotes) {
+            scope.footnotes = [];
+            for (var i = scope.item.textChunks.length - 1; i >= 0; i--) {
+              if(scope.item.textChunks[i].linkedItem) {
+                scope.footnotes.push({
+                  title: scope.item.textChunks[i].linkedItem.title,
+                  type: scope.item.textChunks[i].linkedItem.itemType,
+                  id: scope.item.textChunks[i].linkedItem._id
+                });
+              }
+            }
           }
-          return footnotes;
+          return scope.footnotes;
         };
       }
     };
