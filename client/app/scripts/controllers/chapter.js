@@ -17,13 +17,14 @@ angular.module('SkillitAdminApp')
       console.log("error response: ", response);
     });
 
-    $scope.chapter = {
-      lessonIds: []
-    };
+    $scope.chapter = {};
 
     $scope.timeEstimates = [];
 
     $scope.addLesson = function() {
+      if(!$scope.chapter.lessonIds) {
+        $scope.chapter.lessonIds = [];
+      }
       $scope.timeEstimates.push($scope.selectedLesson.timeEstimate);
       $scope.chapter.lessonIds.push($scope.selectedLesson._id);
     };
@@ -43,7 +44,7 @@ angular.module('SkillitAdminApp')
         lessonIds: $scope.chapter.lessonIds,
         timeEstimate: totalTimeEstimate
       }).then(function(data) {
-        var chapter = data.chapter;
+        var chapter = data.data;
         var alertMsg = "Success! Chapter " + chapter.name + " was saved!";
         alert(alertMsg);
       }, function(response) {

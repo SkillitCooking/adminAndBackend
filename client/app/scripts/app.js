@@ -32,6 +32,11 @@ angular
         controller: 'RecipeCtrl',
         controllerAs: 'recipe'
       })
+      .when('/editRecipes', {
+        templateUrl: 'views/editrecipes.html',
+        controller: 'EditRecipesCtrl',
+        controllerAs: 'editRecipes'
+      })
       .when('/ingredients', {
         templateUrl: 'views/ingredients.html',
         controller: 'IngredientCtrl',

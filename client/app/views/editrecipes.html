@@ -1,0 +1,115 @@
+<div>
+  <h2>Edit Recipe</h2>
+  <a class="btn btn-link active" ng-href="#/recipes">Create</a>
+  <a class="btn btn-link" ng-href="#/editRecipes">Edit</a><br/>
+  <!--copy selectedRecipe over to recipe - that way original model doesn't change-->
+  Select Recipe: <select name="recipeSelect" ng-model="selectedRecipe" ng-change="changeSelectedRecipe()" ng-options="recipe.name for recipe in recipes"></select><br/><br/>
+  <form novalidate name="editRecipeForm" ng-controller="EditRecipesCtrl">
+    Name: <input type="text" ng-model="recipe.name" size="50" required name="nameInput"/> 
+    <span ng-show="recipeForm.nameInput.$invalid">give the recipe a name</span><br /> <br />
+    Description: <textarea ng-model="recipe.description" rows="4" cols="50" required name="descInput"></textarea>
+    <span ng-show="recipeForm.descInput.$invalid">give the recipe a description</span><br/>
+    Collections: <select name="itemCollectionSelect" ng-model="curCollectionId" ng-options="collection._id as collection.name for collection in recipeCollections"></select><br/>
+    <ul>
+      <div ng-repeat="collectionID in recipe.collectionIds">
+        <li>{{collectionID}}</li>
+        <button ng-click="removeCollection($index)">Remove</button>
+      </div>
+    </ul>
+    <button ng-click="addCollection()">Add Collection</button><br/><br/>
+    Main Picture URL: <input type="url" ng-model="recipe.mainPictureURL" size="70" name="mainPicInput" required/><br/>
+    Main Video URL: <input type="url" ng-model="recipe.mainVideoURL" size="70" name="mainVidInput"/><br/><br/>
+    RecipeType: <select name="typeSelect" ng-model="recipe.recipeType" ng-options="recipeType for recipeType in recipeTypes" required></select>
+    <span ng-show="recipeForm.typeSelect.$invalid">select a recipe type</span><br/><br/>
+    RecipeCategory: <select name="categorySelect" ng-model="recipe.recipeCategory" ng-options="recipeCategory for recipeCategory in recipeCategories" required></select>
+    <span ng-show="recipeForm.categorySelect.$invalid">select a recipe category</span><br/><br/>
+    Default Serving Size: <select name="servingSizeSelect" ng-model="recipe.defaultServingSize" ng-options="size for size in servingSizes" required></select><br/>
+    Primary Cooking Method: <select name="primaryCookingSelect" ng-model="recipe.primaryCookingMethod" ng-options="method for method in cookingMethods" required></select><br/>
+    <span ng-show="recipeForm.primaryCookingSelect.$invalid">select a cooking method</span>
+    Other Cooking Methods: <select name="otherCookingSelect" ng-options="method for method in cookingMethods" ng-model="otherCookingMethod"></select>
+    <button class="btn btn-info btn-xs" ng-click="addCookingMethod()">Add Secondary Cooking Method</button>
+    <div ng-repeat="method in recipe.otherCookingMethods">
+      {{method}}  <button class="btn btn-danger btn-xs" ng-click="removeCookingMethod($index)"> - </button>
+    </div><br/><br/>
+    Can Add Seasoning: <input type="checkbox" ng-model="recipe.canAddSeasoningProfile"><br/><br/>
+    Default Seasoning: <select name="seasoningSelect" ng-model="recipe.defaultSeasoningProfile" ng-options="profile as profile.name for profile in seasoningProfiles track by profile._id" ng-disabled="!recipe.canAddSeasoningProfile"></select><br/><br/>
+    Available Seasonings: <select name="availableSeasoningSelect" ng-model="availableSeasoning" ng-disabled="!recipe.canAddSeasoningProfile" ng-options="profile.name for profile in seasoningProfiles"></select>
+    <button class="btn btn-primary btn-xs" ng-click="addSeasoning()">Add Seasoning</button>
+    <div ng-repeat="profile in recipe.choiceSeasoningProfiles">
+      <pre>{{profile.name}}</pre><button class="btn btn-danger btn-xs" ng-click="removeSeasoning($index)"> - </button>
+    </div>
+    <h4>Ingredient List</h4>
+    <b>Ingredient Types</b><br/><br/>
+    <div ng-repeat="type in recipe.ingredientList.ingredientTypes" class="bg-warning">
+      <div ng-if="!isIngredientTypeMinimized($index)">
+        TypeName: <input type="text" ng-model="type.typeName" size="50" required name="typeNameInput"/>
+        <span ng-show="typeForm.typeName.$invalid">give a type name</span><br/><br/>
+        DisplayName: <input type="text" ng-model="type.displayName" size="50" required name="displayNameInput"/>
+        <span ng-show="typeForm.displayName.$invalid">give a display name</span><br/><br/>
+        Min Ingredients Needed: <input type="text" ng-model="type.minNeeded" size="30" required name="minNeeded" ng-pattern="integerval"/>
+        <span ng-show="typeForm.minNeeded.$invalid">give a number for minNeeded</span><br/><br/>
+        Ingredients: <select name="ingredientSelect" ng-model="typeIngredient" ng-options="ingredient.name for ingredient in ingredients" ng-init="setSelectedIngredientForms(typeIngredient)" ng-change="setSelectedIngredientForms(typeIngredient)"></select>
+        <span ng-show="type.ingredients.length === 0">there must be at least one ingredient in a type</span>
+        <div ng-repeat="form in typeIngredient.ingredientForms">
+          {{form.name}}: <input type="checkbox" ng-model="selectedIngredientForms[$index]"/>
+        </div>
+        <br/>
+        <button class="btn btn-primary btn-xs" ng-click="addTypeIngredient($index, typeIngredient)" ng-disabled="!isAFormSelected()">Add Ingredient</button><br/>
+        <div ng-repeat="ingredient in type.ingredients">
+          <div ng-if="isIngredientMinimized(type, $index)">
+            <p>{{ingredient.name}}</p>
+            <button class="btn btn-info btn-xs" ng-click="toggleIngredientExpand(type, $index)">Expand</button>
+            <button class="btn btn-danger btn-xs" ng-click="removeTypeIngredient(type, $index)">Remove</button>
+          </div>
+          <div ng-if="!isIngredientMinimized(type, $index)">
+            <pre>{{ingredient | json}}</pre>
+            <button class="btn btn-info btn-xs" ng-click="toggleIngredientExpand(type, $index)">Minimize</button>
+            <button class="btn btn-danger btn-xs" ng-click="removeTypeIngredient(type, $index)">Remove</button>
+          </div>
+        </div>
+        <button class="btn btn-info btn-sm" ng-click="toggleIngredientTypeExpand($index)">Minimize</button>
+        <button class="btn btn-danger btn-sm" ng-click="removeIngredientType($index)">Remove Ingredient Type</button><br/><br/>
+      </div>
+      <div ng-if="isIngredientTypeMinimized($index)">
+        <p>Type Name: {{type.typeName}} // MinNeeded: {{type.minNeeded}}</p>
+        <button class="btn btn-info btn-sm" ng-click="toggleIngredientTypeExpand($index)">Expand</button>
+        <button class="btn btn-danger btn-sm" ng-click="removeIngredientType($index)">Remove Ingredient Type</button><br/><br/>
+      </div>      
+    </div>
+    <button class="btn btn-primary btn-sm" ng-click="addIngredientType()">Add Ingredient Type</button><br/><br/>
+    <b>Equipment Needed</b><br/>
+    <select name="equipmentSelect" ng-model="typeDish" ng-options="dish.name for dish in dishes"></select>
+    <button class="btn btn-primary btn-xs" ng-click="addDish()">Add Dish</button>
+    <div ng-repeat="dish in recipe.ingredientList.equipmentNeeded">
+      <pre>{{dish.name}}</pre><button class="btn btn-danger btn-xs" ng-click="removeDish($index)"> - </button>
+    </div><br/>
+    Primary Ingredient Type: <select name="primaryIngredientTypeSelect" ng-model="recipe.primaryIngredientType" ng-options="type.typeName as type.typeName for type in recipe.ingredientList.ingredientTypes" required></select><br/><br/>
+    <h4>Step List</h4>
+    <div ng-form="stepForm">
+      <div ng-repeat="constructingStep in recipe.stepList">
+        <cut-step-input ng-if="constructingStep.stepType === 'Cut'"></cut-step-input>
+        <cook-step-input ng-if="constructingStep.stepType === 'Cook'"></cook-step-input>
+        <bake-step-input ng-if="constructingStep.stepType === 'Bake'"></bake-step-input>
+        <boil-step-input ng-if="constructingStep.stepType === 'Boil'"></boil-step-input>
+        <bring-to-boil-step-input ng-if="constructingStep.stepType === 'BringToBoil'"></bring-to-boil-step-input>
+        <custom-step-input ng-if="constructingStep.stepType === 'Custom'"></custom-step-input>
+        <dry-step-input ng-if="constructingStep.stepType === 'Dry'"></dry-step-input>
+        <heat-step-input ng-if="constructingStep.stepType === 'Heat'"></heat-step-input>
+        <place-step-input ng-if="constructingStep.stepType === 'Place'"></place-step-input>
+        <preheat-oven-step-input ng-if="constructingStep.stepType === 'PreheatOven'"></preheat-oven-step-input>
+        <sautee-step-input ng-if="constructingStep.stepType === 'Sautee'"></sautee-step-input>
+        <season-step-input ng-if="constructingStep.stepType === 'Season'"></season-step-input>
+        <slow-cook-step-input ng-if="constructingStep.stepType === 'SlowCook'"></slow-cook-step-input>
+        <steam-step-input ng-if="constructingStep.stepType === 'Steam'"></steam-step-input>
+        <stir-step-input ng-if="constructingStep.stepType === 'Stir'"
+          is-aux-step="false"
+          constructing-step="constructingStep"
+          ingredient-list="recipe.ingredientList"
+          stepList="recipe.stepList"
+          aux-step-arr-index=""></stir-step-input>
+        <equipment-prep-step-input ng-if="constructingStep.stepType === 'EquipmentPrep'"></equipment-prep-step-input>
+        <br /><br />
+      </div>
+    </div>
+  </form>
+</div>

@@ -23,12 +23,12 @@
       </div>
     </div>
     <div ng-switch-when="picture">
-      URL: <input type="url" ng-model="pictureURL" size="60" name="pictureURLInput" placeholder="URL" /><br/>
-      Caption: <input type="text" ng-model="pictureCaption" size="100" name="pictureCaptionURLInput" placeholder="Caption" /><br/><br/>
+      URL: <input type="url" ng-model="picture.pictureURL" size="60" name="pictureURLInput" placeholder="URL" /><br/>
+      Caption: <input type="text" ng-model="picture.pictureCaption" size="100" name="pictureCaptionURLInput" placeholder="Caption" /><br/><br/>
     </div>
     <div ng-switch-when="video">
-      URL: <input type="url" ng-model="videoURL" size="60" name="videoURLInput" placeholder="URL" /><br/>
-      Caption: <input type="text" ng-model="videoCaption" size="100" name="videoCaptionURLInput" placeholder="Caption" />
+      URL: <input type="url" ng-model="video.videoURL" size="60" name="videoURLInput" placeholder="URL" /><br/>
+      Caption: <input type="text" ng-model="video.videoCaption" size="100" name="videoCaptionURLInput" placeholder="Caption" />
     </div>
     <div ng-switch-default></div>
   </div>

@@ -25,19 +25,30 @@ angular.module('SkillitAdminApp')
 
         scope.stirTypes = ["Stir","Flip"];
         scope.tipAdded = false;
+        scope.tipIsMinimized = true;
 
         if(scope.auxStepArrIndex){
           scope.auxStepArrIndex = parseInt(scope.auxStepArrIndex, 10);
         }
 
         if(scope.isAuxiliaryStep === 'false'){
-          scope.constructingStep.stepSpecifics = [{
-            propName: "whenToStir",
-            val: ""
-          }, {
-            propName: "stirType",
-            val: ""
-          }];
+          if(scope.constructingStep.stepId) {
+            //then step already exists, need to load stepSpecifics, productName
+            scope.constructingStep.productName = scope.constructingStep.productKeys[0];
+            if(scope.constructingStep.stepTip) {
+              //then existing tip
+              scope.tipAdded = true;
+            }
+          } else {
+            //then new step, needs appropriate initialization
+            scope.constructingStep.stepSpecifics = [{
+              propName: "whenToStir",
+              val: ""
+            }, {
+              propName: "stirType",
+              val: ""
+            }];
+          }
         }
 
         scope.isAuxDictionary = function(stepType){
@@ -53,8 +64,21 @@ angular.module('SkillitAdminApp')
           }
         };
 
+        scope.toggleTipVisibility = function() {
+          scope.tipIsMinimized = !scope.tipIsMinimized;
+        };
+
+        scope.getTipToggleText = function() {
+          if(scope.tipIsMinimized) {
+            return 'Expand';
+          } else {
+            return 'Minimize';
+          }
+        };
+
         scope.addTip = function() {
           scope.tipAdded = !scope.tipAdded;
+          scope.tipIsMinimized = false;
         };
 
         scope.removeTip = function() {

@@ -10,12 +10,14 @@
           {{getFootnotes(piece)}}
         </div>
         <div ng-switch-when="picture">
-          <img ng-src="picture.url"><br/>
-          <span>{{picture.caption}}</span>
+         {{logSection(piece)}}
+          <img ng-src="{{piece.url}}"><br/>
+          <span>{{piece.caption}}</span>
         </div>
         <div ng-switch-when="video">
-          <iframe width="300" height="169" ng-src="{{video.url}}" frameborder="0" allowfullscreen></iframe>
-          <span>{{video.caption}}</span>
+        {{logSection(piece)}}
+          <iframe width="300" height="169" ng-src="{{piece.url}}" frameborder="0" allowfullscreen></iframe>
+          <span>{{piece.caption}}</span>
         </div>
         <div ng-switch-default></div>
       </div>

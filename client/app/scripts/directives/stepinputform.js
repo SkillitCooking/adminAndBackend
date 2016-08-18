@@ -21,6 +21,37 @@ angular.module('SkillitAdminApp')
       transclude: false,
       link: function(scope, elem, attrs) {
         scope.sourceTypes = ["EquipmentList", "StepProduct", "IngredientList"];
+
+        scope.getStepFromId = function(stepId) {
+          for (var i = scope.stepList.length - 1; i >= 0; i--) {
+            if(scope.stepList[i].stepId === stepId) {
+              return scope.stepList[i];
+            }
+          }
+        };
+
+        //initialize if step already has been filled in
+        if(scope.step.stepId) {
+          if(scope.isMultiple === 'false') {
+            if(scope.step.stepInputs) {
+              if(scope.step.stepInputs[scope.stepInputName].sourceType === 'StepProduct') {
+                scope.sourceIdStep = scope.getStepFromId(scope.step.stepInputs[scope.stepInputName].sourceId);
+              }
+            }
+          }
+          if(scope.isMultiple === 'true') {
+            scope.sourceIdStep = [];
+            //need to fill in array style bro
+            if(scope.step.stepInputs && scope.step.stepInputs[scope.stepInputName]) {
+              for (var i = 0; i <= scope.step.stepInputs[scope.stepInputName].length - 1; i++) {
+                if(scope.step.stepInputs[scope.stepInputName][i].sourceType === 'StepProduct') {
+                  scope.sourceIdStep[i] = scope.getStepFromId(scope.step.stepInputs[scope.stepInputName][i].sourceId); 
+                }
+              }
+            }
+          }
+        }
+        
         scope.showStepId = function() {
           if(!scope.step.stepInputs[scope.stepInputName] || !scope.step.stepInputs[scope.stepInputName].sourceType){
             return false;

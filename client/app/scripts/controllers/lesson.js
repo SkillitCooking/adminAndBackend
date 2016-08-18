@@ -8,35 +8,36 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('LessonCtrl', ['$scope', 'articleService', 'dailyTipsService', 'glossaryService', 'howToShopService', 'trainingVideosService', function ($scope, articleService, dailyTipsService, glossaryService, howToShopService, trainingVideosService) {
+  .controller('LessonCtrl', ['$scope', 'articleService', 'dailyTipsService', 'glossaryService', 'howToShopService', 'trainingVideosService', 'lessonService', function ($scope, articleService, dailyTipsService, glossaryService, howToShopService, trainingVideosService, lessonService) {
     //need to fetch articles - just id and title
-    articleService.getArticlesTitleId().then(function(data) {
-      $scope.lesson.articles = data.articles;
+    articleService.getArticlesTitleId().then(function(res) {
+      $scope.lesson.articles = res.data;
+      console.log('articles: ', $scope.lesson.articles);
     }, function(response) {
       alert("Server Error - see console logs for details");
       console.log("error response: ", response);
     });
     //need to fetch other items... will fetch whole things
-    dailyTipsService.getAllDailyTips().then(function(data) {
-      $scope.tips = data.tips;
+    dailyTipsService.getAllDailyTips().then(function(res) {
+      $scope.tips = res.data;
     }, function(response) {
       alert("Server Error - check console logs for details");
       console.log("error response: ", response);
     });
-    glossaryService.getAllGlossaryEntries().then(function(data) {
-      $scope.glossaryEntries = data.entries;
+    glossaryService.getAllGlossaryEntries().then(function(res) {
+      $scope.glossaryEntries = res.data;
     }, function(response) {
       alert("Server Error - check console logs for details");
       console.log("error response: ", response);
     });
-    trainingVideosService.getAllTrainingVideos().then(function(data) {
-      $scope.trainingVideos = data.videos;
+    trainingVideosService.getAllTrainingVideos().then(function(res) {
+      $scope.trainingVideos = res.data;
     }, function(response) {
       alert("Server Error - check console logs for details");
       console.log("error response: ", response);
     });
-    howToShopService.getAllHowToShopEntries().then(function(data) {
-      $scope.howToShopEntries = data.entries;
+    howToShopService.getAllHowToShopEntries().then(function(res) {
+      $scope.howToShopEntries = res.data;
     }, function(response) {
       alert("Server Error - check console logs for details");
       console.log("error response: ", response);
@@ -83,7 +84,7 @@ angular.module('SkillitAdminApp')
         articleId: $scope.lesson.articleId,
         itemIds: $scope.lesson.itemIds
       }).then(function(data) {
-        var lesson = data.lesson;
+        var lesson = data.data;
         var alertMsg = "Success! Lesson " + lesson.name + " was saved!";
         alert(alertMsg);
       }, function(response) {

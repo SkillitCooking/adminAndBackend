@@ -21,7 +21,7 @@ router.get('/', function(req, res, next) {
       return next(err);
     }
     logger.info('END GET api/recipes/');
-    res.json(recipes);
+    res.json({data: recipes});
   });
 });
 

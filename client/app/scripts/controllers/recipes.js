@@ -29,10 +29,6 @@ angular.module('SkillitAdminApp')
       alert("Server Error: " + response.message);
     });
 
-    $scope.logShitttt = function() {
-      console.log("recipe: ", $scope.recipe);
-    };
-
     ingredientService.getAllIngredients().then(function(ingredients) {
       $scope.ingredients = ingredients;
     }, function(response) {
@@ -51,6 +47,7 @@ angular.module('SkillitAdminApp')
     $scope.recipeTypes = ["AlaCarte", "BYO", "Full"];
     $scope.recipeCategories = ["Sautee", "Scramble", "Roast", "Pasta", "Hash", "Rice", "Quinoa"];
     $scope.cookingMethods = ["Bake", "Sautee", "Boil", "Steam", "SlowCook"];
+    $scope.servingSizes = ["1-2", "2-3", "3-4", "4-5", "5-6", "6-7", "7-8", "8-9", "9-10"];
     $scope.selectedIngredientForms = [];
 
     //initialize constructingStep and it's stepInputs object

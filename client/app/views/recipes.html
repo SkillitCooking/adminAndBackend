@@ -1,5 +1,8 @@
 <div>
   <h2>Recipe Input</h2>
+  <!--Active class for one currently on-->
+  <a class="btn btn-link active" ng-href="#/recipes">Create</a>
+  <a class="btn btn-link" ng-href="#/editRecipes">Edit</a><br/>
   <form novalidate name="recipeForm" ng-controller="RecipeCtrl">
     
     Name: <input type="text" ng-model="recipe.name" size="50" required name="nameInput"/> 
@@ -28,7 +31,7 @@
     <div ng-repeat="method in recipe.otherCookingMethods">
       {{method}}  <button class="btn btn-danger btn-xs" ng-click="removeCookingMethod($index)"> - </button>
     </div><br/><br/>
-    Can Add Seasoning: <input type="checkbox" ng-model="recipe.canAddSeasoningProfile" ng-init="logShitttt()" ng-click="logShitttt()"><br/><br/>
+    Can Add Seasoning: <input type="checkbox" ng-model="recipe.canAddSeasoningProfile"><br/><br/>
     Default Seasoning: <select name="seasoningSelect" ng-model="recipe.defaultSeasoningProfile" ng-options="profile.name for profile in seasoningProfiles" ng-disabled="!recipe.canAddSeasoningProfile"></select><br/><br/>
     Available Seasonings: <select name="availableSeasoningSelect" ng-model="availableSeasoning" ng-disabled="!recipe.canAddSeasoningProfile" ng-options="profile.name for profile in seasoningProfiles"></select>
     <button class="btn btn-primary btn-xs" ng-click="addSeasoning()">Add Seasoning</button>
@@ -60,7 +63,7 @@
     <button class="btn btn-primary btn-sm" ng-click="addIngredientType()">Add Ingredient Type</button><br/><br/>
     <b>Equipment Needed</b><br/>
       <select name="equipmentSelect" ng-model="typeDish" ng-options="dish.name for dish in dishes"></select>
-      <button class="btn btn-primary btn-xs" ng-click="addDish()" ng->Add Dish</button>
+      <button class="btn btn-primary btn-xs" ng-click="addDish()">Add Dish</button>
       <div ng-repeat="dish in ingredientList.equipmentNeeded">
         <pre>{{dish.name}}</pre><button class="btn btn-danger btn-xs" ng-click="removeDish($index)"> - </button>
       </div>

@@ -8,7 +8,7 @@
     Article: <select ng-disabled="!lesson.isArticle" name="articleSelect" ng-model="lesson.articleId" ng-options="article._id as article.title for article in lesson.articles"></select><br/><br/>
     Item Type: <select ng-disabled="lesson.isArticle" name="itemTypeSelect" ng-model="itemType" ng-options="itemType for itemType in itemTypes"></select><br/><br/>
     Item: <select ng-disabled="lesson.isArticle" name="itemSelect" ng-model="selectedItem" ng-options="item._id as item.title for item in getSelectedTypeItems()"></select><br/><br/>
-    <button class="btn btn-warning btn-sm" ng-click="addItem()">Add Item</button><br/><br/>
+    <button class="btn btn-warning btn-sm" ng-click="addItem()" ng-disabled="lesson.isArticle || !selectedItem">Add Item</button><br/><br/>
     Added Items: <div ng-repeat="id in lesson.itemIds">
       <p>{{id.itemType}}: {{id.id}}</p>
       <button class="btn btn-xs btn-danger" ng-click="removeItemId($index)">Remove</button>

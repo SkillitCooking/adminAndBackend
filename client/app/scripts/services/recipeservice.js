@@ -17,7 +17,7 @@ angular.module('SkillitAdminApp')
     // Public API here
     return {
       getAllRecipes: function () {
-        return baseRecipes.getList();
+        return baseRecipes.customGET('/');
       },
       addNewRecipe: function(newRecipe) {
         return baseRecipes.post(newRecipe);

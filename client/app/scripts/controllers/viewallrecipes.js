@@ -11,7 +11,7 @@ angular.module('SkillitAdminApp')
   .controller('ViewallrecipesCtrl', ['$scope', 'recipeService', function ($scope, recipeService) {
 
     recipeService.getAllRecipes().then(function(recipes) {
-      $scope.recipes = recipes;
+      $scope.recipes = recipes.data;
       $scope.isExpandedArr = [];
       $scope.isExpandedArr.fill(false);
     }, function(response){

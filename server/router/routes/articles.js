@@ -7,10 +7,10 @@ var mongoose = require('mongoose');
 var db = require('../../database');
 var Article = db.articles;
 
-router.get('/', function(req, res, next) {
+router.get('/getArticlesTitleId', function(req, res, next) {
   logger.info('START GET api/articles/getArticlesTitleId');
   try {
-    Article.model.find({}, '_id name', function(err, articles) {
+    Article.model.find({}, '_id title', function(err, articles) {
       if(err) {
         logger.error('GET api/articles/getArticlesTitleId', {error: error});
         next(error);

@@ -19,6 +19,8 @@ angular.module('SkillitAdminApp')
         scope.textChunksIndicator = [];
         scope.textChunk = {};
         scope.contentIndicatorArray = [];
+        scope.picture = {};
+        scope.video = {};
 
         scope.toggleContentPiece = function(index) {
           scope.contentIndicatorArray[index] = !scope.contentIndicatorArray[index];
@@ -47,10 +49,13 @@ angular.module('SkillitAdminApp')
         scope.resetContentProperties = function() {
           scope.textChunks = angular.copy([]);
           scope.textChunksIndicator = angular.copy([]);
-          scope.pictureURL = "";
-          scope.pictureCaption = "";
-          scope.videoURL = "";
-          scope.videoCaption = "";
+          scope.picture = angular.copy({});
+          scope.video = angular.copy({});
+        };
+
+        scope.logPicture = function() {
+          console.log('picture url: ', scope.picture.pictureURL);
+          console.log('picture caption: ', scope.picture.pictureCaption);
         };
 
         scope.addContent = function() {
@@ -69,8 +74,8 @@ angular.module('SkillitAdminApp')
             case 'picture':
               scope.contentSection.contentArray.push({
                 type: 'picture',
-                url: scope.pictureURL,
-                caption: scope.pictureCaption
+                url: scope.picture.pictureURL,
+                caption: scope.picture.pictureCaption
               });
               scope.contentIndicatorArray.push(false);
               scope.resetContentProperties();
@@ -78,8 +83,8 @@ angular.module('SkillitAdminApp')
             case 'video':
               scope.contentSection.contentArray.push({
                 type: 'video',
-                url: scope.videoURL,
-                caption: scope.videoCaption
+                url: scope.video.videoURL,
+                caption: scope.video.videoCaption
               });
               scope.contentIndicatorArray.push(false);
               scope.resetContentProperties();
