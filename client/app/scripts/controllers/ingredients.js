@@ -110,7 +110,6 @@ angular.module('SkillitAdminApp')
     $scope.save = function() {
       $scope.ingredient.ingredientForms = $scope.inForms;
       $scope.ingredient.ingredientTips = $scope.ingredientTips;
-      console.log($scope.ingredient);
       ingredientService.addNewIngredient({
         ingredient: {
           name: $scope.ingredient.name,

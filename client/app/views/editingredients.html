@@ -1,0 +1,87 @@
+<div>
+  <h2>Edit Ingredients</h2>
+  <a class="btn btn-link active" ng-href="#/ingredients">Create</a>
+  <a class="btn btn-link" ng-href="#/editIngredients">Edit</a><br/>
+  <form novalidate name="editIngredientForm" ng-controller="EditIngredientsCtrl">
+    Select Ingredient: <select name="ingredientSelect" ng-model="selectedIngredient" ng-change="changeSelectedIngredient()" ng-options="ingredient as ingredient.name for ingredient in ingredients"></select><br/><br/>
+    Name: <input type="text" ng-model="ingredient.name" size="50" required name="nameInput"/><br /><br />
+    Input Category: <select name="inputCategorySelect" ng-model="ingredient.inputCategory" ng-options=
+    "category for category in inputCategories" required></select><br/><br/>
+    Standard Name: <input type="text" ng-model="ingredient.standardForm" size="50" required  name="standardFormInput" /><br/>
+    Plural Name: <input type="text" ng-model="ingredient.pluralForm" size="50" required  name="pluralFormInput" /><br/>
+    Singular Name: <input type="text" ng-model="ingredient.singularForm" size="50" required name="singularFormInput" /><br/><br/>
+    Measuring Units: <input type="text" ng-model="ingredient.units" size="50" required name="unitsInput"><br/><br/>
+    Servings Per Unit: <input type="text" ng-model="ingredient.servingsPerUnit" size="50" required name="servingsPerUnitInput" ng-pattern="integerval"/><br/><br/>
+    Ingredient Forms: <br />
+    <div ng-repeat="form in ingredient.ingredientForms" class="bg-info" ng-form="ingredientFormForm">
+      <div ng-if="!isIngredientFormMinimized($index)">
+        <ul>
+          <li>
+            Name: <input type="text" ng-model="form.name" size="50" required name="formName"/>
+          </li>
+          <li>
+            Cooking Times: <br />
+            <div ng-repeat="time in form.cookingTimes" class="bg-info" ng-form="cookingForm">
+              Cooking Method: <select name="cookingMethods" ng-model="time.cookingMethod" required>
+                <option value="">Select Cooking Method</option>
+                <option ng-repeat="method in cookingMethods">{{method}}</option>
+              </select> 
+              <span ng-show="cookingForm.cookingMethods.$invalid">select a cooking method</span><br />
+              Min Cook Time: <input type="text" ng-model="time.minTime" size="30" required name="minTime" ng-pattern="integerval"/>
+              Max Cook Time: <input type="text" ng-model="time.maxTime" size="30" required name="maxTime" ng-pattern="integerval"/>
+              <span ng-show="cookingForm.minTime.$invalid || cookingForm.maxTime.$invalid">Please enter a number</span>
+              <br />
+              Times Per Side?: <input type="checkbox" ng-model="time.timesArePerSide"/><br />
+              <button ng-click="removeCookingTime(form, $index)" class="btn btn-link btn-xs">Remove Cooking Time</button>
+              <br/><br/>
+            </div>
+          </li>
+          <button ng-click="addCookingTime(form)" class="btn btn-primary btn-xs">Add Cooking Time</button>
+        </ul>
+      </div>
+      <div ng-if="isIngredientFormMinimized($index)">
+        <p>{{form.name}}</p>
+      </div>
+      <button ng-click="removeIngredientForm($index)" class="btn btn-danger btn-sm">Remove Ingredient Form</button>
+      <button ng-click="toggleIngredientForm($index)" class="btn btn-warning btn-sm">{{getIngredientFormVisibilityText($index)}}</button><br/><br/>
+    </div>
+    <button ng-click="addIngredientForm()" class="btn btn-warning btn-sm">Add IngredientForm</button><br/><br/>
+    Ingredient Tips: <br/>
+    <div ng-repeat="tip in ingredient.ingredientTips" class="bg-info" ng-form name="tipForm">
+      <div ng-if="!isIngredientTipMinimized($index)">
+        <ul>
+          <li>
+            StepType: <select name="stepTypeSelect" ng-model="tip.stepType" ng-change="setSubTypes(tip.stepType, $index)" required>
+              <option value="">Select StepType</option>
+              <option ng-repeat="stepType in stepTypes">{{stepType}}</option>
+            </select>
+            StepSubType: <select name="stepSubTypeSelect" ng-model="tip.stepSubType" ng-options="stepSubType for stepSubType in subTypes[$index]" required>
+            </select>
+          </li>
+          <li>
+            Step Tip: <br />
+            <div class="bg-warning">
+              Title: <input type="text" ng-model="tip.stepTip.title" size="50" name="tipTitle"/><br />
+              Text: <textarea ng-model="tip.stepTip.text" rows="4" cols="50" name="tipText"></textarea><br />
+              <span ng-show="tipForm.tipText.$invalid">Must enter text for the tip</span><br/>
+              PictureURL: <input type="url" ng-model="tip.stepTip.pictureURL" name="tipPic" size="70"/> <br />
+              <span ng-show="tipForm.tipPic.$invalid">PictureURL must be a URL</span><br/>
+              VideoTitle: <input type="text" ng-model="tip.stepTip.videoTitle" size="50" name="tipVidTitle"/><br />
+              VideoURL: <input type="url" ng-model="tip.stepTip.videoURL" name="tipVid"/> <br />
+              <span ng-show="tipForm.tipVid.$invalid">VideoURL must be a URL</span><br/>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div ng-if="isIngredientTipMinimized($index)">
+        <p>Title: {{tip.title}} // VideoTitle: {{tip.stepTip.videoTitle}} // StepType: {{tip.stepType}} // subType: {{tip.stepSubType}}</p>
+      </div>
+      <button ng-click="toggleTip($index)" class="btn btn-warning btn-sm">{{getTipVisibilityText($index)}}</button>
+      <button ng-click="removeTip($index)" class="btn btn-danger btn-sm">Remove Tip</button>
+    </div>
+    <button class="btn btn-warning btn-sm" ng-click="addIngredientTip()">Add Ingredient Tip</button><br/><br/>
+    <button class="btn btn-large btn-warning" ng-click="cancelChanges()">Cancel Changes</button>
+    <button class="btn btn-large btn-primary" ng-click="saveChanges()">Save Changes</button>
+    <button class="btn btn-large btn-danger" ng-click="deleteIngredient()">Delete Ingredient</button>
+  </form>
+</div>

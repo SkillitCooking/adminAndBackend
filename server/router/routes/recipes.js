@@ -45,7 +45,7 @@ router.post('/getRecipesWithIds', function(req, res, next) {
     });
   } catch(error) {
     logger.error('ERROR - exception in POST api/recipes/getRecipesWithIds', {error: error});
-    next(error);
+    return next(error);
   }
 });
 
@@ -66,7 +66,7 @@ router.post('/getRecipesOfType', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/recipes/getRecipesOfType', {error: error});
-    next(error);
+    return next(error);
   }
 });
 
@@ -87,7 +87,7 @@ router.post('/getRecipesForCollection', function(req, res, next) {
     });
   } catch(error) {
     logger.error('ERROR - exception in POST api/recipes/getRecipesForCollection', {error: error});
-    next(error);
+    return next(error);
   }
 });
 
@@ -135,7 +135,7 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
       res.json(retVal);
     } catch (error) {
       logger.error('ERROR - exception in POST api/recipes/getRecipesWithIngredients', {error: error});
-      next(error);
+      return next(error);
     }
   });
 });
@@ -172,7 +172,7 @@ router.post('/', function(req, res, next) {
     });
   } catch(error) {
     logger.error('ERROR - exception in POST api/recipes/', {error: error});
-    next(error);
+    return next(error);
   }
 });
 
@@ -219,19 +219,19 @@ router.post('/getRecipesOfTheDay', function(req, res, next) {
 
 /* PUT /recipes/:id */
 router.put('/:id', function(req, res, next) {
-  console.log('start');
   logger.info('START PUT api/recipes/' + req.params.id);
   try {
     Recipe.model.findByIdAndUpdate(req.params.id, req.body.recipe, {new: true}, function(err, recipe) {
       if(err) {
         logger.error('ERROR PUT api/recipes/' + req.params.id, {error: err, body: req.body});
+        return next(err);
       }
       logger.info('END PUT api/recipes/' + req.params.id);
       res.json({data: recipe});
     });
   } catch(error) {
     logger.error('ERROR - exception in PUT api/recipes/:id', {error: error});
-    next(error);
+    return next(error);
   }
 });
 
@@ -249,7 +249,7 @@ router.delete('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in DELETE api/recipes/:id', {error: error});
-    next(error);
+    return next(error);
   }
 });
 

@@ -1,5 +1,7 @@
 <div>
   <h2>Input Ingredient</h2>
+  <a class="btn btn-link active" ng-href="#/ingredients">Create</a>
+  <a class="btn btn-link" ng-href="#/editIngredients">Edit</a><br/>
   <form novalidate name="ingredientForm">
     Name: <input type="text" ng-model="ingredient.name" size="50" required name="nameInput"/><br /><br />
     Input Category: <select name="inputCategorySelect" ng-model="ingredient.inputCategory" ng-options=

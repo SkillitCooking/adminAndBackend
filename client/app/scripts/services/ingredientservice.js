@@ -21,6 +21,12 @@ angular.module('SkillitAdminApp')
       },
       addNewIngredient: function(newIngredient) {
         return baseIngredients.post(newIngredient);
+      },
+      updateIngredient: function(ingredient) {
+        return baseIngredients.customPUT({ingredient: ingredient}, '/' + ingredient._id);
+      },
+      deleteIngredient: function(ingredient) {
+        return baseIngredients.customDELETE('/' + ingredient._id);
       }
     };
   });

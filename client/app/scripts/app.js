@@ -98,6 +98,11 @@ angular
         controller: 'ChapterCtrl',
         controllerAs: 'chapter'
       })
+      .when('/editIngredients', {
+        templateUrl: 'views/editingredients.html',
+        controller: 'EditIngredientsCtrl',
+        controllerAs: 'editIngredients'
+      })
       .otherwise({
         redirectTo: '/'
       });

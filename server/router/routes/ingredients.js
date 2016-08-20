@@ -75,7 +75,7 @@ router.post('/', function(req, res, next) {
     });
   } catch(error) {
     logger.error('ERROR - exception in POST api/ingredients/', {error: error});
-    next(error);
+    return next(error);
   }
 });
 
@@ -96,18 +96,18 @@ router.get('/:id', function(req, res, next) {
 router.put('/:id', function(req, res, next) {
   logger.info('START PUT api/ingredients/' + req.params.id);
   try {
-    Ingredient.model.findByIdAndUpdate(req.params.id, req.body.ingredient, function(err, ingredient) {
+    Ingredient.model.findByIdAndUpdate(req.params.id, req.body.ingredient, {new: true}, function(err, ingredient) {
       if (err) {
-        logger.error('ERROR PUT api/ingredients', {error: err, body: req.body});
+        logger.error('ERROR PUT api/ingredients' + req.params.id, {error: err, body: req.body});
         return next(err);
       }
       /* ingredient is previous value of document */
-      logger.info('END PUT api/ingredients/' + req.param.id);
+      logger.info('END PUT api/ingredients/' + req.params.id);
       res.json(ingredient);
     });
   } catch (error) {
     logger.error('ERROR - exception in PUT api/ingredients/:id', {error: error});
-    next(error);
+    return next(error);
   }
 });
 
@@ -115,7 +115,7 @@ router.put('/:id', function(req, res, next) {
 router.delete('/:id', function(req, res, next) {
   logger.info('START DELETE api/ingredients/' + req.params.id);
   try {
-    Ingredient.model.findByIdAndRemove(req.params.id, req.body.ingredient, function(err, ingredient) {
+    Ingredient.model.findByIdAndRemove(req.params.id, function(err, ingredient) {
       if (err) {
         logger.error('ERROR DELETE api/ingredients/' + req.params.id, {error: err, body: req.body});
         return next(err);
@@ -126,7 +126,7 @@ router.delete('/:id', function(req, res, next) {
     });
   } catch(error) {
     logger.error('ERROR - exception in DELETE api/ingredients/:id', {error: error});
-    next(error);
+    return next(error);
   }
 });
 
