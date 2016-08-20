@@ -219,15 +219,15 @@ router.post('/getRecipesOfTheDay', function(req, res, next) {
 
 /* PUT /recipes/:id */
 router.put('/:id', function(req, res, next) {
+  console.log('start');
   logger.info('START PUT api/recipes/' + req.params.id);
   try {
-    Recipe.model.findByIdAndUpdate(req.params.id, req.body, function(err, recipe) {
+    Recipe.model.findByIdAndUpdate(req.params.id, req.body.recipe, {new: true}, function(err, recipe) {
       if(err) {
         logger.error('ERROR PUT api/recipes/' + req.params.id, {error: err, body: req.body});
-        return next(err);
       }
       logger.info('END PUT api/recipes/' + req.params.id);
-      res.json(recipe);
+      res.json({data: recipe});
     });
   } catch(error) {
     logger.error('ERROR - exception in PUT api/recipes/:id', {error: error});
@@ -239,13 +239,13 @@ router.put('/:id', function(req, res, next) {
 router.delete('/:id', function(req, res, next) {
   logger.info('START DELETE api/recipes/' + req.params.id);
   try {
-    Recipe.model.findByIdAndRemove(req.params.id, req.body, function(err, recipe) {
+    Recipe.model.findByIdAndRemove(req.params.id, function(err, recipe) {
       if(err) {
         logger.error('ERROR DELETE api/recipes/' + req.params.id, {error: err, body: req.body});
         return next(err);
       }
       logger.info('END DELETE api/recipes/' + req.params.id);
-      res.json(recipe);
+      res.json({data: recipe});
     });
   } catch (error) {
     logger.error('ERROR - exception in DELETE api/recipes/:id', {error: error});

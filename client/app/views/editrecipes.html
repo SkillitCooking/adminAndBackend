@@ -3,8 +3,9 @@
   <a class="btn btn-link active" ng-href="#/recipes">Create</a>
   <a class="btn btn-link" ng-href="#/editRecipes">Edit</a><br/>
   <!--copy selectedRecipe over to recipe - that way original model doesn't change-->
-  Select Recipe: <select name="recipeSelect" ng-model="selectedRecipe" ng-change="changeSelectedRecipe()" ng-options="recipe.name for recipe in recipes"></select><br/><br/>
+  <button class="btn btn-sm btn-warning" ng-click="reloadRecipes()">Reload Recipes</button>
   <form novalidate name="editRecipeForm" ng-controller="EditRecipesCtrl">
+    Select Recipe: <select name="recipeSelect" ng-model="selectedRecipe" ng-change="changeSelectedRecipe()" ng-options="recipe.value as recipe.label for recipe in recipes"></select><br/><br/>
     Name: <input type="text" ng-model="recipe.name" size="50" required name="nameInput"/> 
     <span ng-show="recipeForm.nameInput.$invalid">give the recipe a name</span><br /> <br />
     Description: <textarea ng-model="recipe.description" rows="4" cols="50" required name="descInput"></textarea>
@@ -87,6 +88,39 @@
     <h4>Step List</h4>
     <div ng-form="stepForm">
       <div ng-repeat="constructingStep in recipe.stepList">
+        <div ng-if="!isMinimizedStep($index)">
+          <cut-step-input ng-if="constructingStep.stepType === 'Cut'"></cut-step-input>
+          <cook-step-input ng-if="constructingStep.stepType === 'Cook'"></cook-step-input>
+          <bake-step-input ng-if="constructingStep.stepType === 'Bake'"></bake-step-input>
+          <boil-step-input ng-if="constructingStep.stepType === 'Boil'"></boil-step-input>
+          <bring-to-boil-step-input ng-if="constructingStep.stepType === 'BringToBoil'"></bring-to-boil-step-input>
+          <custom-step-input ng-if="constructingStep.stepType === 'Custom'"></custom-step-input>
+          <dry-step-input ng-if="constructingStep.stepType === 'Dry'"></dry-step-input>
+          <heat-step-input ng-if="constructingStep.stepType === 'Heat'"></heat-step-input>
+          <place-step-input ng-if="constructingStep.stepType === 'Place'"></place-step-input>
+          <preheat-oven-step-input ng-if="constructingStep.stepType === 'PreheatOven'"></preheat-oven-step-input>
+          <sautee-step-input ng-if="constructingStep.stepType === 'Sautee'"></sautee-step-input>
+          <season-step-input ng-if="constructingStep.stepType === 'Season'"></season-step-input>
+          <slow-cook-step-input ng-if="constructingStep.stepType === 'SlowCook'"></slow-cook-step-input>
+          <steam-step-input ng-if="constructingStep.stepType === 'Steam'"></steam-step-input>
+          <stir-step-input ng-if="constructingStep.stepType === 'Stir'"
+            is-aux-step="false"
+            constructing-step="constructingStep"
+            ingredient-list="recipe.ingredientList"
+            stepList="recipe.stepList"
+            aux-step-arr-index=""></stir-step-input>
+          <equipment-prep-step-input ng-if="constructingStep.stepType === 'EquipmentPrep'"></equipment-prep-step-input>
+        </div>
+        <div ng-if="isMinimizedStep($index)">
+          <p>{{constructingStep.stepType}}</p>
+        </div>
+        <button class="btn btn-sm btn-info" ng-click="toggleStepMinimize($index)">{{getStepMinimizeButtonText($index)}}</button>
+        <button class="btn btn-sm btn-danger" ng-click="removeStep($index)">Remove (use with caution!)</button>
+        <br /><br />
+      </div>
+      <b>Add New Step: </b><br/><br/>
+      <div ng-form="newStepForm">
+        StepType <select name="stepTypeSelect" ng-model="constructingStep.stepType" ng-options="stepType for stepType in stepTypes" ng-required="!recipeSanityCheck()"></select>
         <cut-step-input ng-if="constructingStep.stepType === 'Cut'"></cut-step-input>
         <cook-step-input ng-if="constructingStep.stepType === 'Cook'"></cook-step-input>
         <bake-step-input ng-if="constructingStep.stepType === 'Bake'"></bake-step-input>
@@ -104,12 +138,16 @@
         <stir-step-input ng-if="constructingStep.stepType === 'Stir'"
           is-aux-step="false"
           constructing-step="constructingStep"
-          ingredient-list="recipe.ingredientList"
-          stepList="recipe.stepList"
+          ingredient-list="ingredientList"
+          stepList="stepList"
           aux-step-arr-index=""></stir-step-input>
         <equipment-prep-step-input ng-if="constructingStep.stepType === 'EquipmentPrep'"></equipment-prep-step-input>
         <br /><br />
       </div>
+      <button ng-disabled="newStepForm.$invalid" ng-click="addStep()" class="btn btn-default">Append Step</button>
     </div>
+    <button class="btn btn-large btn-warning" ng-click="cancelChanges()">Cancel Changes</button>
+    <button class="btn btn-large btn-primary" ng-click="saveChanges()">Save Changes</button>
+    <button class="btn btn-large btn-danger" ng-click="deleteRecipe()">Delete Recipe</button>
   </form>
 </div>
