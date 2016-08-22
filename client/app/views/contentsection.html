@@ -7,7 +7,7 @@
       <textchunk></textchunk><br/>
       <button class="btn btn-default" ng-click="addTextChunk()">Add Text Chunk</button>
       <p>Text Chunks:</p>
-      <div ng-repeat="chunk in textChunks">
+      <div ng-repeat="textChunk in textChunks">
         <div ng-if="!textChunksIndicator[$index]">
           <p>{{textChunks[$index].text}}</p>
           <button class="btn btn-xs btn-info" ng-click="toggleTextChunk($index)">Maximize</button>

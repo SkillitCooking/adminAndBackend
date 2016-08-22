@@ -1,0 +1,22 @@
+<div>
+  <h2>Edit Article</h2>
+  <a class="btn btn-link" ng-href="#/article">Create</a>
+  <a class="btn btn-link active" ng-href="#/editArticles">Edit</a><br/>
+  <form novalidate name="editArticleForm">
+    Select Article: <select name="articleSelect" ng-model="selectedArticle" ng-change="changeSelectedArticle()" ng-options="article as article.title for article in articles"></select><br/>
+    Title: <input type="text" ng-model="article.title" size="50" required name="titleInput" /><br/><br/>
+    <div ng-repeat="contentSection in article.contentSections">
+      <div ng-if="!isMinimizedContentSection($index)">
+        <edit-content-section section="contentSection" tips="tips" glossaries="glossaryEntries" howtos="howToShopEntries" trainings="trainingVideos"></edit-content-section>
+      </div>
+      <div ng-if="isMinimizedContentSection($index)">
+        <p>Section SubTitle: {{contentSection.subTitle}}</p>
+      </div>
+      <button class="btn btn-danger btn-sm" ng-click="removeContentSection($index)">Remove Section</button>
+      <button class="btn btn-warning btn-sm" ng-click="toggleContentSection($index)">{{getContentSectionToggleText($index)}}</button>
+    </div><br/><br/>
+    <button class="btn btn-warning btn-large" ng-click="cancelChanges()">Cancel Changes</button>
+    <button class="btn btn-primary btn-large" ng-click="saveChanges()">Save Changes</button>
+    <button class="btn btn-danger btn-large" ng-click="deleteArticle()">Delete Article</button>
+  </form>
+</div>

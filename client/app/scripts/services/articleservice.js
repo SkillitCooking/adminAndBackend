@@ -18,6 +18,15 @@ angular.module('SkillitAdminApp')
       },
       getArticlesTitleId: function() {
         return baseArticles.customGET('/getArticlesTitleId');
+      },
+      getAllArticles: function () {
+        return baseArticles.customGET('/');
+      },
+      updateArticle: function(article) {
+        return baseArticles.customPUT({article: article}, '/' + article._id);
+      },
+      deleteArticle: function(article) {
+        return baseArticles.customDELETE('/' + article._id);
       }
     };
   });

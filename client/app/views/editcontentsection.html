@@ -1,0 +1,39 @@
+<div ng-form="editContentSectionForm" class="bg-success">
+  Subtitle: <input type="text" ng-model="section.subTitle" name="subTitleInput" required /><br/><br/>
+  <div ng-repeat="piece in section.contentArray" ng-init="pieceIndex = $index">
+    Content Type: <select name="contentTypeSelect" ng-model="piece.type" ng-options="type for type in contentTypes"></select>
+    <div ng-if="!contentPieceMinimized($index)">
+      <div ng-switch on="piece.type">
+        <div ng-switch-when="text">
+          <p>Text Chunks</p>
+          <div ng-repeat="textChunk in piece.textChunks" ng-init="chunkIndex = $index">
+            <div ng-if="!isMinimizedTextChunk(pieceIndex, chunkIndex)">
+              <textchunk></textchunk>
+            </div>
+            <div ng-if="isMinimizedTextChunk(pieceIndex, chunkIndex)">
+              <p>Text: {{chunk.text}}</p>
+            </div>
+            <button class="btn btn-danger btn-xs" ng-click="removeTextChunk(pieceIndex, chunkIndex)">Remove</button>
+            <button class="btn btn-warning btn-xs" ng-click="toggleTextChunk(pieceIndex, chunkIndex)">{{getToggleTextChunkText(pieceIndex, chunkIndex)}}</button><br/>
+          </div>
+          <button class="btn btn-info btn-sm" ng-click="addTextChunk(pieceIndex)">Add Text Chunk</button>
+        </div>
+        <div ng-switch-when="picture">
+          URL: <input type="url" ng-model="piece.url" size="60" name="pictureURLInput" placeholder="URL" /><br/>
+          Caption: <input type="text" ng-model="piece.caption" size="100" name="pictureCaptionURLInput" placeholder="Caption" /><br/><br/>
+        </div>
+        <div ng-switch-when="video">
+          URL: <input type="url" ng-model="piece.url" size="60" name="videoURLInput" placeholder="URL" /><br/>
+          Caption: <input type="text" ng-model="piece.caption" size="100" name="videoCaptionURLInput" placeholder="Caption" />
+        </div>
+        <div ng-switch-default></div>
+      </div>
+    </div>
+    <div ng-if="contentPieceMinimized($index)">
+      <p>Content Type: {{piece.type}}</p>
+    </div>
+    <button class="btn btn-danger btn-small" ng-click="removeContentPiece(pieceIndex)">Remove Piece</button>
+    <button class="btn btn-warning btn-smalll" ng-click="toggleContentPiece(pieceIndex)">{{getContentPieceToggleText(pieceIndex)}}</button>
+  </div>
+  <button class="btn btn-primary" ng-click="addContentPiece()">Add Content Piece</button>
+</div>
