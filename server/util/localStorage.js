@@ -1,8 +1,5 @@
 var redis = require('redis');
 
-//var client = redis.createClient();
-var client = {
-  set: function() {}
-};
+var client = redis.createClient();
 
 module.exports.localStorage = client;
