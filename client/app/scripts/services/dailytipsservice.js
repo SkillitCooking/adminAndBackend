@@ -18,6 +18,12 @@ angular.module('SkillitAdminApp')
       },
       addNewDailyTip: function (newDailyTip) {
         return baseDailyTips.post(newDailyTip);
+      },
+      updateDailyTip: function(tip) {
+        return baseDailyTips.customPUT({tip: tip}, '/' + tip._id);
+      },
+      deleteDailyTip: function(tip) {
+        return baseDailyTips.customDELETE('/' + tip._id);
       }
     };
   });

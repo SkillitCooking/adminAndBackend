@@ -1,0 +1,29 @@
+<div>
+  <h2>Edit HowToShopEntry</h2>
+  <a class="btn btn-link" ng-href="#/howToShopEntry">Create</a>
+  <a class="btn btn-link active" ng-href="#/editHowToShopEntries">Edit</a><br/>
+  <form novalidate name="editHowToShopEntryForm">
+    Select HowToShop Entry: <select name="howToShopEntrySelect" ng-model="selectedEntry" ng-change="changeSelectedEntry()" ng-options="entry as entry.title for entry in howToShopEntries"></select><br/><br/>
+    Title: <input type="text" ng-model="howToShopEntry.title" size="50" required name="titleInput"/><br /><br />
+    Text: <textarea ng-model="howToShopEntry.text" rows="4" cols="50" required name="textInput"></textarea><br/><br/>
+    Pictures: 
+    <div ng-repeat="picture in howToShopEntry.pictures">
+      <input type="url" ng-model="picture.url" size="60" placeholder="URL" />
+      <input type="text" ng-model="picture.caption" size="100" placeholder="Caption"/>
+      <button class="btn btn-sm btn-warning" ng-click="removePicture($index)">Remove Picture</button>
+    </div>
+    <button class="btn btn-info" ng-click="addPicture()">Add a Picture</button>
+    <br/><br/>
+    Collections: <select name="itemCollectionSelect" ng-model="curCollectionId" ng-options="collection._id as collection.name for collection in howToShopCollections"></select><br/>
+    <ul>
+      <div ng-repeat="collectionID in howToShopEntry.collectionIds">
+        <li>{{collectionID}}</li>
+        <button ng-click="removeCollection($index)">Remove</button>
+      </div>
+    </ul>
+    <button ng-click="addCollection()">Add Collection</button><br/><br/>
+    <button class="btn btn-large btn-warning" ng-click="cancelChanges()">Cancel Changes</button>
+    <button class="btn btn-large btn-warning" ng-click="saveChanges()">Save Changes</button>
+    <button class="btn btn-large btn-warning" ng-click="deleteEntry()">Delete Entry</button>
+  </form>
+</div>

@@ -1,0 +1,19 @@
+<div>
+  <h2>Edit Seasoning Profile</h2>
+  <a class="btn btn-link" ng-href="#/seasoningprofiles">Create</a>
+  <a class="btn btn-link active" ng-href="#/editSeasoningProfiles">Edit</a><br/>
+  <form novalidate name="editSeasoningForm">
+    Select Seasoning Profile: <select name="seasoningSelect" ng-model="selectedSeasoning" ng-change="changeSelectedSeasoning()" ng-options="seasoning as seasoning.name for seasoning in seasonings"></select><br/><br/>
+    Name: <input type="text" ng-model="seasoningProfile.name" size="50" required name="nameInput"/><br /><br />
+    Spices: <ul>
+      <li ng-repeat="spice in seasoningProfile.spices">
+        <input type="text" ng-model="spice" size="40"/>
+        <button class="btn btn-xs btn-danger" ng-click="removeSpice($index)">Remove Spice</button>
+      </li>
+    </ul>
+    <button class="btn btn-sm btn-primary" ng-click="addSpice()">Add Spice</button><br/><br/>
+    <button class="btn btn-large btn-warning" ng-click="cancelChanges()">Cancel Changes</button>
+    <button class="btn btn-large btn-primary" ng-click="saveChanges()">Save Changes</button>
+    <button class="btn btn-large btn-danger" ng-click="deleteSeasoningProfile()">Delete Seasoning Profile</button>
+  </form>
+</div>

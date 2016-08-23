@@ -1,5 +1,7 @@
 <div>
   <h2>Input Dish</h2>
+  <a class="btn btn-link active" ng-href="#/dishes">Create</a>
+  <a class="btn btn-link" ng-href="#/editDishes">Edit</a><br/>
   <form novalidate name="dishForm">
     Name: <input type="text" ng-model="dish.name" size="50" required name="nameInput" /><br /><br />
     IngredientCapacity: <input type="text" ng-model="dish.ingredientCapacity" size="30" required name="capacityInput" ng-pattern="integerval"/>

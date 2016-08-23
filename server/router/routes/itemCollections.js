@@ -29,6 +29,40 @@ router.get('/', function(req, res, next) {
   });
 });
 
+router.put('/:id', function(req, res, next) {
+  try {
+    logger.info('START PUT api/itemCollections/' + req.params.id);
+    ItemCollection.model.findByIdAndUpdate(req.params.id, req.body.collection, {new: true}, function(err, collection) {
+      if(err) {
+        logger.error('ERROR PUT api/itemCollections/' + req.params.id, {error: err});
+        return next(err);
+      }
+      logger.info('END PUT api/itemCollections/' + req.params.id);
+      res.json({data: collection});
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in PUT api/itemCollections/:id', {error: error});
+    return next(error);
+  }
+});
+
+router.delete('/:id', function(req, res, next) {
+  try {
+    logger.info('START DELETE api/itemCollections/' + req.params.id);
+    ItemCollection.model.findByIdAndRemove(req.params.id, function(err, collection) {
+      if(err) {
+        logger.error('ERROR DELETE api/itemCollections/' + req.params.id, {error: err});
+        return next(err);
+      }
+      logger.info('END DELETE api/itemCollections/' + req.params.id);
+      res.json({data: collection});
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in PUT api/itemCollections/:id', {error: error});
+    return next(error);
+  }
+});
+
 /* POST */
 /* checks for same collection name of given itemType */
 router.post('/', function(req, res, next) {
@@ -67,7 +101,7 @@ router.post('/', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/itemCollections/', {error: error});
-    next(error);
+    return next(error);
   }
 });
 
@@ -90,7 +124,7 @@ router.post('/getCollectionsForItemType', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/itemCollections/getCollectionsForItemType', {error: error});
-    next(error);
+    return next(error);
   }
 });
 
@@ -118,7 +152,7 @@ router.post('/getCollectionsForItemTypes', function(req, res, next) {
     });
   } catch(error) {
     logger.error('ERROR - exception in POST api/itemCollections/getCollectionsForItemTypes', {error: error});
-    next(error);
+    return next(error);
   }
 });
 

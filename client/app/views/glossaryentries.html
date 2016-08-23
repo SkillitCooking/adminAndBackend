@@ -1,5 +1,7 @@
 <div>
   <h2>Input Glossary Entries</h2><br/>
+  <a class="btn btn-link" ng-href="#/glossaryEntries">Create</a>
+  <a class="btn btn-link active" ng-href="#/editGlossaryEntries">Edit</a><br/>
   <form novalidate name="glossaryEntryForm">
     Title: <input type="text" ng-model="glossaryEntry.title" size="50" required name="titleInput"/><br /><br />
     Text: <textarea ng-model="glossaryEntry.text" rows="4" cols="50" required name="textInput"></textarea><br/><br/>

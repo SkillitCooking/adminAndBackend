@@ -14,7 +14,7 @@ angular.module('SkillitAdminApp')
     seasoningService.getAllSeasonings().then(function(seasonings){
       $scope.profiles = seasonings.data;
     }, function(response) {
-      console.log("Server Error: ", response.message);
+      console.log("Server Error: ", response);
       alert("Server Error: " + response.message);
     });
     

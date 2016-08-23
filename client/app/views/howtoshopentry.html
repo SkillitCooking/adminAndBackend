@@ -1,15 +1,17 @@
 <div>
   <h2>Input How To Shop Entry</h2>
+  <a class="btn btn-link active" ng-href="#/howToShopEntry">Create</a>
+  <a class="btn btn-link" ng-href="#/editHowToShopEntries">Edit</a><br/>
   <form novalidate name="howToShopEntryForm">
-  Title: <input type="text" ng-model="howToShopEntry.title" size="50" required name="titleInput"/><br /><br />
+    Title: <input type="text" ng-model="howToShopEntry.title" size="50" required name="titleInput"/><br /><br />
     Text: <textarea ng-model="howToShopEntry.text" rows="4" cols="50" required name="textInput"></textarea><br/><br/>
     Pictures: 
     <div ng-repeat="picture in howToShopEntry.pictures">
       <input type="url" ng-model="picture.url" size="60" placeholder="URL" />
       <input type="text" ng-model="picture.caption" size="100" placeholder="Caption"/>
+      <button class="btn btn-sm btn-warning" ng-click="removePicture($index)">Remove Picture</button>
     </div>
-    <button class="btn btn-large btn-info" ng-click="addPicture()">Add a Picture</button>
-    <button class="btn btn-large btn-warning" ng-disabled="!howToShopEntry.pictures || howToShopEntry.pictures.length === 0" ng-click="removePicture()">Remove Picture</button>
+    <button class="btn btn-info" ng-click="addPicture()">Add a Picture</button>
     <br/><br/>
     Collections: <select name="itemCollectionSelect" ng-model="curCollectionId" ng-options="collection._id as collection.name for collection in howToShopCollections"></select><br/>
     <ul>

@@ -57,58 +57,63 @@ router.post('/', function(req, res, next) {
     });
   } catch(error) {
     logger.error('ERROR - exception in POST api/seasoningProfiles/', {error: error});
-    next(error);
+    return next(error);
   }
 });
 
 /* GET /seasoningProfiles/id */
 router.get('/:id', function(req, res, next) {
-  logger.info('START GET api/seasoningProfiles/' + req.params.id);
-  SeasoningProfile.model.findById(req.params.id, function(err, profile) {
-    if (err) {
-      logger.error('ERROR POST api/seasoningProfiles/', {error: err, body: req.body});
-      return next(err);
-    }
-    logger.info('END GET api/seasoningProfiles/' + req.params.id);
-    res.json(profile);
-  });
+  try {
+    logger.info('START GET api/seasoningProfiles/' + req.params.id);
+    SeasoningProfile.model.findById(req.params.id, function(err, profile) {
+      if (err) {
+        logger.error('ERROR POST api/seasoningProfiles/', {error: err, body: req.body});
+        return next(err);
+      }
+      logger.info('END GET api/seasoningProfiles/' + req.params.id);
+      res.json(profile);
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in GET api/seasoningProfiles/:id', {error: error});
+    return next(error);
+  }
 });
 
 /* PUT /seasoningProfiles/:id */
 router.put('/:id', function(req, res, next) {
-  logger.info('START PUT api/seasoningProfiles/' + req.params.id);
   try {
-    SeasoningProfile.model.findByIdAndUpdate(req.params.id, req.body.seasoningProfile, function(err, profile) {
+    logger.info('START PUT api/seasoningProfiles/' + req.params.id);
+    SeasoningProfile.model.findByIdAndUpdate(req.params.id, req.body.seasoningProfile, {new: true}, function(err, profile) {
       if (err) {
         logger.error('ERROR PUT api/seasoningProfiles/' + req.params.id, {error: err, body: req.body});
         return next(err);
       }
       /* profile is previous value of document */
       logger.info('END PUT api/seasoningProfiles/' + req.params.id);
-      res.json(profile);
+      res.json({data: profile});
     });
   } catch (error) {
     logger.error('ERROR - exception in PUT api/seasoningProfiles/:id', {error: error});
-    next(error);
+    return next(error);
   }
 });
 
 /* DELETE /seasoningProfiles/:id */
 router.delete('/:id', function(req, res, next) {
-  logger.info('START DELETE api/seasoningProfiles/' + req.params.id);
   try {
-    SeasoningProfile.model.findByIdAndRemove(req.params.id, req.body.seasoningProfile, function(err, profile) {
+    logger.info('START DELETE api/seasoningProfiles/' + req.params.id);
+    SeasoningProfile.model.findByIdAndRemove(req.params.id, function(err, profile) {
       if (err) {
         logger.error('ERROR DELETE api/seasoningProfiles/' + req.params.id, {error: err, body: req.body});
         return next(err);
       }
       /* profile is the value of just-deleted document */
       logger.info('START DELETE api/seasoningProfiles/' + req.params.id);
-      res.json(profile);
+      res.json({data: profile});
     });
   } catch(error) {
     logger.error('ERROR - exception in DELETE api/seasoningProfiles/:id', {error: error});
-    next(error);
+    return next(error);
   }
 });
 

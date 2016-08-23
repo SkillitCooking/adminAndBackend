@@ -14,6 +14,15 @@ angular.module('SkillitAdminApp')
     return {
       addNewChapter: function(newChapter) {
         return baseChapters.post({chapter: newChapter});
+      },
+      getAllChapters: function() {
+        return baseChapters.customGET('/');
+      },
+      updateChapter: function(chapter) {
+        return baseChapters.customPUT({chapter: chapter}, '/' + chapter._id);
+      },
+      deleteChapter: function(chapter) {
+        return baseChapters.customDELETE('/' + chapter._id);
       }
     };
   });

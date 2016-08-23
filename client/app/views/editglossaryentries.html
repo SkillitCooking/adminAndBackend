@@ -1,0 +1,25 @@
+<div>
+  <h2>Edit Glossary Entries</h2>
+  <a class="btn btn-link" ng-href="#/glossaryEntries">Create</a>
+  <a class="btn btn-link active" ng-href="#/editGlossaryEntries">Edit</a><br/>
+  <form novalidate name="editGlossaryEntriesForm">
+    Select Glossary Entry: <select name="glossaryEntrySelect" ng-model="selectedEntry" ng-change="changeSelectedEntry()" ng-options=" as entry.title for entry in glossaryEntries"></select><br/><br/>
+    Title: <input type="text" ng-model="entry.title" size="50" required name="titleInput"/><br /><br />
+    Text: <textarea ng-model="entry.text" rows="4" cols="50" required name="textInput"></textarea><br/><br/>
+    Picture: <input type="url" ng-model="entry.picture.url" size="60" name="pictureURLInput" placeholder="URL" />
+    <input type="text" ng-model="entry.picture.caption" size="100" name="pictureCaptionInput" placeholder="Caption"/><br/><br/>
+    Video: <input type="url" ng-model="entry.video.url" size="60" name="videoURLInput" placeholder="URL" />
+    <input type="text" ng-model="entry.video.caption" size="100" name="videoCaptionInput" placeholder="Caption"/><br/><br/>
+    Collections: <select name="itemCollectionSelect" ng-model="curCollectionId" ng-options="collection._id as collection.name for collection in glossaryCollections"></select><br/>
+    <ul>
+      <div ng-repeat="collectionID in entry.collectionIds">
+        <li>{{collectionID}}</li>
+        <button ng-click="removeCollection($index)">Remove</button>
+      </div>
+    </ul>
+    <button ng-click="addCollection()">Add Collection</button><br/><br/>
+    <button class="btn btn-warning btn-large" ng-click="cancelChanges()">Cancel Changes</button>
+    <button class="btn btn-primary btn-large" ng-click="saveChanges()">Save Changes</button>
+    <button class="btn btn-danger btn-large" ng-click="deleteGlossary()">Delete Entry</button>
+  </form>
+</div>

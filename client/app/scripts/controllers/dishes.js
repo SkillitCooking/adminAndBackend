@@ -14,7 +14,7 @@ angular.module('SkillitAdminApp')
     dishService.getAllDishes().then(function(dishes) {
       $scope.dishes = dishes;
     }, function(response) {
-      console.log("Server Error: ", response.message);
+      console.log("Server Error: ", response);
       alert("Server Error: " + response.message);
     });
 

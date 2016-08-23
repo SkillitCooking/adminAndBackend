@@ -18,6 +18,12 @@ angular.module('SkillitAdminApp')
       },
       addNewTrainingVideo: function(newVideo) {
         return baseTrainingVideos.post(newVideo);
+      },
+      updateTrainingVideo: function(video) {
+        return baseTrainingVideos.customPUT({trainingVideo: video}, '/' + video._id);
+      },
+      deleteTrainingVideo: function(video) {
+        return baseTrainingVideos.customDELETE('/' + video._id);
       }
     };
   });

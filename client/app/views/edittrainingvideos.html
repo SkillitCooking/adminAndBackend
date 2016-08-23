@@ -1,0 +1,24 @@
+<div>
+  <h2>Edit Training Videos</h2>
+  <a class="btn btn-link" ng-href="#/trainingVideos">Create</a>
+  <a class="btn btn-link active" ng-href="#/editTrainingVideos">Edit</a><br/>
+  <form novalidate name="trainingVideoForm">
+    Select Training Video: <select name="trainingVideoSelect" ng-model="selectedVideo" ng-change="changeSelectedVideo()" ng-options="video as video.title for video in videos"></select><br/><br/>
+    Title: <input type="text" ng-model="trainingVideo.title" size="50" required name="titleInput"/><br /><br />
+    Video: <input type="url" ng-model="trainingVideo.video.url" size="60" name="videoURLInput" placeholder="URL" />
+    <input type="text" ng-model="trainingVideo.video.caption" size="100" name="videoCaptionInput" placeholder="Caption"/><br/><br/> 
+    Picture: <input type="url" ng-model="trainingVideo.picture.url" size="60" name="pictureURLInput" placeholder="URL" />
+    <input type="text" ng-model="trainingVideo.picture.caption" size="100" name="pictureCaptionInput" placeholder="Caption"/><br/><br/>
+    Collections: <select name="itemCollectionSelect" ng-model="curCollectionId" ng-options="collection._id as collection.name for collection in trainingVideoCollections"></select><br/>
+    <ul>
+      <div ng-repeat="collectionID in trainingVideo.collectionIds">
+        <li>{{collectionID}}</li>
+        <button ng-click="removeCollection($index)">Remove</button>
+      </div>
+    </ul>
+    <button ng-click="addCollection()">Add Collection</button><br/><br/>
+    <button class="btn btn-large btn-warning" ng-click="cancelChanges()">Cancel Changes</button>
+    <button class="btn btn-large btn-primary" ng-click="saveChanges()">Save Changes</button>
+    <button class="btn btn-large btn-danger" ng-click="deleteVideo()">Delete Video</button>
+  </form>
+</div>

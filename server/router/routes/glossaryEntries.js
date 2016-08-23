@@ -23,6 +23,40 @@ router.get('/', function(req, res, next) {
   });
 });
 
+router.put('/:id', function(req, res, next) {
+  try {
+    logger.info('START PUT api/glossaryEntries/' + req.params.id);
+    GlossaryEntry.model.findByIdAndUpdate(req.params.id, req.body.entry, {new: true}, function(err, entry) {
+      if(err) {
+        logger.error('ERROR PUT api/glossaryEntries/' + req.params.id, {error: err});
+        return next(err);
+      }
+      logger.info('END PUT api/glossaryEntries/' + req.params.id);
+      res.json({data: entry});
+    });
+  } catch(error) {
+    logger.error('ERROR - exception in PUT api/glossaryEntries/:id', {error: error});
+    return next(error);
+  }
+});
+
+router.delete('/:id', function(req, res, next) {
+  try {
+    logger.info('START DELETE api/glossaryEntries/' + req.params.id);
+    GlossaryEntry.findByIdAndRemove(req.params.id, function(err, entry) {
+      if(err) {
+        logger.error('ERROR DELETE api/glossaryEntries/' + req.params.id, {error: err});
+        return next(err);
+      }
+      logger.info('END DELETE api/glossaryEntries/' + req.params.id);
+      res.json({data: entry});
+    });
+  } catch(error) {
+    logger.error('ERROR - exception in DELETE api/glossaryEntries/:id', {error: error});
+    return next(error);
+  }
+});
+
 /*POST a glossaryEntry*/
 router.post('/', function(req, res, next) {
   //check if title already exists
@@ -60,7 +94,7 @@ router.post('/', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/glossaryEntries/', {error: error});
-    next(error);
+    return next(error);
   }
 });
 
@@ -80,7 +114,7 @@ router.post('/getGlossarysForCollection', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/glossaryEntries/getGlossarysForCollection', {error: error});
-    next(error);
+    return next(error);
   }
 });
 

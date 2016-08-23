@@ -23,6 +23,42 @@ router.get('/', function(req, res, next) {
   });
 });
 
+router.put('/:id', function(req, res, next) {
+  try {
+    logger.info('START PUT api/trainingVideos/' + req.params.id);
+    TrainingVideo.model.findByIdAndUpdate(req.params.id, req.body.trainingVideo, {new: true}, function(err, video) {
+      if (err) {
+        logger.error('ERROR PUT api/trainingVideos/' + req.params.id, {error: err, body: req.body});
+        return next(err);
+      }
+      /* video is previous value of document */
+      logger.info('END PUT api/trainingVideos/' + req.params.id);
+      res.json({data: video});
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in PUT api/trainingVideos/:id', {error: error});
+    return next(error);
+  }
+});
+
+router.delete('/:id', function(req, res, next) {
+  try {
+    logger.info('START DELETE api/trainingVideos/' + req.params.id);
+    TrainingVideo.model.findByIdAndRemove(req.params.id, function(err, video) {
+      if (err) {
+        logger.error('ERROR DELETE api/trainingVideos/' + req.params.id, {error: err, body: req.body});
+        return next(err);
+      }
+      /* video is the value of just-deleted document */
+      logger.info('START DELETE api/trainingVideos/' + req.params.id);
+      res.json({data: video});
+    });
+  } catch(error) {
+    logger.error('ERROR - exception in DELETE api/trainingVideos/:id', {error: error});
+    return next(error);
+  }
+});
+
 /*POST single trainingVideo*/
 router.post('/', function(req, res, next) {
   logger.info('START POST api/trainingVideos/');
@@ -59,7 +95,7 @@ router.post('/', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/trainingVideos/', {error: error});
-    next(error);
+    return next(error);
   }
 });
 
@@ -79,7 +115,7 @@ router.post('/getTrainingVideosForCollection', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/trainingVideos/getTrainingVideosForCollection', {error: error});
-    next(error);
+    return next(error);
   }
 });
 

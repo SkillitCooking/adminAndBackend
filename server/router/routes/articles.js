@@ -25,8 +25,8 @@ router.get('/', function(req, res, next) {
 });
 
 router.put('/:id', function(req, res, next) {
-  logger.info('START PUT api/articles/' + req.params.id);
   try {
+    logger.info('START PUT api/articles/' + req.params.id);
     Article.model.findByIdAndUpdate(req.params.id, req.body.article, {new: true}, function(err, article) {
       if(err) {
         logger.error('ERROR PUT api/articles/' + req.params.id, {error: err, body: req.body});
@@ -42,8 +42,8 @@ router.put('/:id', function(req, res, next) {
 });
 
 router.delete('/:id', function(req, res, next) {
-  logger.info('START DELETE api/articles/' + req.params.id);
   try {
+    logger.info('START DELETE api/articles/' + req.params.id);
     Article.model.findByIdAndRemove(req.params.id, function(err, article) {
       if(err) {
         logger.error('ERROR DELETE api/articles/' + req.params.id, {error: err, body: req.body});

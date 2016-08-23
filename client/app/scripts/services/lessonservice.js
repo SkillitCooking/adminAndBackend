@@ -18,6 +18,15 @@ angular.module('SkillitAdminApp')
       },
       getLessonsForChapterConstruction: function() {
         return baseLessons.customGET('/getLessonsForChapterConstruction');
+      },
+      getAllLessons: function() {
+        return baseLessons.customGET('/');
+      },
+      updateLesson: function(lesson) {
+        return baseLessons.customPUT({lesson: lesson}, '/' + lesson._id);
+      },
+      deleteLesson: function(lesson) {
+        return baseLessons.customDELETE('/' + lesson._id);
       }
     };
   });

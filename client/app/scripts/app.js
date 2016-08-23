@@ -108,6 +108,51 @@ angular
         controller: 'EditArticlesCtrl',
         controllerAs: 'editArticles'
       })
+      .when('/editLessons', {
+        templateUrl: 'views/editlessons.html',
+        controller: 'EditLessonsCtrl',
+        controllerAs: 'editLessons'
+      })
+      .when('/editChapter', {
+        templateUrl: 'views/editchapter.html',
+        controller: 'EditChapterCtrl',
+        controllerAs: 'editChapter'
+      })
+      .when('/editDailyTips', {
+        templateUrl: 'views/editdailytips.html',
+        controller: 'EditDailytipsCtrl',
+        controllerAs: 'editDailyTips'
+      })
+      .when('/editDishes', {
+        templateUrl: 'views/editdishes.html',
+        controller: 'EditDishesCtrl',
+        controllerAs: 'editDishes'
+      })
+      .when('/editGlossaryEntries', {
+        templateUrl: 'views/editglossaryentries.html',
+        controller: 'EditGlossaryEntriesCtrl',
+        controllerAs: 'editGlossaryEntries'
+      })
+      .when('/editHowToShopEntries', {
+        templateUrl: 'views/edithowtoshopentries.html',
+        controller: 'EditHowToShopEntriesCtrl',
+        controllerAs: 'editHowToShopEntries'
+      })
+      .when('/editItemCollections', {
+        templateUrl: 'views/edititemcollections.html',
+        controller: 'EditItemCollectionsCtrl',
+        controllerAs: 'editItemCollections'
+      })
+      .when('/editSeasoningProfiles', {
+        templateUrl: 'views/editseasoningprofiles.html',
+        controller: 'EditSeasoningProfilesCtrl',
+        controllerAs: 'editSeasoningProfiles'
+      })
+      .when('/editTrainingVideos', {
+        templateUrl: 'views/edittrainingvideos.html',
+        controller: 'EditTrainingVideosCtrl',
+        controllerAs: 'editTrainingVideos'
+      })
       .otherwise({
         redirectTo: '/'
       });

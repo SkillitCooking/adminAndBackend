@@ -45,10 +45,8 @@ angular.module('SkillitAdminApp')
       });
     };
 
-    $scope.removePicture = function() {
-      if($scope.howToShopEntry.pictures && $scope.howToShopEntry.pictures.length > 0) {
-        $scope.howToShopEntry.pictures.pop();
-      }
+    $scope.removePicture = function(index) {
+      $scope.howToShopEntry.pictures.splice(index, 1);
     };
 
     $scope.reset = function() {

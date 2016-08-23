@@ -18,6 +18,12 @@ angular.module('SkillitAdminApp')
       },
       addNewHowToShopEntry: function(newHowToShopEntry) {
         return baseHowToShopEntries.post(newHowToShopEntry);
+      },
+      updateHowToShopEntry: function(entry) {
+        return baseHowToShopEntries.customPUT({entry: entry}, '/' + entry._id);
+      },
+      deleteHowToShopEntry: function(entry) {
+        return baseHowToShopEntries.customDELETE('/' + entry._id);
       }
     };
   });

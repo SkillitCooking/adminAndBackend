@@ -1,0 +1,14 @@
+<div>
+  <h2>Edit Item Collections</h2>
+  <a class="btn btn-link" ng-href="#/itemCollections">Create</a>
+  <a class="btn btn-link active" ng-href="#/editItemCollections">Edit</a><br/>
+  <form novalidate name="editItemCollectionForm">
+    Select Collection: <select name="itemCollectionSelect" ng-model="selectedCollection" ng-change="changeSelectedCollection()" ng-options="collection as collection.displayName for collection in collections"></select><br/><br/>
+    Name: <input type="text" ng-model="itemCollection.name" size="50" required name="nameInput" /><br/><br/>
+    Description: <textarea ng-model="itemCollection.description" rows="4" cols="50" required name="descriptionInput"></textarea><br/><br/>
+    ItemType: <select name="itemTypeSelect" ng-model="itemCollection.itemType" ng-options="itemType as itemType for itemType in itemTypes" required></select><br/><br/>
+    <button class="btn btn-warning btn-large" ng-click="cancelChanges()">Cancel Changes</button>
+    <button class="btn btn-primary btn-large" ng-click="saveChanges()">Save Changes</button>
+    <button class="btn btn-danger btn-large" ng-click="deleteCollection()">Delete Collection</button>
+  </form>
+</div>

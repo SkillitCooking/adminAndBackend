@@ -54,29 +54,34 @@ router.post('/', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/dishes/', {error: error});
-    next(error);
+    return next(error);
   }
 });
 
-/* GET /dishes/id */
+/* GET /dishes/:id */
 router.get('/:id', function(req, res, next) {
-  logger.info('START GET api/dishes/' + req.params.id);
-  Dish.model.findById(req.params.id, function(err, dish) {
-    if (err) {
-      logger.error('ERROR GET api/dishes/' + req.params.id, {error: err});
-      return next(err);
-    }
+  try {
     logger.info('START GET api/dishes/' + req.params.id);
-    res.json(dish);
-  });
+    Dish.model.findById(req.params.id, function(err, dish) {
+      if (err) {
+        logger.error('ERROR GET api/dishes/' + req.params.id, {error: err});
+        return next(err);
+      }
+      logger.info('START GET api/dishes/' + req.params.id);
+      res.json(dish);
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in GET api/dishes/:id', {error: error});
+    return next(error);
+  }
 });
 
 /* PUT /dishes/:id */
 router.put('/:id', function(req, res, next) {
-  logger.info('START PUT api/dishes/' + req.params.id);
   try {
+    logger.info('START PUT api/dishes/' + req.params.id);
     Dish.model.findByIdAndUpdate(req.params.id, req.body.dish, 
-      {upsert: true}, function(err, dish) {
+      {new: true}, function(err, dish) {
       if (err) {
         logger.error('ERROR PUT api/dishes/' + req.params.id, {error: err, body: req.body});
         return next(err);
@@ -87,15 +92,15 @@ router.put('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in PUT api/dishes/:id', {error: error});
-    next(error);
+    return next(error);
   }
 });
 
 /* DELETE /dishes/:id */
 router.delete('/:id', function(req, res, next) {
-  logger.info('START DELETE api/dishes/' + req.params.id);
   try {
-    Dish.model.findByIdAndRemove(req.params.id, req.body.dish, function(err, dish) {
+    logger.info('START DELETE api/dishes/' + req.params.id);
+    Dish.model.findByIdAndRemove(req.params.id, function(err, dish) {
       if (err) {
         logger.error('ERROR DELETE api/dishes/' + req.params.id, {error: err, body: req.body});
         return next(err);
@@ -106,7 +111,7 @@ router.delete('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in DELETE api/dishes/:id', {error: error});
-    next(error);
+    return next(error);
   }
 });
 

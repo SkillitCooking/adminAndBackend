@@ -1,5 +1,7 @@
 <div>
   <h2>Input Daily Tips</h2><br/>
+  <a class="btn btn-link active" ng-href="#/dailyTips">Create</a>
+  <a class="btn btn-link" ng-href="#/editDailyTips">Edit</a><br/>
   <form novalidate name="dailyTipsForm">
     Title: <input type="text" ng-model="dailyTip.title" size="50" required name="titleInput"/><br /><br />
     Text: <textarea ng-model="dailyTip.text" rows="4" cols="50" required name="textInput"></textarea><br/><br/>

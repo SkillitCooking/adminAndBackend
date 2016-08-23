@@ -21,6 +21,12 @@ angular.module('SkillitAdminApp')
       },
       addNewSeasoning: function (newSeasoning) {
         return baseSeasonings.post(newSeasoning);
+      },
+      updateSeasoning: function (seasoningProfile) {
+        return baseSeasonings.customPUT({seasoningProfile: seasoningProfile}, '/' + seasoningProfile._id);
+      },
+      deleteSeasoning: function (seasoningProfile) {
+        return baseSeasonings.customDELETE('/' + seasoningProfile._id);
       }
     };
   });

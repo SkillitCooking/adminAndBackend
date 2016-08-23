@@ -27,6 +27,42 @@ router.get('/', function(req, res, next) {
   });
 });
 
+/* PUT dailyTip */
+router.put('/:id', function(req, res, next) {
+  try {
+    logger.info('START PUT api/dailyTips/' + req.params.id);
+    DailyTip.model.findByIdAndUpdate(req.params.id, req.body.tip, {new: true}, function(err, tip) {
+      if(err) {
+        logger.error('ERROR PUT api/dailyTips/' + req.params.id);
+        return next(err);
+      }
+      logger.info('END PUT api/dailyTips/' + req.params.id);
+      res.json({data: tip});
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in PUT api/dailyTips/:id', {error: error});
+    return next(error);
+  }
+});
+
+/* DELETE single DailyTip */
+router.delete('/:id', function(req, res, next) {
+  try {
+    logger.info('START DELETE api/dailyTips/' + req.params.id);
+    DailyTip.model.findByIdAndRemove(req.params.id, function(err, tip) {
+      if(err) {
+        logger.error('ERROR DELETE api/dailyTips/' + req.params.id);
+        return next(err);
+      }
+      logger.info('END DELETE api/dailyTips/' + req.params.id);
+      res.json({data: tip});
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in DELETE api/dailyTips/:id', {error: error});
+    return next(error);
+  }
+});
+
 /* POST single DailyTip */
 router.post('/', function(req, res, next) {
   //need any existence checks? probably for title...
@@ -68,12 +104,12 @@ router.post('/', function(req, res, next) {
         }
       } catch (error) {
         logger.error('ERROR - exception in POST api/dailyTips/', {error: error});
-        next(error);
+        return next(error);
       }
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/dailyTips/', {error: error});
-    next(error);
+    return next(error);
   }
 });
 
@@ -115,7 +151,7 @@ router.post('/getTipsForCollection', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/dailyTips/getTipsForCollection', {error: error});
-    next(error);
+    return next(error);
   }
 });
 

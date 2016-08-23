@@ -21,6 +21,12 @@ angular.module('SkillitAdminApp')
       },
       addNewDish: function (newDish) {
         return baseDishes.post(newDish);
+      },
+      updateDish: function(dish) {
+        return baseDishes.customPUT({dish: dish}, '/' + dish._id);
+      },
+      deleteDish: function(dish) {
+        return baseDishes.customDELETE('/' + dish._id);
       }
     };
   });

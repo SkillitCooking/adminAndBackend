@@ -100,4 +100,12 @@ angular.module('SkillitAdminApp')
       $scope.lesson = angular.copy({itemIds: []});
     };
 
+    $scope.getArticleLabel = function() {
+      return $scope.lesson.isArticle;
+    };
+
+    $scope.getItemLabel = function() {
+      return !$scope.lesson.isArticle;
+    };
+
   }]);

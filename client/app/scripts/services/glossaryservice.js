@@ -18,6 +18,12 @@ angular.module('SkillitAdminApp')
       },
       addNewGlossaryEntry: function (newEntry) {
         return baseGlossaryEntries.post(newEntry);
+      },
+      updateGlossaryEntry: function(entry) {
+        return baseGlossaryEntries.customPUT({entry: entry}, '/' + entry._id);
+      },
+      deleteGlossaryEntry: function(entry) {
+        return baseGlossaryEntries.customDELETE('/' + entry._id);
       }
     };
   });

@@ -23,6 +23,40 @@ router.get('/', function(req, res, next) {
   });
 });
 
+router.put(':id', function(req, res, next) {
+  try {
+    logger.info('ERROR PUT api/howToShopEntries/' + req.params.id);
+    HowToShopEntry.findByIdAndUpdate(req.params.id, req.body.entry, {new: true}, function(err, entry) {
+      if(err) {
+        logger.error('ERROR PUT api/howToShopEntries/' + req.params.id, {error: err});
+        return next(err);
+      }
+      logger.info('END PUT api/howToShopEntries/' + req.params.id);
+      res.json({data: entry});
+    });
+  } catch(error) {
+    logger.error('ERROR - exception in PUT api/howToShopEntries/:id', {error: error});
+    return next(error);
+  }
+});
+
+router.delete('/:id', function(req, res, next) {
+  try {
+    logger.info('START DELETE api/howToShopEntries/' + req.params.id);
+    HowToShopEntry.model.findByIdAndRemove(req.params.id, function(err, entry) {
+      if(err) {
+        logger.error('ERROR DELETE api/howToShopEntries/' + req.params.id, {error: err});
+        return next(err);
+      }
+      logger.info('END DELETE api/howToShopEntries/' + req.params.id);
+      res.json({data: entry});
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in DELETE api/howToShopEntries/:id', {error: error});
+    return next(error);
+  }
+});
+
 /*POST single howToShopEntry*/
 router.post('/', function(req, res, next) {
   logger.info('START POST api/howToShopEntries/');
@@ -59,7 +93,7 @@ router.post('/', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/howToShopEntries/', {error: error});
-    next(error);
+    return next(error);
   }
 });
 
@@ -80,7 +114,7 @@ router.post('/getHowToShopForCollection', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/howToShopEntries/getHowToShopForCollection', {error: error});
-    next(error);
+    return next(error);
   }
 });
 

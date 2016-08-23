@@ -1,5 +1,7 @@
 <div>
   <h2>Input Training Videos</h2>
+  <a class="btn btn-link" ng-href="#/trainingVideos">Create</a>
+  <a class="btn btn-link active" ng-href="#/editTrainingVideos">Edit</a><br/>
   <form novalidate name="trainingVideoForm">
     Title: <input type="text" ng-model="trainingVideo.title" size="50" required name="titleInput"/><br /><br />
     Video: <input type="url" ng-model="trainingVideo.video.url" size="60" name="videoURLInput" placeholder="URL" />
@@ -10,7 +12,7 @@
     <ul>
       <div ng-repeat="collectionID in trainingVideo.collectionIds">
         <li>{{collectionID}}</li>
-        <button ng-click="removeCollection()">Remove</button>
+        <button ng-click="removeCollection($index)">Remove</button>
       </div>
     </ul>
     <button ng-click="addCollection()">Add Collection</button><br/><br/>

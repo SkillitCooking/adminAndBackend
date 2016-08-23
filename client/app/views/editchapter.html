@@ -1,0 +1,19 @@
+<div>
+  <h2>Edit Chapter</h2>
+  <a class="btn btn-link" ng-href="#/chapter">Create</a>
+  <a class="btn btn-link active" ng-href="#/editChapter">Edit</a><br/>
+  <form novalidate name="editChapterForm">
+    Select Chapter: <select name="chapterSelect" ng-model="selectedChapter" ng-change="changeSelectedChapter()" ng-options="chapter.name for chapter in chapters"></select><br/><br/>
+    Name: <input type="text" ng-model="chapter.name" size="50" required name="nameInput"><br/><br/>
+    Description: <textarea ng-model="chapter.description" rows="4" cols="50" required name="descriptionInput"></textarea><br/><br/>
+    Select Lesson: <select name="lessonSelect" ng-model="selectedLesson" ng-options="lesson.name for lesson in lessons"></select><br/><br/>
+    <button class="btn btn-sm btn-warning" ng-click="addLesson()">Add Lesson</button><br/><br/>
+    Added Lesson Ids: <div ng-repeat="id in chapter.lessonIds">
+      <p>{{id}}</p>
+      <button class="btn btn-xs btn-danger" ng-click="removeLesson($index)">Remove</button>
+    </div>
+    <button class="btn btn-warning btn-large" ng-click="cancelChanges()">Cancel Changes</button>
+    <button class="btn btn-primary btn-large" ng-click="saveChanges()">Save Changes</button>
+    <button class="btn btn-danger btn-large" ng-click="deleteChapter()">Delete Chapter</button>
+  </form>
+</div>

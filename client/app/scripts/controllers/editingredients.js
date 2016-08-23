@@ -150,8 +150,7 @@ angular.module('SkillitAdminApp')
       }).then(function(res) {
         alert("Ingredient successfully updated! Refresh page.");
       }, function(response) {
-        console.log("Server Error: ", response.message);
-        console.log(response);
+        console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
       });
     };
@@ -160,8 +159,7 @@ angular.module('SkillitAdminApp')
       ingredientService.deleteIngredient({_id: $scope.ingredient._id}).then(function(res) {
         alert("Ingredient successfully deleted. Refresh page.");
       }, function(response) {
-        console.log("Server Error: ", response.message);
-        console.log(response);
+        console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
       });
     };

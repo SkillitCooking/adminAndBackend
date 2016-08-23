@@ -1,13 +1,21 @@
 <div>
   <h2>Input Lesson</h2>
+  <a class="btn btn-link active" ng-href="#/lesson">Create</a>
+  <a class="btn btn-link" ng-href="#/editLessons">Edit</a><br/>
   <form novalidate name="lessonForm">
     Name: <input type="text" ng-model="lesson.name" size="50" required name="nameInput" /><br/><br/>
     Time Estimate (minutes): <input type="text" ng-model="lesson.timeEstimate" size="50" required name="timeEstimateInput" /><br/><br/>
     Description: <textarea ng-model="lesson.description" rows="4" cols="50" required name="descriptionInput"></textarea><br/><br/>
     Is Article? <input type="checkbox" ng-model="lesson.isArticle" /><br/><br/>
-    Article: <select ng-disabled="!lesson.isArticle" name="articleSelect" ng-model="lesson.articleId" ng-options="article._id as article.title for article in lesson.articles"></select><br/><br/>
-    Item Type: <select ng-disabled="lesson.isArticle" name="itemTypeSelect" ng-model="itemType" ng-options="itemType for itemType in itemTypes"></select><br/><br/>
-    Item: <select ng-disabled="lesson.isArticle" name="itemSelect" ng-model="selectedItem" ng-options="item._id as item.title for item in getSelectedTypeItems()"></select><br/><br/>
+    <s ng-show="!getArticleLabel()">Article:</s> 
+    <span ng-show="getArticleLabel()">Article:</span>
+    <select ng-disabled="!lesson.isArticle" name="articleSelect" ng-model="lesson.articleId" ng-options="article._id as article.title for article in lesson.articles"></select><br/><br/>
+    <s ng-show="!getItemLabel()">Item Type:</s>
+    <span ng-show="getItemLabel()">Item Type:</span>
+    <select ng-disabled="lesson.isArticle" name="itemTypeSelect" ng-model="itemType" ng-options="itemType for itemType in itemTypes"></select><br/><br/>
+    <s ng-class="!getItemLabel()">Item:</s>
+    <span ng-class="getItemLabel()">Item:</span>
+    <select ng-disabled="lesson.isArticle" name="itemSelect" ng-model="selectedItem" ng-options="item._id as item.title for item in getSelectedTypeItems()"></select><br/><br/>
     <button class="btn btn-warning btn-sm" ng-click="addItem()" ng-disabled="lesson.isArticle || !selectedItem">Add Item</button><br/><br/>
     Added Items: <div ng-repeat="id in lesson.itemIds">
       <p>{{id.itemType}}: {{id.id}}</p>

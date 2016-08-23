@@ -13,7 +13,7 @@ angular.module('SkillitAdminApp')
     itemCollectionService.getItemCollectionsForType('glossary').then(function(collections) {
       $scope.glossaryCollections = collections.data;
     }, function(response) {
-      console.log("Server Error: ", response.message);
+      console.log("Server Error: ", response);
       alert("Server Error: " + response.message);
     });
 
@@ -55,7 +55,7 @@ angular.module('SkillitAdminApp')
         var alertMsg = "Success! Tip " + entry.data.title + " was saved!";
         alert(alertMsg);
       }, function(response) {
-        console.log("Server Error: ", response.message);
+        console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
       });
       $scope.reset();

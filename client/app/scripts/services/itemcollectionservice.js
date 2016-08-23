@@ -21,6 +21,12 @@ angular.module('SkillitAdminApp')
       },
       getItemCollectionsForType: function (itemType) {
         return baseItemCollections.customPOST({itemType: itemType}, 'getCollectionsForItemType');
+      },
+      updateItemCollection: function(collection) {
+        return baseItemCollections.customPUT({collection: collection}, '/' + collection._id);
+      },
+      deleteItemCollection: function(collection) {
+        return baseItemCollections.customDELETE('/' + collection._id);
       }
-    }
+    };
   });

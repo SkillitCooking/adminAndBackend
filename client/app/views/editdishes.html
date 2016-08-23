@@ -1,0 +1,14 @@
+<div>
+  <h2>Edit Dishes</h2>
+  <a class="btn btn-link" ng-href="#/dishes">Create</a>
+  <a class="btn btn-link active" ng-href="#/editDishes">Edit</a><br/>
+  <form novalidate name="editDishForm">
+    Select Dish: <select name="dishSelect" ng-model="selectedDish" ng-change="changeSelectedDish()" ng-options="dish as dish.name for dish in dishes"></select><br/><br/>
+    Name: <input type="text" ng-model="dish.name" size="50" required name="nameInput" /><br /><br />
+    IngredientCapacity: <input type="text" ng-model="dish.ingredientCapacity" size="30" required name="capacityInput" ng-pattern="integerval"/>
+    <span ng-show="dishForm.capacityInput.$invalid">Please enter a number</span><br/><br/>
+    <button class="btn btn-warning btn-large" ng-click="cancelChanges()">Cancel Changes</button>
+    <button class="btn btn-primary btn-large" ng-click="saveChanges()">Save Changes</button>
+    <button class="btn btn-danger btn-large" ng-click="deleteDish()">Delete Dish</button>
+  </form>
+</div>

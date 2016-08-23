@@ -47,8 +47,8 @@ router.get('/getIngredientsForSelection', function(req, res, next) {
 /* Check for same ingredient name*/
 router.post('/', function(req, res, next) {
   logger.info('START POST api/ingredients/');
-  var query = {'name': req.body.ingredient.name};
   try {
+    var query = {'name': req.body.ingredient.name};
     Ingredient.model.findOneAndUpdate(query, req.body.ingredient,
       {upsert: true}, function(err, ingredient) {
       if (err) {
@@ -81,21 +81,26 @@ router.post('/', function(req, res, next) {
 
 /* GET /ingredients/id */
 router.get('/:id', function(req, res, next) {
-  logger.info('START GET api/ingredients/' + req.params.id);
-  Ingredient.model.findById(req.params.id, function(err, ingredient) {
-    if (err) {
-      logger.error('ERROR GET api/ingredients/' + req.params.id, {error: err});
-      return next(err);
-    }
-    logger.info('END GET api/ingredients/' + req.params.id);
-    res.json(ingredient);
-  });
+  try {
+    logger.info('START GET api/ingredients/' + req.params.id);
+    Ingredient.model.findById(req.params.id, function(err, ingredient) {
+      if (err) {
+        logger.error('ERROR GET api/ingredients/' + req.params.id, {error: err});
+        return next(err);
+      }
+      logger.info('END GET api/ingredients/' + req.params.id);
+      res.json(ingredient);
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in GET api/ingredients/:id', {error: error});
+    return next(error);
+  }
 });
 
 /* PUT /ingredients/:id */
 router.put('/:id', function(req, res, next) {
-  logger.info('START PUT api/ingredients/' + req.params.id);
   try {
+    logger.info('START PUT api/ingredients/' + req.params.id);
     Ingredient.model.findByIdAndUpdate(req.params.id, req.body.ingredient, {new: true}, function(err, ingredient) {
       if (err) {
         logger.error('ERROR PUT api/ingredients' + req.params.id, {error: err, body: req.body});
@@ -113,8 +118,8 @@ router.put('/:id', function(req, res, next) {
 
 /* DELETE /ingredients/:id */
 router.delete('/:id', function(req, res, next) {
-  logger.info('START DELETE api/ingredients/' + req.params.id);
   try {
+    logger.info('START DELETE api/ingredients/' + req.params.id);
     Ingredient.model.findByIdAndRemove(req.params.id, function(err, ingredient) {
       if (err) {
         logger.error('ERROR DELETE api/ingredients/' + req.params.id, {error: err, body: req.body});

@@ -178,15 +178,20 @@ router.post('/', function(req, res, next) {
 
 /* GET /recipes/:id */
 router.get('/:id', function(req, res, next) {
-  logger.info('START GET api/recipes/' + req.params.id);
-  Recipe.model.findById(req.params.id, function(err, recipe) {
-    if(err) {
-      logger.error('ERROR GET api/recipes/' + req.params.id, {error: err});
-      return next(err);
-    }
-    logger.info('END GET api/recipes/' + req.params.id);
-    res.json(recipe);
-  });
+  try {
+    logger.info('START GET api/recipes/' + req.params.id);
+    Recipe.model.findById(req.params.id, function(err, recipe) {
+      if(err) {
+        logger.error('ERROR GET api/recipes/' + req.params.id, {error: err});
+        return next(err);
+      }
+      logger.info('END GET api/recipes/' + req.params.id);
+      res.json(recipe);
+    });
+  } catch (error) {
+    logger.error('ERROR - exception GET in api/recipes/:id', {error: error});
+    return next(error);
+  }
 });
 
 /* GET recipes of the day with given date */
@@ -219,8 +224,8 @@ router.post('/getRecipesOfTheDay', function(req, res, next) {
 
 /* PUT /recipes/:id */
 router.put('/:id', function(req, res, next) {
-  logger.info('START PUT api/recipes/' + req.params.id);
   try {
+    logger.info('START PUT api/recipes/' + req.params.id);
     Recipe.model.findByIdAndUpdate(req.params.id, req.body.recipe, {new: true}, function(err, recipe) {
       if(err) {
         logger.error('ERROR PUT api/recipes/' + req.params.id, {error: err, body: req.body});
@@ -237,8 +242,8 @@ router.put('/:id', function(req, res, next) {
 
 /* DELETE /recipes/:id */
 router.delete('/:id', function(req, res, next) {
-  logger.info('START DELETE api/recipes/' + req.params.id);
   try {
+    logger.info('START DELETE api/recipes/' + req.params.id);
     Recipe.model.findByIdAndRemove(req.params.id, function(err, recipe) {
       if(err) {
         logger.error('ERROR DELETE api/recipes/' + req.params.id, {error: err, body: req.body});
