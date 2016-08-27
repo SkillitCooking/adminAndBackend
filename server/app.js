@@ -13,9 +13,6 @@ var dateJobs = require('./jobs/setDates');
 
 var app = express();
 
-var limiterClient = require('redis').createClient();
-var limiter = require('express-limiter')(app, limiterClient);
-
 app.use(helmet());
 app.use(logger('dev'));
 //order of declaration matters here...
@@ -31,17 +28,20 @@ var router = require('./router')(app);
  * Global Rate Limiter settings
  */
 //limit to 10 requests per second per IP
-limiter({
-  path: '*',
-  method: 'all',
-  lookup: 'connection.remoteAddress',
-  total: 10,
-  expire: 1000,
-  onRateLimited: function(req, res, next) {
-    next({ message: 'Rate limit exceeded', status: 429});
-  }
-});
-
+if(app.get('env') === 'production') {
+  var limiterClient = require('redis').createClient();
+  var limiter = require('express-limiter')(app, limiterClient);
+  limiter({
+    path: '*',
+    method: 'all',
+    lookup: 'connection.remoteAddress',
+    total: 10,
+    expire: 1000,
+    onRateLimited: function(req, res, next) {
+      next({ message: 'Rate limit exceeded', status: 429});
+    }
+  });
+}
 
 /**
  * Development settings
