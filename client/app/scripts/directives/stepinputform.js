@@ -82,7 +82,9 @@ angular.module('SkillitAdminApp')
         };
 
         scope.registerSourceId = function(sourceIdStep) {
-          scope.step.stepInputs[scope.stepInputName].sourceId = sourceIdStep.stepId;
+          if(sourceIdStep) {
+            scope.step.stepInputs[scope.stepInputName].sourceId = sourceIdStep.stepId;
+          }
         };
 
         scope.registerSourceIdMultiple = function(input, index, sourceIdStep) {

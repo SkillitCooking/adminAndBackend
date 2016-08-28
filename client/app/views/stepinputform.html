@@ -2,7 +2,7 @@
 <div ng-form="stepInputSingleForm" ng-if="isMultiple === 'false'" class="bg-info">
   Source Type: <select name="sourceTypeSelect" ng-model="step.stepInputs[stepInputName].sourceType" ng-options="sourceType for sourceType in sourceTypes" required></select><br/>
   <div ng-show="showStepId()">
-    SourceId: <select name="sourceIdSelect" ng-model="sourceIdStep" ng-options="step as getSourceIdSelectName(step, index) for (index, step) in stepList track by step._id" ng-change="registerSourceId(sourceIdStep)" ng-required="showStepId()"></select>
+    SourceId: <select name="sourceIdSelect" ng-model="sourceIdStep" ng-options="step as getSourceIdSelectName(step, index) for (index, step) in stepList track by step.stepId" ng-change="registerSourceId(sourceIdStep)" ng-required="showStepId()"></select>
   </div>
   Key: <select ng-if="step.stepInputs[stepInputName].sourceType === 'StepProduct'" name="stepKeySelect" ng-model="step.stepInputs[stepInputName].key" ng-options="product for product in getProductKeys(sourceIdStep)" ng-required="step.stepInputs[stepInputName].sourceType === 'StepProduct'"></select>
   <select ng-if="step.stepInputs[stepInputName].sourceType === 'IngredientList'" name="ingredKeySelect" ng-model="step.stepInputs[stepInputName].key" ng-options="type.typeName as type.typeName for type in ingredientList.ingredientTypes" ng-required="step.stepInputs[stepInputName].sourceType === 'IngredientList'"></select>
@@ -12,7 +12,7 @@
 <div ng-if="isMultiple === 'true'" ng-form="stepInputMultipleForm" class="bg-info" ng-repeat="input in step.stepInputs[stepInputName]">
   Source Type: <select name="sourceTypeSelect" ng-model="input.sourceType" ng-options="sourceType for sourceType in sourceTypes" required></select><br/>
   <div ng-if="showStepIdMultiple(input)">
-    SourceId: <select name="sourceIdSelect" ng-model="sourceIdStep[$index]" ng-options="getSourceIdSelectName(step, index) for (index, step) in stepList track by step._id" ng-change="registerSourceIdMultiple(input, $index, sourceIdStep)" ng-required="showStepIdMultiple(input)"></select>
+    SourceId: <select name="sourceIdSelect" ng-model="sourceIdStep[$index]" ng-options="getSourceIdSelectName(step, index) for (index, step) in stepList track by step._id" ng-change="registerSourceIdMultiple(input, $index, step)" ng-required="showStepIdMultiple(input)"></select>
   </div>
   Key: <select ng-if="input.sourceType === 'StepProduct'" name="stepKeySelect" ng-model="input.key" ng-options="product for product in getProductKeys(sourceIdStep[$index])" ng-required="input.sourceType === 'StepProduct'"></select>
   <select ng-if="input.sourceType === 'IngredientList'" name="ingredKeySelect" ng-model="input.key" ng-options="type.typeName as type.typeName for type in ingredientList.ingredientTypes" ng-required="input.sourceType === 'IngredientList'"></select>
