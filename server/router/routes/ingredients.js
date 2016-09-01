@@ -13,6 +13,29 @@ var Recipe = db.recipes;
 /* Add Credentials appropriately when time comes */
 /* Add Error checking as well */
 
+router.get('/adjust', function(req, res, next) {
+  Ingredient.model.find(function(err, ingredients) {
+    for (var i = ingredients.length - 1; i >= 0; i--) {
+      if(err) {
+        return next(err);
+      }
+      var standardForm = ingredients[i].name.standardName;
+      var nameObj = {
+        standardForm: standardForm,
+        singularForm: "",
+        pluralForm: ""
+      };
+      ingredients[i].name = nameObj;
+      ingredients[i].save(function(err, ingredient, numAffected) {
+        if(err) {
+          return next(err);
+        }
+      });
+    }
+    res.json({message: 'success'});
+  });
+});
+
 /* GET ingredients listing. */
 router.get('/', function(req, res, next) {
   logger.info('START GET api/ingredients/');

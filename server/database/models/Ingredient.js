@@ -20,12 +20,9 @@ var IngredientTipSchema = new mongoose.Schema({
 });
 
 var IngredientSchema = new mongoose.Schema({
-  name: String,
+  name: mongoose.Schema.Types.Mixed,
   inputCategory: String,
   units: String,
-  pluralForm: String,
-  singularForm: String,
-  standardForm: String,
   nameFormFlag: String,
   servingsPerUnit: Number,
   ingredientForms: [IngredientFormSchema],

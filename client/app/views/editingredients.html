@@ -3,13 +3,12 @@
   <a class="btn btn-link active" ng-href="#/ingredients">Create</a>
   <a class="btn btn-link" ng-href="#/editIngredients">Edit</a><br/>
   <form novalidate name="editIngredientForm" ng-controller="EditIngredientsCtrl">
-    Select Ingredient: <select name="ingredientSelect" ng-model="selectedIngredient" ng-change="changeSelectedIngredient()" ng-options="ingredient as ingredient.name for ingredient in ingredients"></select><br/><br/>
-    Name: <input type="text" ng-model="ingredient.name" size="50" required name="nameInput"/><br /><br />
+    Select Ingredient: <select name="ingredientSelect" ng-model="selectedIngredient" ng-change="changeSelectedIngredient()" ng-options="ingredient as ingredient.name.standardForm for ingredient in ingredients"></select><br/><br/>
+    Name: <input type="text" ng-model="ingredient.name.standardForm" size="50" required name="nameInput"/><br /><br />
     Input Category: <select name="inputCategorySelect" ng-model="ingredient.inputCategory" ng-options=
     "category for category in inputCategories" required></select><br/><br/>
-    Standard Name: <input type="text" ng-model="ingredient.standardForm" size="50" required  name="standardFormInput" /><br/>
-    Plural Name: <input type="text" ng-model="ingredient.pluralForm" size="50" required  name="pluralFormInput" /><br/>
-    Singular Name: <input type="text" ng-model="ingredient.singularForm" size="50" required name="singularFormInput" /><br/><br/>
+    Plural Name: <input type="text" ng-model="ingredient.name.pluralForm" size="50" required  name="pluralFormInput" /><br/>
+    Singular Name: <input type="text" ng-model="ingredient.name.singularForm" size="50" required name="singularFormInput" /><br/><br/>
     Measuring Units: <input type="text" ng-model="ingredient.units" size="50" required name="unitsInput"><br/><br/>
     Servings Per Unit: <input type="text" ng-model="ingredient.servingsPerUnit" size="50" required name="servingsPerUnitInput" ng-pattern="integerval"/><br/><br/>
     Ingredient Forms: <br />

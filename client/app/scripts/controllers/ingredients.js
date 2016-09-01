@@ -11,6 +11,8 @@ angular.module('SkillitAdminApp')
   .controller('IngredientCtrl', ['$scope', 'ingredientService', function ($scope, ingredientService) {
     $scope.integerval = /^\d*$/;
 
+    $scope.ingredient = {name: {}};
+
     ingredientService.getAllIngredients().then(function(ingredients){
       $scope.ingredients = ingredients;
     }, function(response) {
@@ -98,7 +100,7 @@ angular.module('SkillitAdminApp')
     $scope.reset = function() {
       $scope.inForms = angular.copy([]);
       $scope.ingredientTips = angular.copy([]);
-      $scope.ingredient = angular.copy({});
+      $scope.ingredient = angular.copy({name: {}});
       $scope.ingredientForm.nameInput.$setUntouched();
     };
 
@@ -116,9 +118,6 @@ angular.module('SkillitAdminApp')
           ingredientForms: $scope.ingredient.ingredientForms,
           ingredientTips: $scope.ingredient.ingredientTips,
           inputCategory: $scope.ingredient.inputCategory,
-          standardForm: $scope.ingredient.standardForm,
-          pluralForm: $scope.ingredient.pluralForm,
-          singularForm: $scope.ingredient.singularForm,
           units: $scope.ingredient.units,
           servingsPerUnit: $scope.ingredient.servingsPerUnit,
           nameFormFlag: 'standardForm'
