@@ -6,6 +6,8 @@ var logger = require('../../util/logger').serverLogger;
 var mongoose = require('mongoose');
 var db = require('../../database');
 var DailyTip = db.dailyTips;
+var Lesson = db.lessons;
+var Article = db.articles;
 
 /* Add response 'success' signal when time comes */
 /* Add Credentials appropriately when time comes */
@@ -36,8 +38,45 @@ router.put('/:id', function(req, res, next) {
         logger.error('ERROR PUT api/dailyTips/' + req.params.id);
         return next(err);
       }
-      logger.info('END PUT api/dailyTips/' + req.params.id);
-      res.json({data: tip});
+      //adjust affected Articles
+      var articleIds = [];
+      Article.model.find(function(err, articles) {
+        if(err) {
+          logger.error('ERROR PUT api/dailyTips/' + req.params.id + 'in Article.model.find', {tipId: tip._id});
+          return next(err);
+        }
+        for (var i = articles.length - 1; i >= 0; i--) {
+          var articleChanged = false;
+          for (var j = articles[i].contentSections.length - 1; j >= 0; j--) {
+            var contentSection = articles[i].contentSections[j];
+            for (var k = contentSection.contentArray.length - 1; k >= 0; k--) {
+              var piece = contentSection.contentArray[k];
+              if(piece.type === 'text') {
+                for (var l = piece.textChunks.length - 1; l >= 0; l--) {
+                  var chunk = piece.textChunks[l];
+                  if(chunk.linkedItem && tip._id.equals(chunk.linkedItem._id)) {
+                    //if below doesn't work, could explicitly define object...
+                    articles[i].contentSections[j].contentArray[k].textChunks[l].linkedItem = tip;
+                    articles[i].markModified('contentSections');
+                    articleChanged = true;
+                  }
+                }
+              }
+            }
+          }
+          if(articleChanged) {
+            articles[i].save(function(err, article, numAffected) {
+              if(err) {
+                logger.error('ERROR PUT api/dailyTips/' + req.params.id + 'in Article.model.save', {tipId: tip._id, articleId: article._id});
+                return next(err);
+              }
+            });
+            articleIds.push(articles[i]._id);
+          }
+        }
+        logger.info('END PUT api/dailyTips/' + req.params.id);
+        res.json({data: tip, affectedArticleIds: articleIds});
+      });
     });
   } catch (error) {
     logger.error('ERROR - exception in PUT api/dailyTips/:id', {error: error});
@@ -54,8 +93,74 @@ router.delete('/:id', function(req, res, next) {
         logger.error('ERROR DELETE api/dailyTips/' + req.params.id);
         return next(err);
       }
-      logger.info('END DELETE api/dailyTips/' + req.params.id);
-      res.json({data: tip});
+      //Lesson and Article reference adjustment
+      //Below can be made more efficient...
+      var lessonIds = [];
+      Lesson.model.find(function(err, lessons) {
+        if(err) {
+          logger.error('ERROR DELETE api/dailyTips/' + req.params.id + 'in Lesson.model.find', {tipId: tip._id});
+          return next(err);
+        }
+        for (var i = lessons.length - 1; i >= 0; i--) {
+          if(lessons[i].itemIds && lessons[i].itemIds.length > 0) {
+            var itemIds = lessons[i].itemIds;
+            for (var j = itemIds.length - 1; j >= 0; j--) {
+              if(tip._id.equals(itemIds[j].id)) {
+                //then need to remove reference
+                itemIds.splice(j, 1);
+                lessons[i].save(function(err, lesson, numAffected) {
+                  if(err) {
+                    logger.error('ERROR DELETE api/dailyTips/' + req.params.id + 'in Lesson.model.save', {tipId: tip._id, lessonId: lessons[i]._id});
+                    return next(err);
+                  }
+                });
+                lessonIds.push(lessons[i]._id);
+              }
+            }
+          }
+        }
+        logger.info('DELETE api/dailyTips/' + req.params.id + ' - Successful updating of Lesson DailyTip references');
+      });
+      //may be able to make below more efficient too...
+      var articleIds = [];
+      Article.model.find(function(err, articles) {
+        if(err) {
+          logger.error('ERROR DELETE api/dailyTips/' + req.params.id + 'in Article.model.find', {tipId: tip._id});
+          return next(err);
+        }
+        for (var i = articles.length - 1; i >= 0; i--) {
+          var articleChanged = false;
+          for (var j = articles[i].contentSections.length - 1; j >= 0; j--) {
+            var contentSection = articles[i].contentSections[j];
+            for (var k = contentSection.contentArray.length - 1; k >= 0; k--) {
+              var piece = contentSection.contentArray[k];
+              if(piece.type === 'text') {
+                for (var l = piece.textChunks.length - 1; l >= 0; l--) {
+                  var chunk = piece.textChunks[l];
+                  if(chunk.linkedItem && tip._id.equals(chunk.linkedItem._id)) {
+                    //if below doesn't work, could explicitly define object...
+                    articles[i].contentSections[j].contentArray[k].textChunks[l].linkedItem = undefined;
+                    articles[i].contentSections[j].contentArray[k].textChunks[l].itemType = undefined;
+                    articles[i].markModified('contentSections');
+                    articleChanged = true;
+                  }
+                }
+              }
+            }
+          }
+          if(articleChanged) {
+            articles[i].save(function(err, article, numAffected) {
+              if(err) {
+                logger.error('ERROR DELETE api/dailyTips/' + req.params.id + 'in Article.model.save', {tipId: tip._id, articleId: article._id});
+                return next(err);
+              }
+            });
+            articleIds.push(articles[i]._id);
+          }
+        }
+        logger.info('END DELETE api/dailyTips/' + req.params.id);
+        res.json({data: tip, affectedLessonIds: lessonIds, affectedArticleIds: articleIds});
+      });
     });
   } catch (error) {
     logger.error('ERROR - exception in DELETE api/dailyTips/:id', {error: error});

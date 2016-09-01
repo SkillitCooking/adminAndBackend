@@ -22,6 +22,7 @@ router.get('/', function(req, res, next) {
 router.put('/:id', function(req, res, next) {
   try {
     logger.info('START PUT api/lessons/' + req.params.id);
+    console.log('lesson: ', req.body.lesson);
     Lesson.model.findByIdAndUpdate(req.params.id, req.body.lesson, {new: true}, function(err, lesson) {
       if(err) {
         logger.error('ERROR PUT api/lessons/' + req.params.id, {error: err, body: req.body});

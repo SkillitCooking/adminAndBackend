@@ -14,12 +14,12 @@
     <s ng-show="!getItemLabel()">Item Type:</s>
     <span ng-show="getItemLabel()">Item Type:</span>
     <select ng-disabled="lesson.isArticle" name="itemTypeSelect" ng-model="itemType" ng-options="itemType for itemType in itemTypes"></select><br/><br/>
-    <s ng-class="!getItemLabel()">Item:</s>
-    <span ng-class="getItemLabel()">Item:</span>
+    <s ng-show="!getItemLabel()">Item:</s>
+    <span ng-show="getItemLabel()">Item:</span>
     <select ng-disabled="lesson.isArticle" name="itemSelect" ng-model="selectedItem" ng-options="item._id as item.title for item in getSelectedTypeItems()"></select><br/><br/>
     <button ng-disabled="lesson.isArticle || !selectedItem" ng-click="addItem()">Add Item</button><br/><br/>
     Added Items: <div ng-repeat="id in lesson.itemIds">
-      <p>{{id.itemType}}: {{id.id}}</p>
+      <p>{{id.type}}: {{id.id}}</p>
       <button class="btn btn-xs btn-danger" ng-click="removeItemId($index)">Remove</button>
     </div>
     <button class="btn btn-warning btn-lg" ng-click="cancelChanges()">Cancel Changes</button>

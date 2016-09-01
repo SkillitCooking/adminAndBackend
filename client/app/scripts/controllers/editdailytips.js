@@ -53,7 +53,12 @@ angular.module('SkillitAdminApp')
         isTipOfTheDay: $scope.dailyTip.isTipOfTheDay,
         _id: $scope.dailyTip._id
       }).then(function(res) {
-        alert("DailyTip successfully updated! Refresh page.");
+        var articleStr = "";
+        console.log('affected: ', res.affectedArticleIds);
+        if(res.affectedArticleIds && res.affectedArticleIds.length > 0) {
+          articleStr = " Affected Articles that referenced Tip: \n" + res.affectedArticleIds.toString();
+        }
+        alert("DailyTip successfully updated! Refresh page." + articleStr);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
@@ -62,7 +67,14 @@ angular.module('SkillitAdminApp')
 
     $scope.deleteDailyTip = function() {
       dailyTipsService.deleteDailyTip({_id: $scope.dailyTip._id}).then(function(res) {
-        alert("DailyTip successfully deleted! Refresh page.");
+        var extraText = "";
+        if(res.affectedArticleIds && res.affectedArticleIds.length > 0) {
+          extraText += " Affected ArticleIds: \n" + res.affectedArticleIds.toString() + "\n";
+        }
+        if(res.affectedLessonIds && res.affectedLessonIds.length > 0) {
+          extraText += " Affected LessonIds: \n" + res.affectedLessonIds.toString();
+        }
+        alert("DailyTip successfully deleted! Refresh page." + extraText);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);

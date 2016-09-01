@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('EditLessonsCtrl', ['$scope', 'lessonService', function ($scope, lessonService) {
+  .controller('EditLessonsCtrl', ['$scope', 'lessonService', 'articleService', 'dailyTipsService', 'glossaryService', 'trainingVideosService', 'howToShopService', function ($scope, lessonService, articleService, dailyTipsService, glossaryService, trainingVideosService, howToShopService) {
     $scope.itemTypes = ['tip', 'glossary', 'howToShop', 'trainingVideo'];
 
     lessonService.getAllLessons().then(function(res) {
@@ -19,8 +19,7 @@ angular.module('SkillitAdminApp')
     });
 
     articleService.getArticlesTitleId().then(function(res) {
-      $scope.lesson.articles = res.data;
-      console.log('articles: ', $scope.lesson.articles);
+      $scope.articles = res.data;
     }, function(response) {
       alert("Server Error - see console logs for details");
       console.log("error response: ", response);
@@ -58,18 +57,24 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.addItem = function() {
+      console.log("itemType: ", $scope.itemType);
       $scope.lesson.itemIds.push({
         id: $scope.selectedItem,
         type: $scope.itemType
       });
+      console.log('itemIds: ', $scope.lesson.itemIds);
     };
 
     $scope.getArticleLabel = function() {
-      return $scope.lesson.isArticle;
+      if($scope.lesson) {
+        return $scope.lesson.isArticle;
+      }
     };
 
     $scope.getItemLabel = function() {
-      return !$scope.lesson.isArticle;
+      if($scope.lesson) {
+        return !$scope.lesson.isArticle;
+      }
     };
 
     $scope.getSelectedTypeItems = function() {

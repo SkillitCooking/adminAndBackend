@@ -9,10 +9,7 @@ var LessonSchema = new mongoose.Schema({
   description: String,
   isArticle: Boolean,
   articleId: ObjectId,
-  itemIds: {
-    id: ObjectId,
-    type: String
-  }
+  itemIds: [mongoose.Schema.Types.Mixed]
 });
 
 module.exports.model = mongoose.model('Lesson', LessonSchema);

@@ -6,6 +6,7 @@ var logger = require('../../util/logger').serverLogger;
 var mongoose = require('mongoose');
 var db = require('../../database');
 var Article = db.articles;
+var Lesson = db.lessons;
 
 router.get('/', function(req, res, next) {
   logger.info('START GET api/articles/');
@@ -49,8 +50,26 @@ router.delete('/:id', function(req, res, next) {
         logger.error('ERROR DELETE api/articles/' + req.params.id, {error: err, body: req.body});
         return next(err);
       }
-      logger.info('END DELETE api/articles/' + req.params.id);
-      res.json({data: article});
+      //look for lessons that reference article
+      Lesson.model.find({articleId: article._id}, function(err, lessons) {
+        if(err) {
+          logger.error('ERROR DELETE api/articles/' + req.params.id + ' in Lesson.find call', {error: err, body: req.body, articleId: article._id});
+          return next(err);
+        }
+        var lessonIds = [];
+        for (var i = lessons.length - 1; i >= 0; i--) {
+          lessons[i].articleId = undefined;
+          lessons[i].save(function(err, lesson, numAffected) {
+            if(err) {
+              logger.error('ERROR DELETE api/articles/' + req.params.id + 'saving lesson with reference article', {error: err, body: req.body, articleId: article._id, lessonId: lessons[i]._id});
+            return next(err);
+            }
+          });
+          lessonIds.push(lessons[i]._id);
+        }
+        logger.info('END DELETE api/articles/' + req.params.id);
+        res.json({data: article, affectedLessonIds: lessonIds});
+      });
     });
   } catch(error) {
     logger.error('ERROR - exception in DELETE api/articles/:id', {error: error});

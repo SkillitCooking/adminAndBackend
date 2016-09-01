@@ -96,7 +96,11 @@ angular.module('SkillitAdminApp')
       articleService.deleteArticle({
         _id: $scope.article._id
       }).then(function(res) {
-        alert("Article successfully deleted! Refresh page.");
+        var lessonStr = "";
+        if(res.affectedLessonIds && res.affectedLessonIds.length > 0) {
+          lessonStr += " Affected Lesson Ids: \n" + res.affectedLessonIds.toString();
+        }
+        alert("Article successfully deleted! Refresh page." + lessonStr);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
