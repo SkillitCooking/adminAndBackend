@@ -9,6 +9,7 @@
     Plural Name: <input type="text" ng-model="ingredient.name.pluralForm" size="50" required  name="pluralFormInput" /><br/>
     Singular Name: <input type="text" ng-model="ingredient.name.singularForm" size="50" required name="singularFormInput" /><br/><br/>
     Measuring Units: <input type="text" ng-model="ingredient.units" size="50" required name="unitsInput"><br/><br/>
+    Unit is A Single Item: <input type="checkbox" ng-model="ingredient.unitIsASingleItem" name="unitsCheckbox"><br/><br/>
     Servings Per Unit: <input type="text" ng-model="ingredient.servingsPerUnit" size="50" required name="servingsPerUnitInput" ng-pattern="integerval"/><br/><br/>
     Ingredient Forms: <br />
     <div ng-repeat="inForm in inForms" class="bg-warning" ng-form="formForm">

@@ -23,6 +23,7 @@ var IngredientSchema = new mongoose.Schema({
   name: mongoose.Schema.Types.Mixed,
   inputCategory: String,
   units: String,
+  unitIsASingleItem: Boolean,
   nameFormFlag: String,
   servingsPerUnit: Number,
   ingredientForms: [IngredientFormSchema],

@@ -141,6 +141,7 @@ angular.module('SkillitAdminApp')
         ingredientTips: $scope.ingredient.ingredientTips,
         inputCategory: $scope.ingredient.inputCategory,
         units: $scope.ingredient.units,
+        unitIsASingleItem: $scope.ingredient.unitIsASingleItem,
         servingsPerUnit: $scope.ingredient.servingsPerUnit,
         nameFormFlag: 'standardForm',
         _id: $scope.ingredient._id
