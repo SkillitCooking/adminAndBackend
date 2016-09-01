@@ -17,8 +17,8 @@ angular.module('SkillitAdminApp')
       alert("Server Error: " + response.message);
     });
 
-    itemCollectionService.getItemCollectionsForType('glossary').then(function(collections) {
-      $scope.glossaryCollections = collections.data;
+    itemCollectionService.getItemCollectionsForType('howToShop').then(function(collections) {
+      $scope.howToShopCollections = collections.data;
     }, function(response) {
       console.log("Server Error: ", response);
       alert("Server Error: " + response.message);
@@ -58,7 +58,11 @@ angular.module('SkillitAdminApp')
         collectionIds: $scope.howToShopEntry.collectionIds,
         _id: $scope.howToShopEntry._id
       }).then(function(res) {
-        alert("Entry successfully updated. Refresh page");
+        var articleStr = "";
+        if(res.affectedArticleIds && res.affectedArticleIds.length > 0) {
+          articleStr = " Affected Articles that referenced Tip: \n" + res.affectedArticleIds.toString();
+        }
+        alert("Entry successfully updated. Refresh page." + articleStr);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
@@ -67,7 +71,14 @@ angular.module('SkillitAdminApp')
 
     $scope.deleteEntry = function() {
       howToShopService.deleteHowToShopEntry({_id: $scope.howToShopEntry._id}).then(function(res) {
-        alert("Entry successfully deleted. Refresh page");
+        var extraText = "";
+        if(res.affectedArticleIds && res.affectedArticleIds.length > 0) {
+          extraText += " Affected ArticleIds: \n" + res.affectedArticleIds.toString() + "\n";
+        }
+        if(res.affectedLessonIds && res.affectedLessonIds.length > 0) {
+          extraText += " Affected LessonIds: \n" + res.affectedLessonIds.toString();
+        }
+        alert("Entry successfully deleted. Refresh page." + extraText);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);

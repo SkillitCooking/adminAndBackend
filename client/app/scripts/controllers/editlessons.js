@@ -119,6 +119,10 @@ angular.module('SkillitAdminApp')
 
     $scope.deleteLesson = function() {
       lessonService.deleteLesson({_id: $scope.lesson._id}).then(function(res) {
+        var chapterStr = "";
+        if(res.affectedChapterIds && res.affectedChapterIds.length > 0) {
+          chapterStr += " Affected ChapterIds: \n" + res.affectedChapterIds.toString();
+        }
         alert("Lesson successfully deleted. Refresh page.");
       }, function(response) {
         console.log("Server Error: ", response);

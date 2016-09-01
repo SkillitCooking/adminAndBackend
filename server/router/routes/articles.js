@@ -61,7 +61,7 @@ router.delete('/:id', function(req, res, next) {
           lessons[i].articleId = undefined;
           lessons[i].save(function(err, lesson, numAffected) {
             if(err) {
-              logger.error('ERROR DELETE api/articles/' + req.params.id + 'saving lesson with reference article', {error: err, body: req.body, articleId: article._id, lessonId: lessons[i]._id});
+              logger.error('ERROR DELETE api/articles/' + req.params.id + 'saving lesson with reference article', {error: err, body: req.body, articleId: article._id});
             return next(err);
             }
           });

@@ -76,9 +76,11 @@ angular.module('SkillitAdminApp')
     $scope.howToShopEntrySanityCheck = function() {
       //for each of pictures, make sure at least url
       if($scope.howToShopEntry.collectionIds && $scope.howToShopEntry.collectionIds.length > 0) {
-        for (var i = $scope.howToShopEntry.pictures.length - 1; i >= 0; i--) {
-          if(!$scope.howToShopEntry.pictures[i].url || $scope.howToShopEntry.pictures[i].url === "") {
-            return false;
+        if($scope.howToShopEntry.pictures) {
+          for (var i = $scope.howToShopEntry.pictures.length - 1; i >= 0; i--) {
+            if(!$scope.howToShopEntry.pictures[i].url || $scope.howToShopEntry.pictures[i].url === "") {
+              return false;
+            }
           }
         }
         return true;

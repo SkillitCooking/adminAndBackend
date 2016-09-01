@@ -53,7 +53,27 @@ angular.module('SkillitAdminApp')
 
     $scope.deleteCollection = function() {
       itemCollectionService.deleteItemCollection({_id: $scope.itemCollection._id}).then(function(res) {
-        alert("ItemCollection successfully deleted! Refresh page.");
+        var affectedStr = "";
+        switch(res.type) {
+          case "tips":
+            affectedStr += " Affected TipIds: \n" + res.affectedIds.toString();
+            break;
+          case "videos":
+            affectedStr += " Affected VideoIds: \n" + res.affectedIds.toString();
+            break;
+          case "howToShop":
+            affectedStr += " Affected HowToShopIds: \n" + res.affectedIds.toString();
+            break;
+          case "glossary":
+            affectedStr += " Affected GlossaryIds: \n" + res.affectedIds.toString();
+            break;
+          case "recipe":
+            affectedStr += " Affected RecipeIds: \n" + res.affectedIds.toString();
+            break;
+          default:
+            break;
+        }
+        alert("ItemCollection successfully deleted! Refresh page." + affectedStr);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);

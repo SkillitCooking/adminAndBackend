@@ -6,6 +6,7 @@ var logger = require('../../util/logger').serverLogger;
 var mongoose = require('mongoose');
 var db = require('../../database');
 var SeasoningProfile = db.seasoningProfiles;
+var Recipe = db.recipes;
 
 /* Add response 'success' signal when time comes */
 /* Add Credentials appropriately when time comes */
@@ -88,9 +89,39 @@ router.put('/:id', function(req, res, next) {
         logger.error('ERROR PUT api/seasoningProfiles/' + req.params.id, {error: err, body: req.body});
         return next(err);
       }
-      /* profile is previous value of document */
-      logger.info('END PUT api/seasoningProfiles/' + req.params.id);
-      res.json({data: profile});
+      //update recipe references
+      var recipeIds = [];
+      Recipe.model.find({}, 'defaultSeasoningProfile choiceSeasoningProfiles _id', function(err, recipes) {
+        if(err) {
+          logger.error('ERROR PUT api/seasoningProfiles/' + req.params.id + ' in Recipe.model.find', {error: err, body: req.body, profileId: profile._id});
+          return next(err);
+        }
+        for (var i = recipes.length - 1; i >= 0; i--) {
+          var recipeChanged = false;
+          if(profile._id.equals(recipes[i].defaultSeasoningProfile._id)) {
+            recipes[i].defaultSeasoningProfile = profile;
+            recipeChanged = true;
+          }
+          for (var j = recipes[i].choiceSeasoningProfiles.length - 1; j >= 0; j--) {
+            if(profile._id.equals(recipes[i].choiceSeasoningProfiles[j]._id)) {
+              recipes[i].choiceSeasoningProfiles[j] = profile;
+              recipes[i].markModified('choiceSeasoningProfiles');
+              recipeChanged = true;
+            }
+          }
+          if(recipeChanged) {
+            recipes[i].save(function(err, recipe, numAffected) {
+              if(err) {
+                logger.error('ERROR PUT api/seasoningProfiles/' + req.params.id + ' in Recipe.model.save', {error: err, body: req.body, profileId: profile._id});
+                return next(err);
+              }
+            });
+            recipeIds.push(recipes[i]._id);
+          }
+        }
+        logger.info('END PUT api/seasoningProfiles/' + req.params.id);
+        res.json({data: profile, affectedRecipeIds: recipeIds});
+      });
     });
   } catch (error) {
     logger.error('ERROR - exception in PUT api/seasoningProfiles/:id', {error: error});
@@ -107,9 +138,39 @@ router.delete('/:id', function(req, res, next) {
         logger.error('ERROR DELETE api/seasoningProfiles/' + req.params.id, {error: err, body: req.body});
         return next(err);
       }
-      /* profile is the value of just-deleted document */
-      logger.info('START DELETE api/seasoningProfiles/' + req.params.id);
-      res.json({data: profile});
+      //update recipe references
+      var recipeIds = [];
+      Recipe.model.find({}, 'defaultSeasoningProfile choiceSeasoningProfiles _id', function(err, recipes) {
+        if(err) {
+          logger.error('ERROR DELETE api/seasoningProfiles/' + req.params.id + ' in Recipe.model.find', {error: err, body: req.body, profileId: profile._id});
+          return next(err);
+        }
+        for (var i = recipes.length - 1; i >= 0; i--) {
+          var recipeChanged = false;
+          if(profile._id.equals(recipes[i].defaultSeasoningProfile._id)) {
+            recipes[i].defaultSeasoningProfile = undefined;
+            recipeChanged = true;
+          }
+          for (var j = recipes[i].choiceSeasoningProfiles.length - 1; j >= 0; j--) {
+            if(profile._id.equals(recipes[i].choiceSeasoningProfiles[j]._id)) {
+              recipes[i].choiceSeasoningProfiles.splice(j, 1);
+              recipes[i].markModified('choiceSeasoningProfiles');
+              recipeChanged = true;
+            }
+          }
+          if(recipeChanged) {
+            recipes[i].save(function(err, recipe, numAffected) {
+              if(err) {
+                logger.error('ERROR DELETE api/seasoningProfiles/' + req.params.id + ' in Recipe.model.save', {error: err, body: req.body, profileId: profile._id});
+                return next(err);
+              }
+            });
+            recipeIds.push(recipes[i]._id);
+          }
+        }
+        logger.info('END DELETE api/seasoningProfiles/' + req.params.id);
+        res.json({data: profile, affectedRecipeIds: recipeIds});
+      });
     });
   } catch(error) {
     logger.error('ERROR - exception in DELETE api/seasoningProfiles/:id', {error: error});

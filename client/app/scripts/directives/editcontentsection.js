@@ -14,9 +14,9 @@ angular.module('SkillitAdminApp')
       scope: {
         section: '=',
         tips: '=',
-        glossaries: '=',
-        howtos: '=',
-        trainings: '='
+        glossaryEntries: '=glossaries',
+        howToShopEntries: '=howtos',
+        trainingVideos: '=trainings'
       },
       link: function (scope, element, attrs) {
         scope.contentTypes = ['text', 'picture', 'video'];

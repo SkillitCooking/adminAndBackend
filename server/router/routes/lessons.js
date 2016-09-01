@@ -6,6 +6,7 @@ var logger = require('../../util/logger').serverLogger;
 var mongoose = require('mongoose');
 var db = require('../../database');
 var Lesson = db.lessons;
+var Chapter = db.chapters;
 
 router.get('/', function(req, res, next) {
   logger.info('START GET api/lessons/');
@@ -45,8 +46,34 @@ router.delete('/:id', function(req, res, next) {
         logger.error('ERROR DELETE api/lessons/' + req.params.id, {error: err, body: req.body});
         return next(err);
       }
-      logger.info('END DELETE api/lessons/' + req.params.id);
-      res.json({data: lesson});
+      //update Chapter references
+      var chapterIds = [];
+      Chapter.model.find(function(err, chapters) {
+        if(err) {
+          logger.error('ERROR DELETE api/lessons/' + req.params.id + ' in Chapter.model.find', {error: err, body: req.body, lessonId: lesson._id});
+          return next(err);
+        }
+        for (var i = chapters.length - 1; i >= 0; i--) {
+          var chapterChanged = false;
+          for (var j = chapters[i].lessonIds.length - 1; j >= 0; j--) {
+            if(lesson._id.equals(chapters[i].lessonIds[j])) {
+              chapters[i].lessonIds.splice(j, 1);
+              chapterChanged = true;
+            }
+          }
+          if(chapterChanged) {
+            chapters[i].save(function(err, chapter, numAffected) {
+              if(err) {
+                logger.error('ERROR DELETE api/lessons/' + req.params.id + ' in Chapter.model.save', {error: err, body: req.body, lessonId: lesson._id});
+                return next(err);
+              }
+            });
+            chapterIds.push(chapters[i]._id);
+          }
+        }
+        logger.info('END DELETE api/lessons/' + req.params.id);
+        res.json({data: lesson, affectedChapterIds: chapterIds});
+      });
     });
   } catch (error) {
     logger.error('ERROR - exception in DELETE api/lessons/:id', {error: error});

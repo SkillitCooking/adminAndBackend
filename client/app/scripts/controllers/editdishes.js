@@ -34,7 +34,11 @@ angular.module('SkillitAdminApp')
         ingredientCapacity: $scope.dish.ingredientCapacity,
         _id: $scope.dish._id
       }).then(function(res) {
-        alert("Dish successfully updated! Refresh page");
+        var recipeStr = "";
+        if(res.affectedRecipeIds && res.affectedRecipeIds.length > 0) {
+          recipeStr += " Affected Recipe Ids: \n" + res.affectedRecipeIds.toString();
+        }
+        alert("Dish successfully updated! Refresh page." + recipeStr);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
@@ -43,7 +47,11 @@ angular.module('SkillitAdminApp')
 
     $scope.deleteDish = function() {
       dishService.deleteDish({_id: $scope.dish._id}).then(function(res) {
-        alert("Dish successfully deleted! Refresh page");
+        var recipeStr = "";
+        if(res.affectedRecipeIds && res.affectedRecipeIds.length > 0) {
+          recipeStr += " Affected Recipe Ids: \n" + res.affectedRecipeIds.toString();
+        }
+        alert("Dish successfully deleted! Refresh page." + recipeStr);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);

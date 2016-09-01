@@ -6,6 +6,9 @@ var logger = require('../../util/logger').serverLogger;
 var mongoose = require('mongoose');
 var db = require('../../database');
 var TrainingVideo = db.trainingVideos;
+var Lesson = db.lessons;
+var Article = db.articles;
+
 
 /* GET all trainingVideos */
 router.get('/', function(req, res, next) {
@@ -31,9 +34,45 @@ router.put('/:id', function(req, res, next) {
         logger.error('ERROR PUT api/trainingVideos/' + req.params.id, {error: err, body: req.body});
         return next(err);
       }
-      /* video is previous value of document */
-      logger.info('END PUT api/trainingVideos/' + req.params.id);
-      res.json({data: video});
+      //adjust affected Articles
+      var articleIds = [];
+      Article.model.find(function(err, articles) {
+        if(err) {
+          logger.error('ERROR PUT api/trainingVideos/' + req.params.id + 'in Article.model.find', {videoId: video._id});
+          return next(err);
+        }
+        for (var i = articles.length - 1; i >= 0; i--) {
+          var articleChanged = false;
+          for (var j = articles[i].contentSections.length - 1; j >= 0; j--) {
+            var contentSection = articles[i].contentSections[j];
+            for (var k = contentSection.contentArray.length - 1; k >= 0; k--) {
+              var piece = contentSection.contentArray[k];
+              if(piece.type === 'text') {
+                for (var l = piece.textChunks.length - 1; l >= 0; l--) {
+                  var chunk = piece.textChunks[l];
+                  if(chunk.linkedItem && video._id.equals(chunk.linkedItem._id)) {
+                    //if below doesn't work, could explicitly define object...
+                    articles[i].contentSections[j].contentArray[k].textChunks[l].linkedItem = video;
+                    articles[i].markModified('contentSections');
+                    articleChanged = true;
+                  }
+                }
+              }
+            }
+          }
+          if(articleChanged) {
+            articles[i].save(function(err, article, numAffected) {
+              if(err) {
+                logger.error('ERROR PUT api/trainingVideos/' + req.params.id + 'in Article.model.save', {videoId: video._id});
+                return next(err);
+              }
+            });
+            articleIds.push(articles[i]._id);
+          }
+        }
+        logger.info('END PUT api/trainingVideos/' + req.params.id);
+        res.json({data: video, affectedArticleIds: articleIds});
+      });
     });
   } catch (error) {
     logger.error('ERROR - exception in PUT api/trainingVideos/:id', {error: error});
@@ -49,9 +88,74 @@ router.delete('/:id', function(req, res, next) {
         logger.error('ERROR DELETE api/trainingVideos/' + req.params.id, {error: err, body: req.body});
         return next(err);
       }
-      /* video is the value of just-deleted document */
-      logger.info('START DELETE api/trainingVideos/' + req.params.id);
-      res.json({data: video});
+      //Lesson and Article reference adjustment
+      //Below can be made more efficient...
+      var lessonIds = [];
+      Lesson.model.find(function(err, lessons) {
+        if(err) {
+          logger.error('ERROR DELETE api/trainingVideos/' + req.params.id + 'in Lesson.model.find', {videoId: video._id});
+          return next(err);
+        }
+        for (var i = lessons.length - 1; i >= 0; i--) {
+          if(lessons[i].itemIds && lessons[i].itemIds.length > 0) {
+            var itemIds = lessons[i].itemIds;
+            for (var j = itemIds.length - 1; j >= 0; j--) {
+              if(video._id.equals(itemIds[j].id)) {
+                //then need to remove reference
+                itemIds.splice(j, 1);
+                lessons[i].save(function(err, lesson, numAffected) {
+                  if(err) {
+                    logger.error('ERROR DELETE api/trainingVideos/' + req.params.id + 'in Lesson.model.save', {videoId: video._id});
+                    return next(err);
+                  }
+                });
+                lessonIds.push(lessons[i]._id);
+              }
+            }
+          }
+        }
+        logger.info('DELETE api/trainingVideos/' + req.params.id + ' - Successful updating of Lesson TrainingVideo references');
+      });
+      //may be able to make below more efficient too...
+      var articleIds = [];
+      Article.model.find(function(err, articles) {
+        if(err) {
+          logger.error('ERROR DELETE api/trainingVideos/' + req.params.id + 'in Article.model.find', {videoId: video._id});
+          return next(err);
+        }
+        for (var i = articles.length - 1; i >= 0; i--) {
+          var articleChanged = false;
+          for (var j = articles[i].contentSections.length - 1; j >= 0; j--) {
+            var contentSection = articles[i].contentSections[j];
+            for (var k = contentSection.contentArray.length - 1; k >= 0; k--) {
+              var piece = contentSection.contentArray[k];
+              if(piece.type === 'text') {
+                for (var l = piece.textChunks.length - 1; l >= 0; l--) {
+                  var chunk = piece.textChunks[l];
+                  if(chunk.linkedItem && video._id.equals(chunk.linkedItem._id)) {
+                    //if below doesn't work, could explicitly define object...
+                    articles[i].contentSections[j].contentArray[k].textChunks[l].linkedItem = undefined;
+                    articles[i].contentSections[j].contentArray[k].textChunks[l].itemType = undefined;
+                    articles[i].markModified('contentSections');
+                    articleChanged = true;
+                  }
+                }
+              }
+            }
+          }
+          if(articleChanged) {
+            articles[i].save(function(err, article, numAffected) {
+              if(err) {
+                logger.error('ERROR DELETE api/trainingVideos/' + req.params.id + 'in Article.model.save', {videoId: video._id});
+                return next(err);
+              }
+            });
+            articleIds.push(articles[i]._id);
+          }
+        }
+        logger.info('END DELETE api/trainingVideos/' + req.params.id);
+        res.json({data: video, affectedLessonIds: lessonIds, affectedArticleIds: articleIds});
+      });
     });
   } catch(error) {
     logger.error('ERROR - exception in DELETE api/trainingVideos/:id', {error: error});

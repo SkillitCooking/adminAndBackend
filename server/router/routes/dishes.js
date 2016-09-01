@@ -7,6 +7,7 @@ var logger = require('../../util/logger').serverLogger;
 var mongoose = require('mongoose');
 var db = require('../../database');
 var Dish = db.dishes;
+var Recipe = db.recipes;
 
 /* Add response 'success' signal when time comes */
 /* Add Credentials appropriately when time comes */
@@ -86,9 +87,37 @@ router.put('/:id', function(req, res, next) {
         logger.error('ERROR PUT api/dishes/' + req.params.id, {error: err, body: req.body});
         return next(err);
       }
-      /* dish is previous value of document */
-      logger.info('END PUT api/dishes/' + req.params.id);
-      res.json(dish);
+      //update applicable recipes... careful of payload, though - just get ingredientList.equipmentNeeded
+      var recipeIds = [];
+      Recipe.model.find({}, 'ingredientList.equipmentNeeded _id', function(err, recipes) {
+        if(err) {
+          logger.error('ERROR PUT api/dishes/' + req.params.id + ' in Recipe.model.find', {error: err, body: req.body, dishId: dish._id});
+          return next(err);
+        }
+        for (var i = recipes.length - 1; i >= 0; i--) {
+          var recipeChanged = false;
+          for (var j = recipes[i].ingredientList.equipmentNeeded.length - 1; j >= 0; j--) {
+            var dishPiece = recipes[i].ingredientList.equipmentNeeded[j];
+            if(dish._id.equals(dishPiece._id)) {
+              //then need to update dishPiece
+              recipes[i].ingredientList.equipmentNeeded[j] = dish;
+              recipes[i].markModified('ingredientList');
+              recipeChanged = true;
+            }
+          }
+          if(recipeChanged) {
+            recipes[i].save(function(err, recipe, numAffected) {
+              if(err) {
+                logger.error('ERROR PUT api/dishes/' + req.params.id + ' in Recipe.model.save', {error: err, body: req.body, dishId: dish._id});
+                return next(err);
+              }
+            });
+            recipeIds.push(recipes[i]._id);
+          }
+        }
+        logger.info('END PUT api/dishes/' + req.params.id);
+        res.json({data: dish, affectedRecipeIds: recipeIds});
+      });
     });
   } catch (error) {
     logger.error('ERROR - exception in PUT api/dishes/:id', {error: error});
@@ -105,9 +134,37 @@ router.delete('/:id', function(req, res, next) {
         logger.error('ERROR DELETE api/dishes/' + req.params.id, {error: err, body: req.body});
         return next(err);
       }
-      /* dish is the value of just-deleted document */
-      logger.info('START DELETE api/dishes/' + req.params.id);
-      res.json(dish);
+      //propagate to recipes
+      var recipeIds = [];
+      Recipe.model.find({}, 'ingredientList.equipmentNeeded _id', function(err, recipes) {
+        if(err) {
+          logger.error('ERROR DELETE api/dishes/' + req.params.id + ' in Recipe.model.find', {error: err, body: req.body, dishId: dish._id});
+          return next(err);
+        }
+        for (var i = recipes.length - 1; i >= 0; i--) {
+          var recipeChanged = false;
+          for (var j = recipes[i].ingredientList.equipmentNeeded.length - 1; j >= 0; j--) {
+            var dishPiece = recipes[i].ingredientList.equipmentNeeded[j];
+            if(dish._id.equals(dishPiece._id)) {
+              //then need to update dishPiece
+              recipes[i].ingredientList.equipmentNeeded.splice(j, 1);
+              recipes[i].markModified('ingredientList');
+              recipeChanged = true;
+            }
+          }
+          if(recipeChanged) {
+            recipes[i].save(function(err, recipe, numAffected) {
+              if(err) {
+                logger.error('ERROR DELETE api/dishes/' + req.params.id + ' in Recipe.model.save', {error: err, body: req.body, dishId: dish._id});
+                return next(err);
+              }
+            });
+            recipeIds.push(recipes[i]._id);
+          }
+        }
+        logger.info('END DELETE api/dishes/' + req.params.id);
+        res.json({data: dish, affectedRecipeIds: recipeIds});
+      });
     });
   } catch (error) {
     logger.error('ERROR - exception in DELETE api/dishes/:id', {error: error});

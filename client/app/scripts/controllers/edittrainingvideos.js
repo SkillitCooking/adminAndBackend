@@ -50,7 +50,11 @@ angular.module('SkillitAdminApp')
         collectionIds: $scope.trainingVideo.collectionIds,
         _id: $scope.trainingVideo._id
       }).then(function(res) {
-        alert("Video updated successfully! Refresh page");
+        var articleStr = "";
+        if(res.affectedArticleIds && res.affectedArticleIds.length > 0) {
+          articleStr = " Affected Articles that referenced Tip: \n" + res.affectedArticleIds.toString();
+        }
+        alert("Video updated successfully! Refresh page." + articleStr);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
@@ -59,7 +63,14 @@ angular.module('SkillitAdminApp')
 
     $scope.deleteVideo = function() {
       trainingVideosService.deleteTrainingVideo({_id: $scope.trainingVideo._id}).then(function(res) {
-        alert("Video successfully deleted! Refresh page");
+        var extraText = "";
+        if(res.affectedArticleIds && res.affectedArticleIds.length > 0) {
+          extraText += " Affected ArticleIds: \n" + res.affectedArticleIds.toString() + "\n";
+        }
+        if(res.affectedLessonIds && res.affectedLessonIds.length > 0) {
+          extraText += " Affected LessonIds: \n" + res.affectedLessonIds.toString();
+        }
+        alert("Video successfully deleted! Refresh page." + extraText);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);

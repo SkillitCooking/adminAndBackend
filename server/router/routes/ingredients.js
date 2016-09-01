@@ -7,6 +7,7 @@ var mongoose = require('mongoose');
 var underscore = require('underscore');
 var db = require('../../database');
 var Ingredient = db.ingredients;
+var Recipe = db.recipes;
 
 /* Add response 'success' signal when time comes */
 /* Add Credentials appropriately when time comes */
@@ -106,9 +107,39 @@ router.put('/:id', function(req, res, next) {
         logger.error('ERROR PUT api/ingredients' + req.params.id, {error: err, body: req.body});
         return next(err);
       }
-      /* ingredient is previous value of document */
-      logger.info('END PUT api/ingredients/' + req.params.id);
-      res.json(ingredient);
+      //update Recipe references
+      var recipeIds = [];
+      Recipe.model.find({}, 'ingredientList.ingredientTypes _id', function(err, recipes) {
+        if(err) {
+          logger.error('ERROR PUT api/ingredients/' + req.params.id + ' in Recipe.model.find', {error: err, body: req.body, ingredientId: ingredient._id});
+          return next(err);
+        }
+        for (var i = recipes.length - 1; i >= 0; i--) {
+          var recipeChanged = false;
+          for (var j = recipes[i].ingredientList.ingredientTypes.length - 1; j >= 0; j--) {
+            var type = recipes[i].ingredientList.ingredientTypes[j];
+            for (var k = type.ingredients.length - 1; k >= 0; k--) {
+              if(ingredient._id.equals(type.ingredients[k]._id)) {
+                //then need to update
+                recipes[i].ingredientList.ingredientTypes[j].ingredients[k] = ingredient;
+                recipes[i].markModified('ingredientList');
+                recipeChanged = true;
+              }
+            }
+          }
+          if(recipeChanged) {
+            recipes[i].save(function(err, recipe, numAffected) {
+              if(err) {
+                logger.error('ERROR PUT api/ingredients/' + req.params.id + ' in Recipe.model.save', {error: err, body: req.body, ingredient: ingredient._id});
+                return next(err);
+              }
+            });
+            recipeIds.push(recipes[i]._id);
+          }
+        }
+        logger.info('END PUT api/ingredients/' + req.params.id);
+        res.json({data: ingredient, affectedRecipeIds: recipeIds});
+      });    
     });
   } catch (error) {
     logger.error('ERROR - exception in PUT api/ingredients/:id', {error: error});
@@ -125,9 +156,39 @@ router.delete('/:id', function(req, res, next) {
         logger.error('ERROR DELETE api/ingredients/' + req.params.id, {error: err, body: req.body});
         return next(err);
       }
-      /* ingredient is the value of just-deleted document */
-      logger.info('END DELETE api/ingredients/' + req.params.id);
-      res.json(ingredient);
+      //update Recipe references
+      var recipeIds = [];
+      Recipe.model.find({}, 'ingredientList.ingredientTypes _id', function(err, recipes) {
+        if(err) {
+          logger.error('ERROR DELETE api/ingredients/' + req.params.id + ' in Recipe.model.find', {error: err, body: req.body, ingredient: ingredient._id});
+          return next(err);
+        }
+        for (var i = recipes.length - 1; i >= 0; i--) {
+          var recipeChanged = false;
+          for (var j = recipes[i].ingredientList.ingredientTypes.length - 1; j >= 0; j--) {
+            var type = recipes[i].ingredientList.ingredientTypes[j];
+            for (var k = type.ingredients.length - 1; k >= 0; k--) {
+              if(ingredient._id.equals(type.ingredients[k]._id)) {
+                //then delete reference
+                recipes[i].ingredientList.ingredientTypes[j].ingredients.splice(k, 1);
+                recipes[i].markModified('ingredientList');
+                recipeChanged = true;
+              }
+            }
+          }
+          if(recipeChanged) {
+            recipes[i].save(function(err, recipe, numAffected) {
+              if(err) {
+                logger.error('ERROR DELETE api/ingredients/' + req.params.id + ' in Recipe.model.save', {error: err, body: req.body, ingredientId: ingredient._id});
+                return next(err);
+              }
+            });
+            recipeIds.push(recipes[i]._id);
+          }
+        }
+        logger.info('END DELETE api/ingredients/' + req.params.id);
+        res.json({data: ingredient, affectedRecipeIds: recipeIds});
+      }); 
     });
   } catch(error) {
     logger.error('ERROR - exception in DELETE api/ingredients/:id', {error: error});

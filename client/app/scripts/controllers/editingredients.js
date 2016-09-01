@@ -148,7 +148,11 @@ angular.module('SkillitAdminApp')
         nameFormFlag: 'standardForm',
         _id: $scope.ingredient._id
       }).then(function(res) {
-        alert("Ingredient successfully updated! Refresh page.");
+        var recipeStr = "";
+        if(res.affectedRecipeIds && res.affectedRecipeIds.length > 0) {
+          recipeStr += " Affected Recipe Ids: \n" + res.affectedRecipeIds.toString();
+        }
+        alert("Ingredient successfully updated! Refresh page." + recipeStr);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
@@ -157,7 +161,11 @@ angular.module('SkillitAdminApp')
 
     $scope.deleteIngredient = function() {
       ingredientService.deleteIngredient({_id: $scope.ingredient._id}).then(function(res) {
-        alert("Ingredient successfully deleted. Refresh page.");
+        var recipeStr = "";
+        if(res.affectedRecipeIds && res.affectedRecipeIds.length > 0) {
+          recipeStr += " Affected Recipe Ids: \n" + res.affectedRecipeIds.toString();
+        }
+        alert("Ingredient successfully deleted. Refresh page." + recipeStr);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);

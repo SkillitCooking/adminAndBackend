@@ -67,7 +67,7 @@ router.put('/:id', function(req, res, next) {
           if(articleChanged) {
             articles[i].save(function(err, article, numAffected) {
               if(err) {
-                logger.error('ERROR PUT api/dailyTips/' + req.params.id + 'in Article.model.save', {tipId: tip._id, articleId: article._id});
+                logger.error('ERROR PUT api/dailyTips/' + req.params.id + 'in Article.model.save', {tipId: tip._id});
                 return next(err);
               }
             });
@@ -110,7 +110,7 @@ router.delete('/:id', function(req, res, next) {
                 itemIds.splice(j, 1);
                 lessons[i].save(function(err, lesson, numAffected) {
                   if(err) {
-                    logger.error('ERROR DELETE api/dailyTips/' + req.params.id + 'in Lesson.model.save', {tipId: tip._id, lessonId: lessons[i]._id});
+                    logger.error('ERROR DELETE api/dailyTips/' + req.params.id + 'in Lesson.model.save', {tipId: tip._id});
                     return next(err);
                   }
                 });
@@ -151,7 +151,7 @@ router.delete('/:id', function(req, res, next) {
           if(articleChanged) {
             articles[i].save(function(err, article, numAffected) {
               if(err) {
-                logger.error('ERROR DELETE api/dailyTips/' + req.params.id + 'in Article.model.save', {tipId: tip._id, articleId: article._id});
+                logger.error('ERROR DELETE api/dailyTips/' + req.params.id + 'in Article.model.save', {tipId: tip._id});
                 return next(err);
               }
             });
