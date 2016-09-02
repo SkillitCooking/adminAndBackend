@@ -48,7 +48,7 @@
       <span ng-show="typeForm.displayName.$invalid">give a display name</span><br/><br/>
       Min Ingredients Needed: <input type="text" ng-model="type.minNeeded" size="30" required name="minNeeded" ng-pattern="integerval"/>
       <span ng-show="typeForm.minNeeded.$invalid">give a number for minNeeded</span><br/><br/>
-      Ingredients: <select name="ingredientSelect" ng-model="typeIngredient" ng-options="ingredient.name for ingredient in ingredients" ng-init="setSelectedIngredientForms(typeIngredient)" ng-change="setSelectedIngredientForms(typeIngredient)"></select>
+      Ingredients: <select name="ingredientSelect" ng-model="typeIngredient" ng-options="ingredient.name.standardForm for ingredient in ingredients" ng-init="setSelectedIngredientForms(typeIngredient)" ng-change="setSelectedIngredientForms(typeIngredient)"></select>
       <span ng-show="type.ingredients.length === 0">there must be at least one ingredient in a type</span>
       <div ng-repeat="form in typeIngredient.ingredientForms">
         {{form.name}}: <input type="checkbox" ng-model="selectedIngredientForms[$index]"/>
