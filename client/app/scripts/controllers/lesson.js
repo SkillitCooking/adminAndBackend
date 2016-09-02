@@ -65,6 +65,9 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.addItem = function() {
+      if(!$scope.lesson.itemIds) {
+        $scope.lesson.itemIds = [];
+      }
       $scope.lesson.itemIds.push({
         id: $scope.selectedItem,
         type: $scope.itemType
