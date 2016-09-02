@@ -93,6 +93,7 @@ router.post('/getRecipesForCollection', function(req, res, next) {
 
 /* this could get to be a bit of a load on the server as the number of recipes scales up... However, at the given moment, when we really are only going to be dealing with a number of recipes on the level of like 50-100 at max, we're probably OK, given the complexity of handling this full query on the Mongo side */
 /* A future iteration will probably have some Mongo query that will reduce the returned set while performing further processing on the server*/
+/*Why not identify with ids?*/
 router.post('/getRecipesWithIngredients', function(req, res, next) {
   logger.info('START POST api/recipes/getRecipesWithIngredients');
   Recipe.model.find((err, recipes) => {
@@ -109,7 +110,7 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
         for (var i = ingredientTypes.length - 1; i >= 0; i--) {
           var count = 0;
           for (var j = ingredientTypes[i].ingredients.length - 1; j >= 0; j--) {
-            if(ingredientNames && ingredientNames.indexOf(ingredientTypes[i].ingredients[j].name) !== -1){
+            if(ingredientNames && ingredientNames.indexOf(ingredientTypes[i].ingredients[j].name.standardForm) !== -1){
               count++;
             }
           }
