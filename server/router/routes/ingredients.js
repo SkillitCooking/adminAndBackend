@@ -109,7 +109,7 @@ router.put('/:id', function(req, res, next) {
       }
       //update Recipe references
       var recipeIds = [];
-      Recipe.model.find({}, 'ingredientList.ingredientTypes _id', function(err, recipes) {
+      Recipe.model.find({}, 'ingredientList _id', function(err, recipes) {
         if(err) {
           logger.error('ERROR PUT api/ingredients/' + req.params.id + ' in Recipe.model.find', {error: err, body: req.body, ingredientId: ingredient._id});
           return next(err);
@@ -158,7 +158,7 @@ router.delete('/:id', function(req, res, next) {
       }
       //update Recipe references
       var recipeIds = [];
-      Recipe.model.find({}, 'ingredientList.ingredientTypes _id', function(err, recipes) {
+      Recipe.model.find({}, 'ingredientList _id', function(err, recipes) {
         if(err) {
           logger.error('ERROR DELETE api/ingredients/' + req.params.id + ' in Recipe.model.find', {error: err, body: req.body, ingredient: ingredient._id});
           return next(err);

@@ -89,7 +89,7 @@ router.put('/:id', function(req, res, next) {
       }
       //update applicable recipes... careful of payload, though - just get ingredientList.equipmentNeeded
       var recipeIds = [];
-      Recipe.model.find({}, 'ingredientList.equipmentNeeded _id', function(err, recipes) {
+      Recipe.model.find({}, 'ingredientList _id', function(err, recipes) {
         if(err) {
           logger.error('ERROR PUT api/dishes/' + req.params.id + ' in Recipe.model.find', {error: err, body: req.body, dishId: dish._id});
           return next(err);
@@ -136,7 +136,7 @@ router.delete('/:id', function(req, res, next) {
       }
       //propagate to recipes
       var recipeIds = [];
-      Recipe.model.find({}, 'ingredientList.equipmentNeeded _id', function(err, recipes) {
+      Recipe.model.find({}, 'ingredientList _id', function(err, recipes) {
         if(err) {
           logger.error('ERROR DELETE api/dishes/' + req.params.id + ' in Recipe.model.find', {error: err, body: req.body, dishId: dish._id});
           return next(err);
