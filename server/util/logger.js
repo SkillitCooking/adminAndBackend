@@ -51,6 +51,8 @@ if(process.env.NODE_ENV === 'production') {
         })
       ]
     });
+    module.exports.serverLogger = serverLogger;
+    module.exports.clientLogger = clientLogger;
   }, function(error) {
     console.log('logger promise error: ', error);
     serverLogger = {
@@ -61,6 +63,8 @@ if(process.env.NODE_ENV === 'production') {
       info: function() {},
       error: function() {}
     };
+    module.exports.serverLogger = serverLogger;
+    module.exports.clientLogger = clientLogger;
   });
   
 } else {
@@ -73,7 +77,6 @@ if(process.env.NODE_ENV === 'production') {
     info: function() {},
     error: function() {}
   };
+  module.exports.serverLogger = serverLogger;
+  module.exports.clientLogger = clientLogger;
 }
-
-module.exports.serverLogger = serverLogger;
-module.exports.clientLogger = clientLogger;
