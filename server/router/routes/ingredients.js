@@ -29,10 +29,7 @@ router.get('/', function(req, res, next) {
 /* GET getIngredientsForSelection */
 /* Organizes ingredients by inputCategory*/
 router.get('/getIngredientsForSelection', function(req, res, next) {
-  console.log('here');
-  console.log('logger', logger);
   logger.info('START GET api/ingredients/getIngredientsForSelection');
-  console.log("thiere");
   Ingredient.model.find(function (err, ingredients) {
     if(err) {
       logger.error('ERROR GET api/ingredients/getIngredientsForSelection', {error: err});
