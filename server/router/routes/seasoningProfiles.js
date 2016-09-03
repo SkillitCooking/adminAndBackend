@@ -12,6 +12,26 @@ var Recipe = db.recipes;
 /* Add Credentials appropriately when time comes */
 /* Add Error checking as well */
 
+router.get('/addDefault', function(req, res, next) {
+  SeasoningProfile.model.findOne('572c58ea23731e97a70c5fa4', function(err, profile) {
+    if(err)
+      return next(err);
+    Recipe.model.find(function(err, recipes) {
+      if(err)
+        return next(err);
+      for (var i = recipes.length - 1; i >= 0; i--) {
+        if(!recipes[i].defaultSeasoningProfile) {
+          recipes[i].defaultSeasoningProfile = profile;
+          recipes[i].save(function(err, recipe, numAffected) {
+            if(err) return next(err);
+          });
+        }
+      }
+      res.json({success: 'yep'});
+    });
+  });
+});
+
 /* GET seasoningProfiles listing. */
 router.get('/', function(req, res, next) {
   logger.info('START GET api/seasoningProfiles/');
