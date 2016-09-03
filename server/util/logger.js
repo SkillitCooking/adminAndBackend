@@ -1,7 +1,8 @@
 var winston = require('winston');
-var localStorage = require('./localStorage').localStorage;
+//var moment = require('moment');
+//var localStorage = require('./localStorage').localStorage;
 
-function getFileName() {
+/*function getFileName() {
   var promise = new Promise(function(resolve, reject) {
     var fileName;
     localStorage.get('currentDateString', function(err, reply) {
@@ -18,41 +19,16 @@ function getFileName() {
     });
   });
   return promise;
-}
+}*/
 
 var clientLogger, serverLogger;
 
 if(process.env.NODE_ENV === 'production') {
   //then set up actual loggers
-  getFileName().then(function(dailyLogFileName) {
+  /*getFileName().then(function(dailyLogFileName) {
     console.log('logger dailyLogFileName: ', dailyLogFileName);
 
-    clientLogger = new (winston.Logger)({
-      transports: [
-        new (winston.transports.File)({
-          name: 'client-error-logs',
-          filename: 'logs/client/' + dailyLogFileName,
-          level: 'error'
-        })
-      ]
-    });
-
-    serverLogger = new (winston.Logger)({
-      transports: [
-        new (winston.transports.File)({
-          name: 'api-logs',
-          filename: 'logs/api/callLogs/' + dailyLogFileName,
-          level: 'info'
-        }),
-        new (winston.transports.File)({
-          name: 'server-error-logs',
-          filename: 'logs/api/errors/errors.log',
-          level: 'error'
-        })
-      ]
-    });
-    module.exports.serverLogger = serverLogger;
-    module.exports.clientLogger = clientLogger;
+    
   }, function(error) {
     console.log('logger promise error: ', error);
     serverLogger = {
@@ -65,8 +41,37 @@ if(process.env.NODE_ENV === 'production') {
     };
     module.exports.serverLogger = serverLogger;
     module.exports.clientLogger = clientLogger;
+  });*/
+clientLogger = new (winston.Logger)({
+    transports: [
+      new (winston.transports.File)({
+        name: 'client-error-logs',
+        filename: 'logs/client/clientErrors.log',
+        level: 'error',
+        maxsize: 100 * 1024,
+        maxFiles: 10
+      })
+    ]
   });
-  
+
+  serverLogger = new (winston.Logger)({
+    transports: [
+      new (winston.transports.File)({
+        name: 'api-logs',
+        filename: 'logs/api/callLogs/calls.log',
+        level: 'info',
+        maxsize: 100 * 1024,
+        maxFiles: 3
+      }),
+      new (winston.transports.File)({
+        name: 'server-error-logs',
+        filename: 'logs/api/errors/errors.log',
+        level: 'error',
+        maxsize: 100 * 1024,
+        maxFiles: 5
+      })
+    ]
+  });
 } else {
   //have dummy loggers with no redis
   serverLogger = {
@@ -77,6 +82,6 @@ if(process.env.NODE_ENV === 'production') {
     info: function() {},
     error: function() {}
   };
-  module.exports.serverLogger = serverLogger;
-  module.exports.clientLogger = clientLogger;
 }
+module.exports.serverLogger = serverLogger;
+module.exports.clientLogger = clientLogger;
