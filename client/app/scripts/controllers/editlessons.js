@@ -57,12 +57,30 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.addItem = function() {
-      console.log("itemType: ", $scope.itemType);
       $scope.lesson.itemIds.push({
         id: $scope.selectedItem,
         type: $scope.itemType
       });
-      console.log('itemIds: ', $scope.lesson.itemIds);
+    };
+
+    $scope.canAddAllForItemType = function() {
+      if($scope.lesson) {
+        if(!$scope.lesson.isArticle && ($scope.itemType && $scope.itemType !== "")) {
+          return true;
+        }
+        return false;
+      }
+      return false;
+    };
+
+    $scope.addAllOfItemType = function() {
+      var typeArray = $scope.getSelectedTypeItems();
+      for (var i = typeArray.length - 1; i >= 0; i--) {
+        $scope.lesson.itemIds.push({
+          id: typeArray[i]._id,
+          itemType: $scope.itemType
+        });
+      }
     };
 
     $scope.getArticleLabel = function() {

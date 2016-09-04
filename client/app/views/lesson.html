@@ -17,6 +17,7 @@
     <span ng-class="getItemLabel()">Item:</span>
     <select ng-disabled="lesson.isArticle" name="itemSelect" ng-model="selectedItem" ng-options="item._id as item.title for item in getSelectedTypeItems()"></select><br/><br/>
     <button class="btn btn-warning btn-sm" ng-click="addItem()" ng-disabled="lesson.isArticle || !selectedItem">Add Item</button><br/><br/>
+    <button class="btn btn-success btn-sm" ng-click="addAllOfItemType()" ng-disabled="!canAddAllForItemType()">Add All For Item Type</button><br/><br/>
     Added Items: <div ng-repeat="id in lesson.itemIds">
       <p>{{id.itemType}}: {{id.id}}</p>
       <button class="btn btn-xs btn-danger" ng-click="removeItemId($index)">Remove</button>
