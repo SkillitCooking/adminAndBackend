@@ -276,7 +276,7 @@ angular.module('SkillitAdminApp')
         var alertMsg = "Success! Recipe " + recipe.name + " was saved!";
         alert(alertMsg);
       }, function(response) {
-        console.log("Server Error: ", response.message);
+        console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
       });
       $scope.reset();

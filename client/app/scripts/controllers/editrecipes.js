@@ -73,8 +73,11 @@ angular.module('SkillitAdminApp')
       });
     };
 
+    $scope.originalName = "";
+
     $scope.changeSelectedRecipe = function() {
       if($scope.selectedRecipe && $scope.selectedRecipe.name) {
+        $scope.originalName = $scope.selectedRecipe.name;
         $scope.selectedRecipeIndex = $scope.recipes.indexOf($scope.selectedRecipe);
         $scope.recipe = angular.copy($scope.selectedRecipe);
         $scope.ingredientList = $scope.recipe.ingredientList;
@@ -349,6 +352,62 @@ angular.module('SkillitAdminApp')
     $scope.deleteRecipe = function() {
       recipeService.deleteRecipe({_id: $scope.recipe._id}).then(function(res) {
         alert("Recipe successfully deleted");
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
+    };
+
+    $scope.noRecipeNameChange = function() {
+      if($scope.recipe) {
+        return $scope.originalName === $scope.recipe.name;
+      }
+      return true;
+    };
+
+    $scope.duplicateRecipe = function() {
+      delete $scope.recipe.ingredientList._id;
+      for (var i = $scope.recipe.ingredientList.ingredientTypes.length - 1; i >= 0; i--) {
+        delete $scope.recipe.ingredientList.ingredientTypes[i]._id;
+      }
+      for (var i = $scope.recipe.stepList.length - 1; i >= 0; i--) {
+        delete $scope.recipe.stepList[i]._id;
+        for (var j = $scope.recipe.stepList[i].stepSpecifics.length - 1; j >= 0; j--) {
+          delete $scope.recipe.stepList[i].stepSpecifics[j]._id;
+        }
+        for (var j = $scope.recipe.stepList[i].auxiliarySteps.length - 1; j >= 0; j--) {
+          delete $scope.recipe.stepList[i].auxiliarySteps[j]._id;
+        }
+        var nameTokens = $scope.recipe.name.split(" ");
+        $scope.squishedRecipeName = nameTokens.join("");
+        $scope.recipe.stepList[i].stepId = $scope.squishedRecipeName + i;
+      }
+      recipeService.addNewRecipe({
+        recipe: {
+          name: $scope.recipe.name,
+          description: $scope.recipe.description,
+          defaultServingSize: $scope.recipe.defaultServingSize,
+          recipeType: $scope.recipe.recipeType,
+          collectionIds: $scope.recipe.collectionIds,
+          recipeCategory: $scope.recipe.recipeCategory,
+          ingredientList: $scope.recipe.ingredientList,
+          stepList: $scope.recipe.stepList,
+          primaryCookingMethod: $scope.recipe.primaryCookingMethod,
+          otherCookingMethods: $scope.recipe.otherCookingMethods,
+          canAddSeasoningProfile: $scope.recipe.canAddSeasoningProfile,
+          defaultSeasoningProfile: $scope.recipe.defaultSeasoningProfile,
+          choiceSeasoningProfiles: $scope.recipe.choiceSeasoningProfiles,
+          primaryIngredientType: $scope.recipe.primaryIngredientType,
+          mainPictureURL: $scope.recipe.mainPictureURL,
+          mainVideoURL: $scope.recipe.mainVideoURL,
+          prepTime: $scope.recipe.prepTime,
+          totalTime: $scope.recipe.totalTime,
+          hasBeenRecipeOfTheDay: false,
+          datesUsedAsRecipeOfTheDay: [],
+          isRecipeOfTheDay: false
+        }
+      }).then(function(recipe) {
+        alert('Success! Recipe ' + recipe.name + 'was saved! Refresh form.');
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);

@@ -12,7 +12,7 @@ angular.module('SkillitAdminApp')
     $scope.integerval = /^\d*$/;
     $scope.inputCategories = ["Protein", "Vegetables", "Starches", "Other"];
     $scope.cookingMethods = ["Bake", "Sautee", "Boil", "Steam", "SlowCook"];
-    $scope.stepTypes = ["Bake", "Boil", "BringToBoil", "Custom", "Cut", "Dry", "Heat", "Place", "PreheatOven", "Sautee", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir"];
+    $scope.stepTypes = ["Bake", "Boil", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "Heat", "Place", "PreheatOven", "Sautee", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir"];
     $scope.subTypes = [];
 
     ingredientService.getAllIngredients().then(function(ingredients) {
