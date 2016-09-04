@@ -45,7 +45,7 @@ angular.module('SkillitAdminApp')
 
     $scope.stepTypes = ["Bake", "Boil", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "Heat", "Place", "PreheatOven", "Sautee", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir"];
     $scope.recipeTypes = ["AlaCarte", "BYO", "Full"];
-    $scope.recipeCategories = ["Sautee", "Scramble", "Roast", "Pasta", "Hash", "Rice", "Quinoa"];
+    $scope.recipeCategories = ["Sautee", "Easy Dinners", "Scramble", "Roast", "Pasta", "Hash", "Rice", "Quinoa"];
     $scope.cookingMethods = ["Bake", "Sautee", "Boil", "Steam", "SlowCook"];
     $scope.servingSizes = ["1-2", "2-3", "3-4", "4-5", "5-6", "6-7", "7-8", "8-9", "9-10"];
     $scope.selectedIngredientForms = [];
@@ -230,12 +230,15 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.reset = function() {
-      $scope.constructingStep = angular.copy({});
-      $scope.stepList = angular.copy([]);
-      $scope.ingredientList = angular.copy({});
-      $scope.recipe = angular.copy({});
-      $scope.recipeForm.$setPristine();
-      $scope.recipeForm.$setUntouched();
+      if(confirm('Are You Sure You Want To reset?')) {
+        $scope.constructingStep = angular.copy({});
+        $scope.stepList = angular.copy([]);
+        $scope.ingredientList = angular.copy({});
+        $scope.recipe = angular.copy({});
+        $scope.recipeForm.$setPristine();
+        $scope.recipeForm.$setUntouched();
+      }
+      
     };
 
     $scope.save = function() {

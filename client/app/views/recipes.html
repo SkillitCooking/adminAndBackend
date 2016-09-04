@@ -119,7 +119,7 @@
         <equipmentprep-step-item ng-if="step.stepType === 'EquipmentPrep'"></equipmentprep-step-item>
         <button ng-if="$last" ng-click="removeStep()">Remove Step</button>
       </div><br/><br/>
-      <button class="btn btn-large btn-default" ng-click="reset()">Reset Recipe Form</button>
+      <button class="btn btn-large btn-warning" ng-click="reset()">Reset Recipe Form</button>
       <button class="btn btn-large btn-info" ng-click="preview()">Preview Recipe</button>
       <button class="btn btn-large btn-success" ng-click="save()" ng-disabled="recipeForm.$invalid || !recipeSanityCheck()">Save Recipe</button>
       <h3>Current Recipe Being Built</h3>
