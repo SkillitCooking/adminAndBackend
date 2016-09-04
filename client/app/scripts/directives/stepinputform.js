@@ -53,11 +53,15 @@ angular.module('SkillitAdminApp')
         }
         
         scope.showStepId = function() {
-          if(!scope.step.stepInputs[scope.stepInputName] || !scope.step.stepInputs[scope.stepInputName].sourceType){
-            return false;
-          }
-          if(scope.step.stepInputs[scope.stepInputName].sourceType === 'StepProduct'){
-            return true;
+          if(scope.step.stepInputs) {
+            if(!scope.step.stepInputs[scope.stepInputName] || !scope.step.stepInputs[scope.stepInputName].sourceType){
+              return false;
+            }
+            if(scope.step.stepInputs[scope.stepInputName].sourceType === 'StepProduct'){
+              return true;
+            } else {
+              return false;
+            }
           } else {
             return false;
           }

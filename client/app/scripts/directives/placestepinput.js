@@ -18,7 +18,7 @@ angular.module('SkillitAdminApp')
         scope.showExampleText = false;
         scope.tipAdded = false;
         scope.tipIsMinimized = true;
-        scope.placeTypes = ["Place", "Add", "Combine", "Mix"];
+        scope.placeTypes = ["Place", "Add", "Combine", "Mix", "Plate"];
 
         if(scope.constructingStep.stepId) {
           //then step already exists, need to load stepSpecifics, productName
@@ -58,7 +58,7 @@ angular.module('SkillitAdminApp')
         scope.removeTip = function() {
           scope.tipAdded = !scope.tipAdded;
           scope.constructingStep.stepTip = undefined;
-        }
+        };
       }
     };
   });
