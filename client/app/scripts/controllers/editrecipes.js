@@ -91,6 +91,26 @@ angular.module('SkillitAdminApp')
           types[i].ingredientMinimizedIndicator = new Array(types[i].ingredients.length);
           types[i].ingredientMinimizedIndicator.fill(true);
         }
+        if($scope.recipeCollections) {
+          for (var i = $scope.recipe.collectionIds.length - 1; i >= 0; i--) {
+            var index = _.findIndex($scope.recipeCollections, function(collection) {
+              return collection._id === $scope.recipe.collectionIds[i];
+            });
+            if(index > -1) {
+              $scope.recipeCollections[index].useInRecipe = true;
+            }
+          }
+        }
+        if($scope.seasoningProfiles) {
+          for (var i = $scope.recipe.choiceSeasoningProfiles.length - 1; i >= 0; i--) {
+            var index = _.findIndex($scope.seasoningProfiles, function(profile) {
+              return profile._id === $scope.recipe.choiceSeasoningProfiles[i]._id;
+            });
+            if(index > -1) {
+              $scope.seasoningProfiles[index].useInChoiceSeasonings = true;
+            }
+          }
+        }
       }
     };
 
@@ -312,6 +332,20 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.saveChanges = function() {
+      $scope.recipe.choiceSeasoningProfiles = [];
+      for (var i = $scope.seasoningProfiles.length - 1; i >= 0; i--) {
+        if($scope.seasoningProfiles[i].useInChoiceSeasonings) {
+          delete $scope.seasoningProfiles[i].useInChoiceSeasonings;
+          $scope.recipe.choiceSeasoningProfiles.push($scope.seasoningProfiles[i]);
+        }
+      }
+      $scope.recipe.collectionIds = [];
+      for (var i = $scope.recipeCollections.length - 1; i >= 0; i--) {
+        if($scope.recipeCollections[i].useInRecipe) {
+          delete $scope.recipeCollections[i].useInRecipe;
+          $scope.recipe.collectionIds.push($scope.recipeCollections[i]._id);
+        }
+      }
       recipeService.updateRecipe({
         name: $scope.recipe.name,
         description: $scope.recipe.description,
@@ -381,6 +415,20 @@ angular.module('SkillitAdminApp')
         var nameTokens = $scope.recipe.name.split(" ");
         $scope.squishedRecipeName = nameTokens.join("");
         $scope.recipe.stepList[i].stepId = $scope.squishedRecipeName + i;
+      }
+      $scope.recipe.choiceSeasoningProfiles = [];
+      for (var i = $scope.seasoningProfiles.length - 1; i >= 0; i--) {
+        if($scope.seasoningProfiles[i].useInChoiceSeasonings) {
+          delete $scope.seasoningProfiles[i].useInChoiceSeasonings;
+          $scope.recipe.choiceSeasoningProfiles.push($scope.seasoningProfiles[i]);
+        }
+      }
+      $scope.recipe.collectionIds = [];
+      for (var i = $scope.recipeCollections.length - 1; i >= 0; i--) {
+        if($scope.recipeCollections[i].useInRecipe) {
+          delete $scope.recipeCollections[i].useInRecipe;
+          $scope.recipe.collectionIds.push($scope.recipeCollections[i]._id);
+        }
       }
       recipeService.addNewRecipe({
         recipe: {

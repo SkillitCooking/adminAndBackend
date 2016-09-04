@@ -247,6 +247,24 @@ angular.module('SkillitAdminApp')
       if(!$scope.recipe.canAddSeasoningProfile){
         $scope.recipe.canAddSeasoningProfile = false;
       }
+      if(!$scope.recipe.choiceSeasoningProfiles) {
+        $scope.recipe.choiceSeasoningProfiles = [];
+      }
+      for (var i = $scope.seasoningProfiles.length - 1; i >= 0; i--) {
+        if($scope.seasoningProfiles[i].useInChoiceSeasonings) {
+          delete $scope.seasoningProfiles[i].useInChoiceSeasonings;
+          $scope.recipe.choiceSeasoningProfiles.push($scope.seasoningProfiles[i]);
+        }
+      }
+      if(!$scope.recipe.collectionIds) {
+        $scope.recipe.collectionIds = [];
+      }
+      for (var i = $scope.recipeCollections.length - 1; i >= 0; i--) {
+        if($scope.recipeCollections[i].useInRecipe) {
+          delete $scope.recipeCollections[i].useInRecipe;
+          $scope.recipe.collectionIds.push($scope.recipeCollections[i]._id);
+        }
+      }
       $scope.getGlobalCookTimes();
       recipeService.addNewRecipe({ 
         recipe:{
@@ -300,5 +318,23 @@ angular.module('SkillitAdminApp')
     $scope.preview = function() {
       $scope.recipe.ingredientList = $scope.ingredientList;
       $scope.recipe.stepList = $scope.stepList;
+      if(!$scope.recipe.choiceSeasoningProfiles) {
+        $scope.recipe.choiceSeasoningProfiles = [];
+      }
+      for (var i = $scope.seasoningProfiles.length - 1; i >= 0; i--) {
+        if($scope.seasoningProfiles[i].useInChoiceSeasonings) {
+          delete $scope.seasoningProfiles[i].useInChoiceSeasonings;
+          $scope.recipe.choiceSeasoningProfiles.push($scope.seasoningProfiles[i]);
+        }
+      }
+      if(!$scope.recipe.collectionIds) {
+        $scope.recipe.collectionIds = [];
+      }
+      for (var i = $scope.recipeCollections.length - 1; i >= 0; i--) {
+        if($scope.recipeCollections[i].useInRecipe) {
+          delete $scope.recipeCollections[i].useInRecipe;
+          $scope.recipe.collectionIds.push($scope.recipeCollections[i]._id);
+        }
+      }
     };
   }]);

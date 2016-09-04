@@ -10,14 +10,11 @@
     <span ng-show="recipeForm.nameInput.$invalid">give the recipe a name</span><br /> <br />
     Description: <textarea ng-model="recipe.description" rows="4" cols="50" required name="descInput"></textarea>
     <span ng-show="recipeForm.descInput.$invalid">give the recipe a description</span><br/>
-    Collections: <select name="itemCollectionSelect" ng-model="curCollectionId" ng-options="collection._id as collection.name for collection in recipeCollections"></select><br/>
-    <ul>
-      <div ng-repeat="collectionID in recipe.collectionIds">
-        <li>{{collectionID}}</li>
-        <button ng-click="removeCollection($index)">Remove</button>
-      </div>
-    </ul>
-    <button ng-click="addCollection()">Add Collection</button><br/><br/>
+    Collections: <br/>
+    <div ng-repeat="collection in recipeCollections">
+      <input type="checkbox" ng-model="collection.useInRecipe" />
+      <span>{{collection.name}}</span>
+    </div><br/><br/>
     Main Picture URL: <input type="url" ng-model="recipe.mainPictureURL" size="70" name="mainPicInput" required/><br/>
     Main Video URL: <input type="url" ng-model="recipe.mainVideoURL" size="70" name="mainVidInput"/><br/><br/>
     RecipeType: <select name="typeSelect" ng-model="recipe.recipeType" ng-options="recipeType for recipeType in recipeTypes" required></select>
@@ -34,10 +31,10 @@
     </div><br/><br/>
     Can Add Seasoning: <input type="checkbox" ng-model="recipe.canAddSeasoningProfile"><br/><br/>
     Default Seasoning: <select name="seasoningSelect" ng-model="recipe.defaultSeasoningProfile" ng-options="profile as profile.name for profile in seasoningProfiles track by profile._id" ng-disabled="!recipe.canAddSeasoningProfile"></select><br/><br/>
-    Available Seasonings: <select name="availableSeasoningSelect" ng-model="availableSeasoning" ng-disabled="!recipe.canAddSeasoningProfile" ng-options="profile.name for profile in seasoningProfiles"></select>
-    <button class="btn btn-primary btn-xs" ng-click="addSeasoning()">Add Seasoning</button>
-    <div ng-repeat="profile in recipe.choiceSeasoningProfiles">
-      <pre>{{profile.name}}</pre><button class="btn btn-danger btn-xs" ng-click="removeSeasoning($index)"> - </button>
+    Available Seasonings: <br/>
+    <div ng-repeat="profile in seasoningProfiles" ng-if="recipe.canAddSeasoningProfile">
+      <input type="checkbox" ng-model="profile.useInChoiceSeasonings" />
+      <span>{{profile.name}}</span>
     </div>
     <h4>Ingredient List</h4>
     <b>Ingredient Types</b><br/><br/>
