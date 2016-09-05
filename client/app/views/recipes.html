@@ -4,7 +4,7 @@
   <a class="btn btn-link active" ng-href="#/recipes">Create</a>
   <a class="btn btn-link" ng-href="#/editRecipes">Edit + Duplicate</a><br/>
   <form novalidate name="recipeForm" ng-controller="RecipeCtrl">
-    Name: <input type="text" ng-model="recipe.name" size="50" required name="nameInput"/> 
+    Name: <input type="text" ng-model="recipe.name" size="50" ng-focus="logRecipeName()" ng-blur="updateRecipeName()" required name="nameInput"/> 
     <span ng-show="recipeForm.nameInput.$invalid">give the recipe a name</span><br /> <br />
     Description: <textarea ng-model="recipe.description" rows="4" cols="50" required name="descInput"></textarea>
     <span ng-show="recipeForm.descInput.$invalid">give the recipe a description</span><br/>

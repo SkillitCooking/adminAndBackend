@@ -61,6 +61,46 @@ angular.module('SkillitAdminApp')
 
     $scope.stepList = [];
 
+    $scope.logRecipeName = function() {
+      $scope.originalName = $scope.recipe.name;
+    };
+
+    $scope.updateRecipeName = function() {
+      var nameTokens = $scope.recipe.name.split(" ");
+      $scope.squishedRecipeName = nameTokens.join("");
+      if($scope.stepList) {
+        for (var i = $scope.stepList.length - 1; i >= 0; i--) {
+          $scope.stepList[i].stepId = $scope.squishedRecipeName + i;
+          //look at inputs, if sourceId, then look up step in shortened array, project stepId
+          //for use in sourceId
+          for(var key in $scope.stepList[i].stepInputs) {
+            if(Array.isArray($scope.stepList[i].stepInputs[key])) {
+              for (var j = $scope.stepList[i].stepInputs[key].length - 1; j >= 0; j--) {
+                if($scope.stepList[i].stepInputs[key][j].sourceId) {
+                  for (var k = $scope.stepList.length - 1; k >= 0; k--) {
+                    if($scope.stepList[k].stepId === $scope.stepList[i].stepInputs[key][j].sourceId) {
+                      $scope.stepList[i].stepInputs[key][j].sourceId = $scope.squishedRecipeName + k;
+                      break;
+                    }
+                  }
+                }
+              }
+            } else {
+              var list = $scope.stepList;
+              if($scope.stepList[i].stepInputs[key].sourceId) {
+                for (var j = list.length - 1; j >= 0; j--) {
+                  if(list[j].stepId === $scope.stepList[i].stepInputs[key].sourceId){
+                    $scope.stepList[i].stepInputs[key].sourceId = $scope.squishedRecipeName + j;
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+
     $scope.setSelectedIngredientForms = function (typeIngredient) {
       var length;
       if(typeIngredient && typeIngredient.ingredientForms){

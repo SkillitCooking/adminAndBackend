@@ -6,7 +6,7 @@
   <button class="btn btn-sm btn-warning" ng-click="reloadRecipes()">Reload Recipes</button>
   <form novalidate name="editRecipeForm" ng-controller="EditRecipesCtrl">
     Select Recipe: <select name="recipeSelect" ng-model="selectedRecipe" ng-change="changeSelectedRecipe()" ng-options="recipe.value as recipe.label for recipe in recipes"></select><br/><br/>
-    Name: <input type="text" ng-model="recipe.name" size="50" required name="nameInput"/> 
+    Name: <input type="text" ng-model="recipe.name" size="50" required ng-focus="logRecipeName()" ng-blur="updateRecipeName()" name="nameInput"/> 
     <span ng-show="recipeForm.nameInput.$invalid">give the recipe a name</span><br /> <br />
     Description: <textarea ng-model="recipe.description" rows="4" cols="50" required name="descInput"></textarea>
     <span ng-show="recipeForm.descInput.$invalid">give the recipe a description</span><br/>
