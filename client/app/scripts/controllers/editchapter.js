@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('EditChapterCtrl', ['$scope', 'chapterService', 'lessonService', function ($scope, chapterService, lessonService) {
+  .controller('EditChapterCtrl', ['$window', '$scope', 'chapterService', 'lessonService', function ($window, $scope, chapterService, lessonService) {
     
     chapterService.getAllChapters().then(function(res) {
       $scope.chapters = res.data;
@@ -67,18 +67,22 @@ angular.module('SkillitAdminApp')
         _id: $scope.chapter._id
       }).then(function(res) {
         alert("Chapter successfully updated! Refresh page.");
+        $window.location.reload(true);
       }, function(response) {
         alert("Server Error - check console logs for details");
         console.log("error response: ", response);
+        $window.location.reload(true);
       });
     };
 
     $scope.deleteChapter = function() {
       chapterService.deleteChapter({_id: $scope.chapter._id}).then(function(res) {
         alert("Chapter successfully deleted! Refresh page.");
+        $window.location.reload(true);
       }, function(response) {
         alert("Server Error - check console logs for details");
-        console.log("error response: ", response)
+        console.log("error response: ", response);
+        $window.location.reload(true);
       });
     };
   }]);

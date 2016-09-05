@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('DishesCtrl', ['$scope', 'dishService', function ($scope, dishService) {
+  .controller('DishesCtrl', ['$window', '$scope', 'dishService', function ($window, $scope, dishService) {
     $scope.integerval = /^\d*$/;
 
     dishService.getAllDishes().then(function(dishes) {
@@ -19,9 +19,7 @@ angular.module('SkillitAdminApp')
     });
 
     $scope.reset = function() {
-      $scope.dish = angular.copy({});
-      $scope.dishForm.nameInput.$setUntouched();
-      $scope.dishForm.capacityInput.$setUntouched();
+      $window.location.reload(true);
     };
 
     $scope.save = function() {
@@ -36,8 +34,6 @@ angular.module('SkillitAdminApp')
         console.log("Server Error: ", response.message);
         alert("Server Error: " + response.message);
       });
-      $scope.dish = angular.copy({});
-      $scope.dishForm.nameInput.$setUntouched();
-      $scope.dishForm.capacityInput.$setUntouched();
+      $scope.reset();
     };
   }]);

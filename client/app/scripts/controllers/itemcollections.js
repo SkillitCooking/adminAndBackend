@@ -8,15 +8,13 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('ItemcollectionsCtrl', ['$scope', 'itemCollectionService', function ($scope, itemCollectionService) {
+  .controller('ItemcollectionsCtrl', ['$window', '$scope', 'itemCollectionService', function ($window, $scope, itemCollectionService) {
     
     $scope.itemCollection = {};
     $scope.itemTypes = ["dailyTip", "trainingVideo", "howToShop", "glossary", "recipe"];
 
     $scope.reset = function() {
-      $scope.itemCollection = angular.copy({});
-      $scope.itemCollectionsForm.$setPristine();
-      $scope.itemCollectionsForm.$setUntouched();
+      $window.location.reload(true);
     };
 
     $scope.save = function() {

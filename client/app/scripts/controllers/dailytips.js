@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('DailytipsCtrl', ['$scope', 'dailyTipsService', 'itemCollectionService', function ($scope, dailyTipsService, itemCollectionService) {
+  .controller('DailytipsCtrl', ['$window', '$scope', 'dailyTipsService', 'itemCollectionService', function ($window, $scope, dailyTipsService, itemCollectionService) {
     
     itemCollectionService.getItemCollectionsForType('dailyTip').then(function(collections) {
       $scope.tipCollections = collections.data;
@@ -36,9 +36,7 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.reset = function() {
-      $scope.dailyTip = angular.copy({picture:{}, video: {}, collectionIds: []});
-      $scope.dailyTipsForm.$setPristine();
-      $scope.dailyTipsForm.$setUntouched();
+      $window.location.reload(true);
     };
 
     $scope.save = function() {

@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('EditLessonsCtrl', ['$scope', 'lessonService', 'articleService', 'dailyTipsService', 'glossaryService', 'trainingVideosService', 'howToShopService', function ($scope, lessonService, articleService, dailyTipsService, glossaryService, trainingVideosService, howToShopService) {
+  .controller('EditLessonsCtrl', ['$window', '$scope', 'lessonService', 'articleService', 'dailyTipsService', 'glossaryService', 'trainingVideosService', 'howToShopService', function ($window, $scope, lessonService, articleService, dailyTipsService, glossaryService, trainingVideosService, howToShopService) {
     $scope.itemTypes = ['tip', 'glossary', 'howToShop', 'trainingVideo'];
 
     lessonService.getAllLessons().then(function(res) {
@@ -129,9 +129,11 @@ angular.module('SkillitAdminApp')
         _id: $scope.lesson._id
       }).then(function(res) {
         alert("Lesson successfully updated! Refresh page.");
+        $window.location.reload(true);
       }, function(response) {
         alert("Server Error - check console logs for details");
         console.log("error response: ", response);
+        $window.location.reload(true);
       });
     };
 
@@ -141,10 +143,12 @@ angular.module('SkillitAdminApp')
         if(res.affectedChapterIds && res.affectedChapterIds.length > 0) {
           chapterStr += " Affected ChapterIds: \n" + res.affectedChapterIds.toString();
         }
-        alert("Lesson successfully deleted. Refresh page.");
+        alert("Lesson successfully deleted. Refresh page." + chapterStr);
+        $window.location.reload(true);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+        $window.location.reload(true);
       });
     };
 

@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('RecipeCtrl', ['$scope', 'recipeService', 'seasoningService', 'ingredientService', 'dishService', 'itemCollectionService', '_', function ($scope, recipeService, seasoningService, ingredientService, dishService, itemCollectionService, _) {
+  .controller('RecipeCtrl', ['$window', '$scope', 'recipeService', 'seasoningService', 'ingredientService', 'dishService', 'itemCollectionService', '_', function ($window, $scope, recipeService, seasoningService, ingredientService, dishService, itemCollectionService, _) {
     $scope.integerval = /^\d*$/;
 
     $scope.recipe = {
@@ -271,14 +271,8 @@ angular.module('SkillitAdminApp')
 
     $scope.reset = function() {
       if(confirm('Are You Sure You Want To reset?')) {
-        $scope.constructingStep = angular.copy({});
-        $scope.stepList = angular.copy([]);
-        $scope.ingredientList = angular.copy({});
-        $scope.recipe = angular.copy({});
-        $scope.recipeForm.$setPristine();
-        $scope.recipeForm.$setUntouched();
+        $window.location.reload(true);
       }
-      
     };
 
     $scope.save = function() {
@@ -337,7 +331,7 @@ angular.module('SkillitAdminApp')
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
       });
-      $scope.reset();
+      $window.location.reload(true);
     };
 
     $scope.isPrepStep = function(stepType) {

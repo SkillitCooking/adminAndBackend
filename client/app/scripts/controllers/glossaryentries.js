@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('GlossaryentriesCtrl', ['$scope', 'glossaryService', 'itemCollectionService', function ($scope, glossaryService, itemCollectionService) {
+  .controller('GlossaryentriesCtrl', ['$window', '$scope', 'glossaryService', 'itemCollectionService', function ($window, $scope, glossaryService, itemCollectionService) {
     
     itemCollectionService.getItemCollectionsForType('glossary').then(function(collections) {
       $scope.glossaryCollections = collections.data;
@@ -37,9 +37,7 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.reset = function () {
-      $scope.glossaryEntry = angular.copy({picture:{}, video: {}, collectionIds: []});
-      $scope.glossaryEntryForm.$setPristine();
-      $scope.glossaryEntryForm.$setUntouched();
+      $window.location.reload(true);
     };
 
     $scope.save = function() {

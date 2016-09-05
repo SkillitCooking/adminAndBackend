@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('ArticleCtrl', ['$scope', 'articleService', 'dailyTipsService', 'glossaryService', 'trainingVideosService', 'howToShopService', function ($scope, articleService, dailyTipsService, glossaryService, trainingVideosService, howToShopService) {
+  .controller('ArticleCtrl', ['$window', '$scope', 'articleService', 'dailyTipsService', 'glossaryService', 'trainingVideosService', 'howToShopService', function ($window, $scope, articleService, dailyTipsService, glossaryService, trainingVideosService, howToShopService) {
 
     //need to get all various items from their respective services here...
     //make sure names are correct
@@ -68,10 +68,7 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.reset = function() {
-      $scope.contentSection = angular.copy({});
-      $scope.article = angular.copy({});
-      $scope.articleForm.$setPristine();
-      $scope.articleForm.$setUntouched();
+      $window.location.reload(true);
     };
 
     $scope.togglePreview = function() {

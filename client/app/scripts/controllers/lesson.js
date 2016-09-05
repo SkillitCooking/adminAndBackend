@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('LessonCtrl', ['$scope', 'articleService', 'dailyTipsService', 'glossaryService', 'howToShopService', 'trainingVideosService', 'lessonService', function ($scope, articleService, dailyTipsService, glossaryService, howToShopService, trainingVideosService, lessonService) {
+  .controller('LessonCtrl', ['$window', '$scope', 'articleService', 'dailyTipsService', 'glossaryService', 'howToShopService', 'trainingVideosService', 'lessonService', function ($window, $scope, articleService, dailyTipsService, glossaryService, howToShopService, trainingVideosService, lessonService) {
     //need to fetch articles - just id and title
     articleService.getArticlesTitleId().then(function(res) {
       $scope.lesson.articles = res.data;
@@ -118,9 +118,7 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.reset = function() {
-      $scope.lessonForm.$setPristine();
-      $scope.lessonForm.$setUntouched();
-      $scope.lesson = angular.copy({itemIds: []});
+      $window.location.reload(true);
     };
 
     $scope.getArticleLabel = function() {

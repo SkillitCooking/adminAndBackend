@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('ChapterCtrl', ['$scope', 'lessonService', 'chapterService', function ($scope, lessonService, chapterService) {
+  .controller('ChapterCtrl', ['$window', '$scope', 'lessonService', 'chapterService', function ($window, $scope, lessonService, chapterService) {
     //get lessons - need name, id, timeEstimate
     lessonService.getLessonsForChapterConstruction().then(function(data) {
       $scope.lessons = data.lessons;
@@ -55,10 +55,7 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.reset = function() {
-      $scope.chapterForm.$setUntouched();
-      $scope.chapterForm.$setPristine();
-      $scope.chapter = angular.copy({lessonIds: []});
-      $scope.timeEstimates = angular.copy([]);
+      $window.location.reload(true);
     };
 
     //saving will involve timeEstimate calculation...

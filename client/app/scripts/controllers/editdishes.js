@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('EditDishesCtrl', ['$scope', 'dishService', function ($scope, dishService) {
+  .controller('EditDishesCtrl', ['$window', '$scope', 'dishService', function ($window, $scope, dishService) {
     $scope.integerval = $scope.integerval = /^\d*$/;
 
     dishService.getAllDishes().then(function(dishes) {
@@ -39,9 +39,11 @@ angular.module('SkillitAdminApp')
           recipeStr += " Affected Recipe Ids: \n" + res.affectedRecipeIds.toString();
         }
         alert("Dish successfully updated! Refresh page." + recipeStr);
+        $window.location.reload(true);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+        $window.location.reload(true);
       });
     };
 
@@ -52,9 +54,11 @@ angular.module('SkillitAdminApp')
           recipeStr += " Affected Recipe Ids: \n" + res.affectedRecipeIds.toString();
         }
         alert("Dish successfully deleted! Refresh page." + recipeStr);
+        $window.location.reload(true);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+        $window.location.reload(true);
       });
     };
   }]);

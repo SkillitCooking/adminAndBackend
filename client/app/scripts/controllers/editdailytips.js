@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('EditDailytipsCtrl', ['$scope', 'dailyTipsService', 'itemCollectionService', function ($scope, dailyTipsService, itemCollectionService) {
+  .controller('EditDailytipsCtrl', ['$window', '$scope', 'dailyTipsService', 'itemCollectionService', function ($window, $scope, dailyTipsService, itemCollectionService) {
     
     dailyTipsService.getAllDailyTips().then(function(res) {
       $scope.tips = res.data;
@@ -59,9 +59,11 @@ angular.module('SkillitAdminApp')
           articleStr = " Affected Articles that referenced Tip: \n" + res.affectedArticleIds.toString();
         }
         alert("DailyTip successfully updated! Refresh page." + articleStr);
+        $window.location.reload(true);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+        $window.location.reload(true);
       });
     };
 
@@ -75,9 +77,11 @@ angular.module('SkillitAdminApp')
           extraText += " Affected LessonIds: \n" + res.affectedLessonIds.toString();
         }
         alert("DailyTip successfully deleted! Refresh page." + extraText);
+        $window.location.reload(true);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+        $window.location.reload(true);
       });
     };
   }]);

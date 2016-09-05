@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('IngredientCtrl', ['$scope', 'ingredientService', function ($scope, ingredientService) {
+  .controller('IngredientCtrl', ['$window', '$scope', 'ingredientService', function ($window, $scope, ingredientService) {
     $scope.integerval = /^\d*$/;
 
     $scope.ingredient = {name: {}};
@@ -98,10 +98,7 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.reset = function() {
-      $scope.inForms = angular.copy([]);
-      $scope.ingredientTips = angular.copy([]);
-      $scope.ingredient = angular.copy({name: {}});
-      $scope.ingredientForm.nameInput.$setUntouched();
+      $window.location.reload(true);
     };
 
     $scope.preview = function() {

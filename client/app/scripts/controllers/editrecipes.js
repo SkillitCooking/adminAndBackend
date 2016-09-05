@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('EditRecipesCtrl', ['$scope', 'recipeService', 'itemCollectionService', 'seasoningService', 'ingredientService', 'dishService', function ($scope, recipeService, itemCollectionService, seasoningService, ingredientService, dishService) {
+  .controller('EditRecipesCtrl', ['$window', '$scope', 'recipeService', 'itemCollectionService', 'seasoningService', 'ingredientService', 'dishService', function ($window, $scope, recipeService, itemCollectionService, seasoningService, ingredientService, dishService) {
 
     $scope.integerval = /^\d*$/;
     $scope.recipeTypes = ["AlaCarte", "BYO", "Full"];
@@ -409,25 +409,23 @@ angular.module('SkillitAdminApp')
         isRecipeOfTheDay: $scope.recipe.isRecipeOfTheDay,
         _id: $scope.recipe._id
       }).then(function(res) {
-        var recipe = {
-          label: res.data.name,
-          value: res.data
-        };
-        //doesn't actually have any effect...
-        $scope.recipes.splice($scope.selectedRecipeIndex, 1, recipe);
         alert("Recipe successfully updated!");
+        $window.location.reload(true);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+        $window.location.reload(true);
       });
     };
 
     $scope.deleteRecipe = function() {
       recipeService.deleteRecipe({_id: $scope.recipe._id}).then(function(res) {
         alert("Recipe successfully deleted");
+        $window.location.reload(true);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+        $window.location.reload(true);
       });
     };
 
@@ -492,9 +490,11 @@ angular.module('SkillitAdminApp')
         }
       }).then(function(recipe) {
         alert('Success! Recipe ' + recipe.name + 'was saved! Refresh form.');
+        $window.location.reload(true);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+        $window.location.reload(true);
       });
     };
 

@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('HowtoshopentryCtrl', ['$scope', 'howToShopService', 'itemCollectionService', function ($scope, howToShopService, itemCollectionService) {
+  .controller('HowtoshopentryCtrl', ['$window', '$scope', 'howToShopService', 'itemCollectionService', function ($window, $scope, howToShopService, itemCollectionService) {
     
     itemCollectionService.getItemCollectionsForType('howToShop').then(function(collections) {
       $scope.howToShopCollections = collections.data;
@@ -50,9 +50,7 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.reset = function() {
-      $scope.howToShopEntry = angular.copy({pictures: [], collectionIds: []});
-      $scope.howToShopEntryForm.$setPristine();
-      $scope.howToShopEntryForm.$setUntouched();
+      $window.location.reload(true);
     };
 
     $scope.save = function() {

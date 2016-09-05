@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('EditIngredientsCtrl', ['$scope', 'ingredientService', function ($scope, ingredientService) {
+  .controller('EditIngredientsCtrl', ['$window', '$scope', 'ingredientService', function ($window, $scope, ingredientService) {
     $scope.integerval = /^\d*$/;
     $scope.inputCategories = ["Protein", "Vegetables", "Starches", "Other"];
     $scope.cookingMethods = ["Bake", "Sautee", "Boil", "Steam", "SlowCook"];
@@ -151,9 +151,11 @@ angular.module('SkillitAdminApp')
           recipeStr += " Affected Recipe Ids: \n" + res.affectedRecipeIds.toString();
         }
         alert("Ingredient successfully updated! Refresh page." + recipeStr);
+        $window.location.reload(true);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+        $window.location.reload(true);
       });
     };
 
@@ -164,9 +166,11 @@ angular.module('SkillitAdminApp')
           recipeStr += " Affected Recipe Ids: \n" + res.affectedRecipeIds.toString();
         }
         alert("Ingredient successfully deleted. Refresh page." + recipeStr);
+        $window.location.reload(true);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+        $window.location.reload(true);
       });
     };
   }]);

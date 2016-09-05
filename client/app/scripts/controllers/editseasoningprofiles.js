@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('EditSeasoningProfilesCtrl', ['$scope', 'seasoningService', function ($scope, seasoningService) {
+  .controller('EditSeasoningProfilesCtrl', ['$window', '$scope', 'seasoningService', function ($window, $scope, seasoningService) {
     seasoningService.getAllSeasonings().then(function(res) {
       $scope.seasonings = res.data;
     }, function(response) {
@@ -45,9 +45,11 @@ angular.module('SkillitAdminApp')
           recipeStr += " Affected Recipe Ids: \n" + res.affectedRecipeIds.toString();
         }
         alert("Seasoning successfully updated! Refresh page." + recipeStr);
+        $window.location.reload(true);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+        $window.location.reload(true);
       });
     };
 
@@ -58,9 +60,11 @@ angular.module('SkillitAdminApp')
           recipeStr += " Affected Recipe Ids: \n" + res.affectedRecipeIds.toString();
         }
         alert("Seasoning successfully deleted! Refresh page." + recipeStr);
+        $window.location.reload(true);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+        $window.location.reload(true);
       });
     };
 

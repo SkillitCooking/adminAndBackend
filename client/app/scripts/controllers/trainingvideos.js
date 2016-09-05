@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('TrainingvideosCtrl', ['$scope', 'trainingVideosService', 'itemCollectionService', function ($scope, trainingVideosService, itemCollectionService) {
+  .controller('TrainingvideosCtrl', ['$window', '$scope', 'trainingVideosService', 'itemCollectionService', function ($window, $scope, trainingVideosService, itemCollectionService) {
     
     itemCollectionService.getItemCollectionsForType('trainingVideo').then(function(collections) {
       $scope.trainingVideoCollections = collections.data;
@@ -37,9 +37,7 @@ angular.module('SkillitAdminApp')
     $scope.curCollectionId = "";
 
     $scope.reset = function() {
-      $scope.trainingVideo = angular.copy({video: {}, picture: {}, collectionIds: []});
-      $scope.trainingVideoForm.$setPristine();
-      $scope.trainingVideoForm.$setUntouched();
+      $window.location.reload(true);
     };
 
     $scope.save = function() {

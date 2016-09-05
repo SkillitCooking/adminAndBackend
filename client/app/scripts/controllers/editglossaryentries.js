@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('EditGlossaryEntriesCtrl', ['$scope', 'glossaryService', 'itemCollectionService', function ($scope, glossaryService, itemCollectionService) {
+  .controller('EditGlossaryEntriesCtrl', ['$window', '$scope', 'glossaryService', 'itemCollectionService', function ($window, $scope, glossaryService, itemCollectionService) {
     
     glossaryService.getAllGlossaryEntries().then(function(res) {
       $scope.glossaryEntries = res.data;
@@ -56,9 +56,11 @@ angular.module('SkillitAdminApp')
           articleStr = " Affected Articles that referenced Tip: \n" + res.affectedArticleIds.toString();
         }
         alert("Glossary Entry successfully updated! Refresh page." + articleStr);
+        $window.location.reload(true);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+        $window.location.reload(true);
       });
     };
 
@@ -72,9 +74,11 @@ angular.module('SkillitAdminApp')
           extraText += " Affected LessonIds: \n" + res.affectedLessonIds.toString();
         }
         alert("Glossary Entry successfully deleted! Refresh page" + extraText);
+        $window.location.reload(true);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+        $window.location.reload(true);
       });
     };
 

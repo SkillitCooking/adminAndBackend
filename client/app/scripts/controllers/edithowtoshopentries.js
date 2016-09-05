@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('EditHowToShopEntriesCtrl', ['$scope', 'howToShopService', 'itemCollectionService', function ($scope, howToShopService, itemCollectionService) {
+  .controller('EditHowToShopEntriesCtrl', ['$window', '$scope', 'howToShopService', 'itemCollectionService', function ($window, $scope, howToShopService, itemCollectionService) {
     
     howToShopService.getAllHowToShopEntries().then(function(res) {
       $scope.howToShopEntries = res.data;
@@ -63,9 +63,11 @@ angular.module('SkillitAdminApp')
           articleStr = " Affected Articles that referenced Tip: \n" + res.affectedArticleIds.toString();
         }
         alert("Entry successfully updated. Refresh page." + articleStr);
+        $window.location.reload(true);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+        $window.location.reload(true);
       });
     };
 
@@ -79,9 +81,11 @@ angular.module('SkillitAdminApp')
           extraText += " Affected LessonIds: \n" + res.affectedLessonIds.toString();
         }
         alert("Entry successfully deleted. Refresh page." + extraText);
+        $window.location.reload(true);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+        $window.location.reload(true);
       });
     };
   }]);

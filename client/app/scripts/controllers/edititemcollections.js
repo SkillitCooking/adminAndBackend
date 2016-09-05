@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('EditItemCollectionsCtrl', ['$scope', 'itemCollectionService', function ($scope, itemCollectionService) {
+  .controller('EditItemCollectionsCtrl', ['$window', '$scope', 'itemCollectionService', function ($window, $scope, itemCollectionService) {
 
     $scope.itemTypes = $scope.itemTypes = ["dailyTip", "trainingVideo", "howToShop", "glossary", "recipe"];
 
@@ -45,9 +45,11 @@ angular.module('SkillitAdminApp')
         _id: $scope.itemCollection._id
       }).then(function(res) {
         alert("ItemCollection successfully updated! Refresh page.");
+        $window.location.reload(true);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+        $window.location.reload(true);
       });
     };
 
@@ -74,9 +76,11 @@ angular.module('SkillitAdminApp')
             break;
         }
         alert("ItemCollection successfully deleted! Refresh page." + affectedStr);
+        $window.location.reload(true);
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+        $window.location.reload(true);
       });
     };
   }]);

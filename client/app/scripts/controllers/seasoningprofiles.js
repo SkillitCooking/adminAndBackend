@@ -8,8 +8,8 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('SeasoningprofilesCtrl', ['$scope', 'seasoningService',
-   function ($scope, seasoningService) {
+  .controller('SeasoningprofilesCtrl', ['$window', '$scope', 'seasoningService',
+   function ($window, $scope, seasoningService) {
 
     seasoningService.getAllSeasonings().then(function(seasonings){
       $scope.profiles = seasonings.data;
@@ -20,9 +20,7 @@ angular.module('SkillitAdminApp')
     
     //reset the form
     $scope.reset = function() {
-      $scope.seasoningProfile = angular.copy({});
-      $scope.seasoningForm.nameInput.$setUntouched();
-      $scope.seasoningForm.spiceInput.$setUntouched();
+      $window.location.reload(true);
     };
     
     //save the input
@@ -41,8 +39,6 @@ angular.module('SkillitAdminApp')
         console.log("Server Error: ", response.message);
         alert("Server Error: " + response.message);
       });
-      $scope.seasoningProfile = angular.copy({});
-      $scope.seasoningForm.nameInput.$setUntouched();
-      $scope.seasoningForm.spiceInput.$setUntouched();
+     $scope.reset();
     };
   }]);
