@@ -19,6 +19,8 @@
     <span ng-show="recipeForm.typeSelect.$invalid">select a recipe type</span><br/><br/>
     RecipeCategory: <select name="categorySelect" ng-model="recipe.recipeCategory" ng-options="recipeCategory for recipeCategory in recipeCategories" required></select>
     <span ng-show="recipeForm.categorySelect.$invalid">select a recipe category</span><br/><br/>
+    Active Time: <input type="text" ng-pattern="integerval" ng-model="recipe.manActiveTime"/><br/><br/>
+    Total Time: <input type="text" ng-pattern="integerval" ng-model="recipe.manTotalTime"/><br/><br/>
     Default Serving Size: <select name="servingSizeSelect" ng-model="recipe.defaultServingSize" ng-options="size for size in servingSizes" required></select><br/>
     Primary Cooking Method: <select name="primaryCookingSelect" ng-model="recipe.primaryCookingMethod" ng-options="method for method in cookingMethods" required></select><br/>
     <span ng-show="recipeForm.primaryCookingSelect.$invalid">select a cooking method</span>

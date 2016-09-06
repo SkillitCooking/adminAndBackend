@@ -50,6 +50,8 @@ var RecipeSchema = new mongoose.Schema({
   primaryIngredientType: String,
   mainPictureURL: String,
   mainVideoURL: String,
+  manActiveTime: Number,
+  manTotalTime: Number,
   prepTime: Number,
   totalTime: Number,
   hasBeenRecipeOfTheDay: Boolean,

@@ -320,6 +320,8 @@ angular.module('SkillitAdminApp')
           mainVideoURL: $scope.recipe.mainVideoURL,
           prepTime: $scope.recipe.prepTime,
           totalTime: $scope.recipe.totalTime,
+          manActiveTime: $scope.recipe.manActiveTime,
+          manTotalTime: $scope.recipe.manTotalTime,
           hasBeenRecipeOfTheDay: false,
           datesUsedAsRecipeOfTheDay: [],
           isRecipeOfTheDay: false
