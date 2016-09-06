@@ -329,7 +329,11 @@ angular.module('SkillitAdminApp')
         alert(alertMsg);
       }, function(response) {
         console.log("Server Error: ", response);
-        alert("Server Error: " + response.message);
+        var errStr = "";
+        for (var key in response) {
+          errStr += key + ": " + response[key] + "\n";
+        }
+        alert("Server Error: " + errStr);
       });
       $window.location.reload(true);
     };
