@@ -144,6 +144,7 @@ angular.module('SkillitAdminApp')
         unitIsASingleItem: $scope.ingredient.unitIsASingleItem,
         servingsPerUnit: $scope.ingredient.servingsPerUnit,
         nameFormFlag: 'standardForm',
+        useFormNameForDisplay: $scope.ingredient.useFormNameForDisplay,
         _id: $scope.ingredient._id
       }).then(function(res) {
         var recipeStr = "";

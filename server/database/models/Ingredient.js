@@ -24,6 +24,7 @@ var IngredientSchema = new mongoose.Schema({
   inputCategory: String,
   units: String,
   unitIsASingleItem: Boolean,
+  useFormNameForDisplay: Boolean,
   nameFormFlag: String,
   servingsPerUnit: Number,
   ingredientForms: [IngredientFormSchema],

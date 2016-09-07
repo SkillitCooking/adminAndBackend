@@ -103,15 +103,27 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
     }
     try {
       var retRecipes = [];
-      var ingredientNames = req.body.ingredientNames;
+      var ingredientIds = req.body.ingredientIds;
       for (var k = recipes.length - 1; k >= 0; k--) {
         var ingredientTypes = recipes[k].ingredientList.ingredientTypes;
         var flag = true;
         for (var i = ingredientTypes.length - 1; i >= 0; i--) {
           var count = 0;
           for (var j = ingredientTypes[i].ingredients.length - 1; j >= 0; j--) {
-            if(ingredientNames && ingredientNames.indexOf(ingredientTypes[i].ingredients[j].name.standardForm) !== -1){
-              count++;
+            if(ingredientIds){
+              var ingredientId = underscore.find(ingredientIds, function(ingred) {
+                return ingredientTypes[i].ingredients[j]._id.equals(ingred._id);
+              });
+              if(ingredientId) {
+                for (var l = ingredientTypes[i].ingredients[j].ingredientForms.length - 1; l >= 0; l--) {
+                  var form = underscore.find(ingredientId.formIds, function(formId){
+                    return ingredientTypes[i].ingredients[j].ingredientForms[l]._id.equals(formId);
+                  });
+                  if(form) {
+                    count++;
+                  }
+                }
+              }
             }
           }
           if(count < ingredientTypes[i].minNeeded){

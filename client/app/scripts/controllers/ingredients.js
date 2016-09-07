@@ -118,6 +118,7 @@ angular.module('SkillitAdminApp')
           units: $scope.ingredient.units,
           unitIsASingleItem: $scope.ingredient.unitIsASingleItem,
           servingsPerUnit: $scope.ingredient.servingsPerUnit,
+          useFormNameForDisplay: $scope.ingredient.useFormNameForDisplay,
           nameFormFlag: 'standardForm'
         }
       }).then(function(ingredient) {
