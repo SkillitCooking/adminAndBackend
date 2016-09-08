@@ -160,6 +160,7 @@ router.post('/', function(req, res, next) {
   logger.info('START POST api/recipes/');
   try {
     var query = {'name': req.body.recipe.name};
+    req.body.recipe.dateModified = Date.parse(new Date().toUTCString());
     Recipe.model.findOne(query, function(err, recipe) {
       if (err) {
         logger.error('ERROR POST api/recipes/', {error: err, body: req.body});
@@ -239,7 +240,8 @@ router.post('/getRecipesOfTheDay', function(req, res, next) {
 router.put('/:id', function(req, res, next) {
   try {
     logger.info('START PUT api/recipes/' + req.params.id);
-    Recipe.model.findByIdAndUpdate(req.params.id, req.body.recipe, {new: true}, function(err, recipe) {
+    req.body.recipe.dateModified = Date.parse(new Date().toUTCString());
+    Recipe.model.findByIdAndUpdate(req.params.id, req.body.recipe, {new: true, setDefaultsOnInsert: true}, function(err, recipe) {
       if(err) {
         logger.error('ERROR PUT api/recipes/' + req.params.id, {error: err, body: req.body});
         return next(err);

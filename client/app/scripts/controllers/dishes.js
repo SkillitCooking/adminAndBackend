@@ -29,11 +29,13 @@ angular.module('SkillitAdminApp')
           ingredientCapacity: $scope.dish.ingredientCapacity
         }
       }).then(function(dish) {
+        alert("Successfully saved dish");
         $scope.dishes.push(dish);
+        $scope.reset();
       }, function(response){
-        console.log("Server Error: ", response.message);
+        console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+        $scope.reset();
       });
-      $scope.reset();
     };
   }]);

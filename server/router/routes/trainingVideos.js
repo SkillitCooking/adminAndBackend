@@ -29,7 +29,8 @@ router.get('/', function(req, res, next) {
 router.put('/:id', function(req, res, next) {
   try {
     logger.info('START PUT api/trainingVideos/' + req.params.id);
-    TrainingVideo.model.findByIdAndUpdate(req.params.id, req.body.trainingVideo, {new: true}, function(err, video) {
+    req.body.trainingVideo.dateModified = Date.parse(new Date().toUTCString());
+    TrainingVideo.model.findByIdAndUpdate(req.params.id, req.body.trainingVideo, {new: true, setDefaultsOnInsert: true}, function(err, video) {
       if (err) {
         logger.error('ERROR PUT api/trainingVideos/' + req.params.id, {error: err, body: req.body});
         return next(err);
@@ -61,6 +62,7 @@ router.put('/:id', function(req, res, next) {
             }
           }
           if(articleChanged) {
+            articles[i].dateModified = Date.parse(new Date().toUTCString());
             articles[i].save(function(err, article, numAffected) {
               if(err) {
                 logger.error('ERROR PUT api/trainingVideos/' + req.params.id + 'in Article.model.save', {videoId: video._id});
@@ -99,18 +101,23 @@ router.delete('/:id', function(req, res, next) {
         for (var i = lessons.length - 1; i >= 0; i--) {
           if(lessons[i].itemIds && lessons[i].itemIds.length > 0) {
             var itemIds = lessons[i].itemIds;
+            var lessonChanged = false;
             for (var j = itemIds.length - 1; j >= 0; j--) {
               if(video._id.equals(itemIds[j].id)) {
                 //then need to remove reference
                 itemIds.splice(j, 1);
-                lessons[i].save(function(err, lesson, numAffected) {
-                  if(err) {
-                    logger.error('ERROR DELETE api/trainingVideos/' + req.params.id + 'in Lesson.model.save', {videoId: video._id});
-                    return next(err);
-                  }
-                });
-                lessonIds.push(lessons[i]._id);
+                lessonChanged = true;
               }
+            }
+            if(lessonChanged) {
+              lessons[i].dateModified = Date.parse(new Date().toUTCString());
+              lessons[i].save(function(err, lesson, numAffected) {
+                if(err) {
+                  logger.error('ERROR DELETE api/trainingVideos/' + req.params.id + 'in Lesson.model.save', {videoId: video._id});
+                  return next(err);
+                }
+              });
+              lessonIds.push(lessons[i]._id);
             }
           }
         }
@@ -144,6 +151,7 @@ router.delete('/:id', function(req, res, next) {
             }
           }
           if(articleChanged) {
+            articles[i].dateModified = Date.parse(new Date().toUTCString());
             articles[i].save(function(err, article, numAffected) {
               if(err) {
                 logger.error('ERROR DELETE api/trainingVideos/' + req.params.id + 'in Article.model.save', {videoId: video._id});
@@ -168,6 +176,7 @@ router.post('/', function(req, res, next) {
   logger.info('START POST api/trainingVideos/');
   try {
     var query = {'title': req.body.trainingVideo.title};
+    req.body.trainingVideo.dateModified = Date.parse(new Date().toUTCString());
     TrainingVideo.model.findOne(query, function(err, video) {
       if(err) {
         logger.error('ERROR POST api/trainingVideos/', {error: err, body: req.body});
@@ -182,8 +191,8 @@ router.post('/', function(req, res, next) {
         res.json(retVal);
       } else {
         var trainingVideo = req.body.trainingVideo;
-        trainingVideo.dateAdded = Date.now();
-        trainingVideo.dateModified = Date.now();
+        trainingVideo.dateAdded = Date.parse(new Date().toUTCString());
+        trainingVideo.dateModified = Date.parse(new Date().toUTCString());
         TrainingVideo.model.create(trainingVideo, function(err, trainingVideo) {
           if(err) {
             logger.error('ERROR POST api/trainingVideos/', {error: err, body: req.body});

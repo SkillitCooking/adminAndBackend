@@ -30,20 +30,27 @@ router.get('/', function(req, res, next) {
 /* check for same dish name */
 router.post('/', function(req, res, next) {
   logger.info('START POST api/dishes/');
+  console.log('here');
   try{
     var query = {'name': req.body.dish.name};
-    Dish.model.findOneAndUpdate(query, req.body.dish, {upsert: true},function(err, dish) {
+    req.body.dish.dateModified = Date.parse(new Date().toUTCString());
+    console.log('dish', req.body.dish);
+    Dish.model.findOneAndUpdate(query, req.body.dish, {upsert: true, setDefaultsOnInsert: true},function(err, dish) {
       if (err) {
+        console.log('err', err);
         logger.error('ERROR POST api/dishes/', {error: err, body: req.body});
         return next(err);
       }
+      console.log('there', dish);
       if(dish === null){
         //then inserted, and need it to return
         Dish.model.findOne({'name': req.body.dish.name}, function(err, dish) {
           if(err) {
+            console.log('err2', err);
             logger.error('ERROR POST api/dishes/', {error: err, body: req.body});
             return next(err);
           }
+          console.log('dish', dish);
           logger.info('END POST api/dishes/');
           res.json(dish);
         });
@@ -81,8 +88,9 @@ router.get('/:id', function(req, res, next) {
 router.put('/:id', function(req, res, next) {
   try {
     logger.info('START PUT api/dishes/' + req.params.id);
+    req.body.dish.dateModified = Date.parse(new Date().toUTCString());
     Dish.model.findByIdAndUpdate(req.params.id, req.body.dish, 
-      {new: true}, function(err, dish) {
+      {new: true, setDefaultsOnInsert: true}, function(err, dish) {
       if (err) {
         logger.error('ERROR PUT api/dishes/' + req.params.id, {error: err, body: req.body});
         return next(err);
@@ -106,6 +114,7 @@ router.put('/:id', function(req, res, next) {
             }
           }
           if(recipeChanged) {
+            recipes[i].dateModified = Date.parse(new Date().toUTCString());
             recipes[i].save(function(err, recipe, numAffected) {
               if(err) {
                 logger.error('ERROR PUT api/dishes/' + req.params.id + ' in Recipe.model.save', {error: err, body: req.body, dishId: dish._id});
@@ -153,6 +162,7 @@ router.delete('/:id', function(req, res, next) {
             }
           }
           if(recipeChanged) {
+            recipes[i].dateModified = Date.parse(new Date().toUTCString());
             recipes[i].save(function(err, recipe, numAffected) {
               if(err) {
                 logger.error('ERROR DELETE api/dishes/' + req.params.id + ' in Recipe.model.save', {error: err, body: req.body, dishId: dish._id});

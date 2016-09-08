@@ -64,11 +64,12 @@ angular.module('SkillitAdminApp')
       }).then(function(entry) {
         var alertMsg = "Success! Entry " + entry.data.title + " was saved!";
         alert(alertMsg);
+        $scope.reset();
       }, function(response) {
         console.log("Server Error: ", response.message);
         alert("Server Error: " + response.message);
+        $scope.reset();
       });
-      $scope.reset();
     };
 
     $scope.howToShopEntrySanityCheck = function() {

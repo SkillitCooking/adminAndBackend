@@ -28,7 +28,8 @@ router.get('/', function(req, res, next) {
 router.put('/:id', function(req, res, next) {
   try {
     logger.info('START PUT api/articles/' + req.params.id);
-    Article.model.findByIdAndUpdate(req.params.id, req.body.article, {new: true}, function(err, article) {
+    req.body.article.dateModified = Date.parse(new Date().toUTCString());
+    Article.model.findByIdAndUpdate(req.params.id, req.body.article, {new: true, setDefaultsOnInsert: true}, function(err, article) {
       if(err) {
         logger.error('ERROR PUT api/articles/' + req.params.id, {error: err, body: req.body});
         return next(err);
@@ -101,7 +102,8 @@ router.post('/', function(req, res, next) {
   logger.info('START POST api/articles/');
   try {
     var query = {'title': req.body.article.title};
-    Article.model.findOneAndUpdate(query, req.body.article, {upsert: true}, function(err, article) {
+    req.body.article.dateModified = Date.parse(new Date().toUTCString());
+    Article.model.findOneAndUpdate(query, req.body.article, {upsert: true, setDefaultsOnInsert: true}, function(err, article) {
       if(err) {
         logger.error('ERROR POST api/articles/', {error: err});
         return next(err);

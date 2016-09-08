@@ -329,6 +329,7 @@ angular.module('SkillitAdminApp')
       }).then(function(recipe){
         var alertMsg = "Success! Recipe " + recipe.name + " was saved!";
         alert(alertMsg);
+        $scope.reset();
       }, function(response) {
         console.log("Server Error: ", response);
         var errStr = "";
@@ -336,8 +337,8 @@ angular.module('SkillitAdminApp')
           errStr += key + ": " + response[key] + "\n";
         }
         alert("Server Error: " + errStr);
+        $scope.reset();
       });
-      $window.location.reload(true);
     };
 
     $scope.isPrepStep = function(stepType) {

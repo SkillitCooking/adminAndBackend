@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var stepTip = require('./StepTip');
+var curUTCDate = require('../../util/dateLib').curUTCDate;
 
 var CookingTimeSchema = new mongoose.Schema({
   cookingMethod: String,
@@ -28,7 +29,15 @@ var IngredientSchema = new mongoose.Schema({
   nameFormFlag: String,
   servingsPerUnit: Number,
   ingredientForms: [IngredientFormSchema],
-  ingredientTips: [IngredientTipSchema]
+  ingredientTips: [IngredientTipSchema],
+  dateCreated: {
+    type: Date,
+    default: curUTCDate
+  },
+  dateModified: {
+    type: Date,
+    default: curUTCDate
+  }
 });
 
 module.exports.model = mongoose.model('Ingredient', IngredientSchema);

@@ -123,11 +123,12 @@ angular.module('SkillitAdminApp')
         }
       }).then(function(ingredient) {
         $scope.ingredients.push(ingredient);
+        alert("Successfully saved ingredient");
+        $scope.reset();
       }, function(response) {
-        console.log("Server Error: ", response.message);
-        console.log(response);
+        console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+        $scope.reset();
       });
-      $scope.reset();
     };
   }]);

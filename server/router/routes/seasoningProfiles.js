@@ -33,8 +33,9 @@ router.post('/', function(req, res, next) {
   logger.info('START POST api/seasoningProfiles/');
   try {
     var query = {'name': req.body.seasoningProfile.name};
+    req.body.seasoningProfile.dateModified = Date.parse(new Date().toUTCString());
     SeasoningProfile.model.findOneAndUpdate(query, 
-      req.body.seasoningProfile, {upsert: true}, 
+      req.body.seasoningProfile, {upsert: true, setDefaultsOnInsert: true}, 
       function(err, profile) {
         if (err) {
           logger.error('ERROR POST api/seasoningProfiles/', {error: err, body: req.body});
@@ -84,7 +85,8 @@ router.get('/:id', function(req, res, next) {
 router.put('/:id', function(req, res, next) {
   try {
     logger.info('START PUT api/seasoningProfiles/' + req.params.id);
-    SeasoningProfile.model.findByIdAndUpdate(req.params.id, req.body.seasoningProfile, {new: true}, function(err, profile) {
+    req.seasoningProfile.dateModified = Date.parse(new Date().toUTCString());
+    SeasoningProfile.model.findByIdAndUpdate(req.params.id, req.body.seasoningProfile, {new: true, setDefaultsOnInsert: true}, function(err, profile) {
       if (err) {
         logger.error('ERROR PUT api/seasoningProfiles/' + req.params.id, {error: err, body: req.body});
         return next(err);
@@ -110,6 +112,7 @@ router.put('/:id', function(req, res, next) {
             }
           }
           if(recipeChanged) {
+            recipes[i].dateModified = Date.parse(new Date().toUTCString());
             recipes[i].save(function(err, recipe, numAffected) {
               if(err) {
                 logger.error('ERROR PUT api/seasoningProfiles/' + req.params.id + ' in Recipe.model.save', {error: err, body: req.body, profileId: profile._id});
@@ -159,6 +162,7 @@ router.delete('/:id', function(req, res, next) {
             }
           }
           if(recipeChanged) {
+            recipes[i].dateModified = Date.parse(new Date().toUTCString());
             recipes[i].save(function(err, recipe, numAffected) {
               if(err) {
                 logger.error('ERROR DELETE api/seasoningProfiles/' + req.params.id + ' in Recipe.model.save', {error: err, body: req.body, profileId: profile._id});

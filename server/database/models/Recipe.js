@@ -3,6 +3,7 @@ var SeasoningProfile = require('./SeasoningProfile');
 var Dish = require('./Dish');
 var StepTip = require('./StepTip');
 var Ingredient = require('./Ingredient');
+var curUTCDate = require('../../util/dateLib').curUTCDate;
 
 var ObjectId = mongoose.Schema.Types.ObjectId;
 
@@ -57,7 +58,15 @@ var RecipeSchema = new mongoose.Schema({
   hasBeenRecipeOfTheDay: Boolean,
   datesUsedAsRecipeOfTheDay: [Date],
   isRecipeOfTheDay: Boolean,
-  collectionIds: [ObjectId]
+  collectionIds: [ObjectId],
+  dateCreated: {
+    type: Date,
+    default: curUTCDate
+  },
+  dateModified: {
+    type: Date,
+    default: curUTCDate
+  }
 });
 
 module.exports.model = mongoose.model('Recipe', RecipeSchema);

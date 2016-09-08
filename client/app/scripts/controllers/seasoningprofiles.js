@@ -35,10 +35,12 @@ angular.module('SkillitAdminApp')
         spices: spicesArr
       } }).then(function(seasoning) {
         $scope.profiles.push(seasoning);
+        alert("Successfully saved seasoning");
+        $scope.reset();
       }, function(response) {
         console.log("Server Error: ", response.message);
         alert("Server Error: " + response.message);
+        $scope.reset();
       });
-     $scope.reset();
     };
   }]);

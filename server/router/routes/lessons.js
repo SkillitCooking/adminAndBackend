@@ -23,8 +23,8 @@ router.get('/', function(req, res, next) {
 router.put('/:id', function(req, res, next) {
   try {
     logger.info('START PUT api/lessons/' + req.params.id);
-    console.log('lesson: ', req.body.lesson);
-    Lesson.model.findByIdAndUpdate(req.params.id, req.body.lesson, {new: true}, function(err, lesson) {
+    req.body.lesson.dateModified = Date.parse(new Date().toUTCString());
+    Lesson.model.findByIdAndUpdate(req.params.id, req.body.lesson, {new: true, setDefaultsOnInsert: true}, function(err, lesson) {
       if(err) {
         logger.error('ERROR PUT api/lessons/' + req.params.id, {error: err, body: req.body});
         return next(err);
@@ -62,6 +62,7 @@ router.delete('/:id', function(req, res, next) {
             }
           }
           if(chapterChanged) {
+            chapters[i].dateModified = Date.parse(new Date().toUTCString());
             chapters[i].save(function(err, chapter, numAffected) {
               if(err) {
                 logger.error('ERROR DELETE api/lessons/' + req.params.id + ' in Chapter.model.save', {error: err, body: req.body, lessonId: lesson._id});
@@ -100,7 +101,8 @@ router.post('/', function(req, res, next) {
   logger.info('START POST api/lessons/');
   try {
     var query = {'name': req.body.lesson.name};
-    Lesson.model.findOneAndUpdate(query, req.body.lesson, {upsert: true}, function(err, lesson) {
+    req.body.lesson.dateModified = Date.parse(new Date().toUTCString());
+    Lesson.model.findOneAndUpdate(query, req.body.lesson, {upsert: true, setDefaultsOnInsert: true}, function(err, lesson) {
       if(err) {
         logger.error('ERROR POST api/lessons/', {error: err});
         return next(err);

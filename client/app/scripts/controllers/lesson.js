@@ -110,11 +110,12 @@ angular.module('SkillitAdminApp')
         var lesson = data.data;
         var alertMsg = "Success! Lesson " + lesson.name + " was saved!";
         alert(alertMsg);
+        $scope.reset();
       }, function(response) {
         alert("Server Error - check console logs for details");
         console.log("error response: ", response);
+        $scope.reset();
       });
-      $scope.reset();
     };
 
     $scope.reset = function() {

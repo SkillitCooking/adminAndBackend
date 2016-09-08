@@ -60,11 +60,12 @@ angular.module('SkillitAdminApp')
         article = article.data;
         var alertMsg = "Success! Article " + article.title + " was saved!";
         alert(alertMsg);
+        $scope.reset();
       }, function(response) {
         console.log("Server Error: ", response.message);
         alert("Server Error: " + response.message);
+        $scope.reset();
       });
-      $scope.reset();
     };
 
     $scope.reset = function() {

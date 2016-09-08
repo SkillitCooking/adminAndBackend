@@ -33,7 +33,8 @@ router.get('/', function(req, res, next) {
 router.put('/:id', function(req, res, next) {
   try {
     logger.info('START PUT api/dailyTips/' + req.params.id);
-    DailyTip.model.findByIdAndUpdate(req.params.id, req.body.tip, {new: true}, function(err, tip) {
+    req.body.tip.dateModified = Date.parse(new Date().toUTCString());
+    DailyTip.model.findByIdAndUpdate(req.params.id, req.body.tip, {new: true, setDefaultsOnInsert: true}, function(err, tip) {
       if(err) {
         logger.error('ERROR PUT api/dailyTips/' + req.params.id);
         return next(err);
@@ -65,6 +66,7 @@ router.put('/:id', function(req, res, next) {
             }
           }
           if(articleChanged) {
+            articles[i].dateModified = Date.parse(new Date().toUTCString());
             articles[i].save(function(err, article, numAffected) {
               if(err) {
                 logger.error('ERROR PUT api/dailyTips/' + req.params.id + 'in Article.model.save', {tipId: tip._id});
@@ -104,18 +106,23 @@ router.delete('/:id', function(req, res, next) {
         for (var i = lessons.length - 1; i >= 0; i--) {
           if(lessons[i].itemIds && lessons[i].itemIds.length > 0) {
             var itemIds = lessons[i].itemIds;
+            var lessonChanged = false;
             for (var j = itemIds.length - 1; j >= 0; j--) {
               if(tip._id.equals(itemIds[j].id)) {
                 //then need to remove reference
                 itemIds.splice(j, 1);
-                lessons[i].save(function(err, lesson, numAffected) {
-                  if(err) {
-                    logger.error('ERROR DELETE api/dailyTips/' + req.params.id + 'in Lesson.model.save', {tipId: tip._id});
-                    return next(err);
-                  }
-                });
-                lessonIds.push(lessons[i]._id);
+                lessonChanged = true;
               }
+            }
+            if(lessonChanged) {
+              lessons[i].dateModified = Date.parse(new Date().toUTCString());
+              lessons[i].save(function(err, lesson, numAffected) {
+                if(err) {
+                  logger.error('ERROR DELETE api/dailyTips/' + req.params.id + 'in Lesson.model.save', {tipId: tip._id});
+                  return next(err);
+                }
+              });
+              lessonIds.push(lessons[i]._id);
             }
           }
         }
@@ -149,6 +156,7 @@ router.delete('/:id', function(req, res, next) {
             }
           }
           if(articleChanged) {
+            articles[i].dateModified = Date.parse(new Date().toUTCString());
             articles[i].save(function(err, article, numAffected) {
               if(err) {
                 logger.error('ERROR DELETE api/dailyTips/' + req.params.id + 'in Article.model.save', {tipId: tip._id});
@@ -191,8 +199,8 @@ router.post('/', function(req, res, next) {
         } else {
           //will need to set the applicable dates first here, which will require the use of moment.js library
           var postedTip = req.body.dailyTip;
-          postedTip.dateAdded = Date.now();
-          postedTip.dateModified = Date.now();
+          postedTip.dateAdded = Date.parse(new Date().toUTCString());
+          postedTip.dateModified = Date.parse(new Date().toUTCString());
           //null date
           postedTip.dateFeatured = new Date(0);
           DailyTip.model.create(postedTip, function(err, dailyTip) {

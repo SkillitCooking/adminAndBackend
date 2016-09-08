@@ -37,7 +37,8 @@ router.get('/', function(req, res, next) {
 router.put('/:id', function(req, res, next) {
   try {
     logger.info('START PUT api/itemCollections/' + req.params.id);
-    ItemCollection.model.findByIdAndUpdate(req.params.id, req.body.collection, {new: true}, function(err, collection) {
+    req.body.collection.dateModified = Date.parse(new Date().toUTCString());
+    ItemCollection.model.findByIdAndUpdate(req.params.id, req.body.collection, {new: true, setDefaultsOnInsert:true}, function(err, collection) {
       if(err) {
         logger.error('ERROR PUT api/itemCollections/' + req.params.id, {error: err});
         return next(err);
@@ -79,6 +80,7 @@ router.delete('/:id', function(req, res, next) {
               }
               if(tipChanged) {
                 tipIds.push(tips[i]._id);
+                tips[i].dateModified = Date.parse(new Date().toUTCString());
                 tips[i].save(function(err, tip, numAffected) {
                   if(err) {
                     logger.error('ERROR DELETE api/itemCollections/' + req.params.id + 'in DailyTip.model.save', {collectionId: collection._id});
@@ -109,6 +111,7 @@ router.delete('/:id', function(req, res, next) {
               }
               if(entryChanged) {
                 howToShopIds.push(entries[i]._id);
+                entries[i].dateModified = Date.parse(new Date().toUTCString());
                 entries[i].save(function(err, entry, numAffected) {
                   if(err) {
                     logger.error('ERROR DELETE api/itemCollections/' + req.params.id + 'in HowToShopEntry.model.save', {collectionId: collection._id});
@@ -139,6 +142,7 @@ router.delete('/:id', function(req, res, next) {
               }
               if(recipeChanged) {
                 recipeIds.push(recipes[i]._id);
+                recipes[i].dateModified = Date.parse(new Date().toUTCString());
                 recipes[i].save(function(err, recipe, numAffected) {
                   if(err) {
                     logger.error('ERROR DELETE api/itemCollections/' + req.params.id + 'in Recipe.model.save', {collectionId: collection._id});
@@ -169,6 +173,7 @@ router.delete('/:id', function(req, res, next) {
               }
               if(entryChanged) {
                 glossaryIds.push(entries[i]._id);
+                entries[i].dateModified = Date.parse(new Date().toUTCString());
                 entries[i].save(function(err, entry, numAffected) {
                   if(err) {
                     logger.error('ERROR DELETE api/itemCollections/' + req.params.id + 'in GlossaryEntry.model.save', {collectionId: collection._id});
@@ -199,6 +204,7 @@ router.delete('/:id', function(req, res, next) {
               }
               if(videoChanged) {
                 videoIds.push(videos[i]._id);
+                videos[i].dateModified = Date.parse(new Date().toUTCString());
                 videos[i].save(function(err, video, numAffected) {
                   if(err) {
                     logger.error('ERROR DELETE api/itemCollections/' + req.params.id + 'in TrainingVideo.model.save', {collectionId: collection._id});
@@ -232,7 +238,8 @@ router.post('/', function(req, res, next) {
       'name': req.body.itemCollection.name,
       'itemType': req.body.itemCollection.itemType
     };
-    ItemCollection.model.findOneAndUpdate(query, req.body.itemCollection, {upsert: true}, function(err, collection) {
+    req.body.dateModified = Date.parse(new Date().toUTCString());
+    ItemCollection.model.findOneAndUpdate(query, req.body.itemCollection, {upsert: true, setDefaultsOnInsert: true}, function(err, collection) {
       if(err) {
         logger.error('ERROR POST api/itemCollections/', {error: err, body: req.body});
         return next(err);

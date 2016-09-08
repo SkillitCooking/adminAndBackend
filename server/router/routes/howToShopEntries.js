@@ -28,7 +28,8 @@ router.get('/', function(req, res, next) {
 router.put('/:id', function(req, res, next) {
   try {
     logger.info('ERROR PUT api/howToShopEntries/' + req.params.id);
-    HowToShopEntry.model.findByIdAndUpdate(req.params.id, req.body.entry, {new: true}, function(err, entry) {
+    req.body.entry.dateModified = Date.parse(new Date().toUTCString());
+    HowToShopEntry.model.findByIdAndUpdate(req.params.id, req.body.entry, {new: true, setDefaultsOnInsert: true}, function(err, entry) {
       if(err) {
         logger.error('ERROR PUT api/howToShopEntries/' + req.params.id, {error: err});
         return next(err);
@@ -60,6 +61,7 @@ router.put('/:id', function(req, res, next) {
             }
           }
           if(articleChanged) {
+            articles[i].dateModified = Date.parse(new Date().toUTCString());
             articles[i].save(function(err, article, numAffected) {
               if(err) {
                 logger.error('ERROR PUT api/howToShopEntries/' + req.params.id + 'in Article.model.save', {howToShopId: entry._id});
@@ -98,18 +100,23 @@ router.delete('/:id', function(req, res, next) {
         for (var i = lessons.length - 1; i >= 0; i--) {
           if(lessons[i].itemIds && lessons[i].itemIds.length > 0) {
             var itemIds = lessons[i].itemIds;
+            var lessonChanged = false;
             for (var j = itemIds.length - 1; j >= 0; j--) {
               if(entry._id.equals(itemIds[j].id)) {
                 //then need to remove reference
                 itemIds.splice(j, 1);
-                lessons[i].save(function(err, lesson, numAffected) {
-                  if(err) {
-                    logger.error('ERROR DELETE api/howToShopEntries/' + req.params.id + 'in Lesson.model.save', {howToShopId: entry._id});
-                    return next(err);
-                  }
-                });
-                lessonIds.push(lessons[i]._id);
+                lessonChanged = true;
               }
+            }
+            if(lessonChanged) {
+              lessons[i].dateModified = Date.parse(new Date().toUTCString());
+              lessons[i].save(function(err, lesson, numAffected) {
+                if(err) {
+                  logger.error('ERROR DELETE api/howToShopEntries/' + req.params.id + 'in Lesson.model.save', {howToShopId: entry._id});
+                  return next(err);
+                }
+              });
+              lessonIds.push(lessons[i]._id);
             }
           }
         }
@@ -143,6 +150,7 @@ router.delete('/:id', function(req, res, next) {
             }
           }
           if(articleChanged) {
+            articles[i].dateModified = Date.parse(new Date().toUTCString());
             articles[i].save(function(err, article, numAffected) {
               if(err) {
                 logger.error('ERROR DELETE api/howToShopEntries/' + req.params.id + 'in Article.model.save', {howToShopId: entry._id});
@@ -181,8 +189,8 @@ router.post('/', function(req, res, next) {
         res.json(retVal);
       } else {
         var howToShopEntry = req.body.howToShopEntry;
-        howToShopEntry.dateAdded = Date.now();
-        howToShopEntry.dateModified = Date.now();
+        howToShopEntry.dateAdded = Date.parse(new Date().toUTCString());
+        howToShopEntry.dateModified = Date.parse(new Date().toUTCString());
         HowToShopEntry.model.create(howToShopEntry, function(err, howToShopEntry) {
           if(err) {
             logger.error('ERROR POST api/howToShopEntries/', {error: err, body: req.body});

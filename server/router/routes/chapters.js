@@ -22,7 +22,8 @@ router.get('/', function(req, res, next) {
 router.put('/:id', function(req, res, next) {
   try {
     logger.info('START PUT api/chapters/' + req.params.id);
-    Chapter.model.findByIdAndUpdate(req.params.id, req.body.chapter, {new: true}, function(err, chapter) {
+    req.body.chapter.dateModified = Date.parse(new Date().toUTCString());
+    Chapter.model.findByIdAndUpdate(req.params.id, req.body.chapter, {new: true, setDefaultsOnInsert: true}, function(err, chapter) {
       if(err) {
         logger.error('ERROR PUT api/chapters/' + req.params.id, {error: err, body: req.body});
         return next(err);
@@ -57,7 +58,8 @@ router.post('/', function(req, res, next) {
   logger.info('START POST api/chapters/');
   try {
     var query = {'name': req.body.chapter.name};
-    Chapter.model.findOneAndUpdate(query, req.body.chapter, {upsert: true}, function(err, chapter) {
+    req.body.chapter.dateModified = Date.parse(new Date().toUTCString());
+    Chapter.model.findOneAndUpdate(query, req.body.chapter, {upsert: true, setDefaultsOnInsert: true}, function(err, chapter) {
       if(err) {
         logger.error('ERROR POST api/chapters/', {error: err});
         return next(err);

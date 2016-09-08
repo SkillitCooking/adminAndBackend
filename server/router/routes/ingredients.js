@@ -50,8 +50,9 @@ router.post('/', function(req, res, next) {
   logger.info('START POST api/ingredients/');
   try {
     var query = {'name': req.body.ingredient.name};
+    req.body.ingredient.dateModified = Date.parse(new Date().toUTCString());
     Ingredient.model.findOneAndUpdate(query, req.body.ingredient,
-      {upsert: true}, function(err, ingredient) {
+      {upsert: true, setDefaultsOnInsert: true}, function(err, ingredient) {
       if (err) {
         logger.error('ERROR POST api/ingredients/', {error: err, body: req.body});
         return next(err);
@@ -102,7 +103,8 @@ router.get('/:id', function(req, res, next) {
 router.put('/:id', function(req, res, next) {
   try {
     logger.info('START PUT api/ingredients/' + req.params.id);
-    Ingredient.model.findByIdAndUpdate(req.params.id, req.body.ingredient, {new: true}, function(err, ingredient) {
+    req.body.ingredient.dateModified = Date.parse(new Date().toUTCString());
+    Ingredient.model.findByIdAndUpdate(req.params.id, req.body.ingredient, {new: true, setDefaultsOnInsert: true}, function(err, ingredient) {
       if (err) {
         logger.error('ERROR PUT api/ingredients' + req.params.id, {error: err, body: req.body});
         return next(err);
@@ -128,6 +130,7 @@ router.put('/:id', function(req, res, next) {
             }
           }
           if(recipeChanged) {
+            recipes[i].dateModified = Date.parse(new Date().toUTCString());
             recipes[i].save(function(err, recipe, numAffected) {
               if(err) {
                 logger.error('ERROR PUT api/ingredients/' + req.params.id + ' in Recipe.model.save', {error: err, body: req.body, ingredient: ingredient._id});
@@ -177,6 +180,7 @@ router.delete('/:id', function(req, res, next) {
             }
           }
           if(recipeChanged) {
+            recipes[i].dateModified = Date.parse(new Date().toUTCString());
             recipes[i].save(function(err, recipe, numAffected) {
               if(err) {
                 logger.error('ERROR DELETE api/ingredients/' + req.params.id + ' in Recipe.model.save', {error: err, body: req.body, ingredientId: ingredient._id});

@@ -28,7 +28,11 @@ angular.module('SkillitAdminApp')
         console.log("collection: ", collection);
         var alertMsg = "Success! Item Collection " + collection.data.name + " was saved!";
         alert(alertMsg);
+        $scope.reset();
+      }, function(response) {
+        console.log('Server Error: ', response);
+        alert("Server Error: ", response);
+        $scope.reset();
       }); 
-      $scope.reset();
     };
   }]);

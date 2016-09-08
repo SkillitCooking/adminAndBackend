@@ -1,12 +1,19 @@
 var mongoose = require('mongoose');
+var curUTCDate = require('../../util/dateLib').curUTCDate;
 
 var ObjectId = mongoose.Schema.Types.ObjectId;
 
 var GlossaryEntrySchema = new mongoose.Schema({
   title: String,
   text: String,
-  dateAdded: Date,
-  dateModified: Date,
+  dateAdded: {
+    type: Date,
+    default: curUTCDate
+  },
+  dateModified: {
+    type: Date,
+    default: curUTCDate
+  },
   picture: {
     url: String,
     caption: String

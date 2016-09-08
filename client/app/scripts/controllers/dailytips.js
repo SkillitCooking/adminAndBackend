@@ -53,11 +53,12 @@ angular.module('SkillitAdminApp')
       }).then(function(tip) {
         var alertMsg = "Success! Tip " + tip.data.title + " was saved!";
         alert(alertMsg);
+        $scope.reset();
       }, function(response) {
         console.log("Server Error: ", response.message);
         alert("Server Error: " + response.message);
+        $scope.reset();
       });
-      $scope.reset();
     };
 
     $scope.dailyTipSanityCheck = function() {
