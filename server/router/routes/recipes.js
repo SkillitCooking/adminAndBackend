@@ -15,7 +15,7 @@ var Recipe = db.recipes;
 /* GET all recipes */
 router.get('/', function(req, res, next) {
   logger.info('START GET api/recipes/');
-  Recipe.model.find(function (err, recipes) {
+  Recipe.model.find({}, '-datesUsedAsRecipeOfTheDay', function (err, recipes) {
     if(err) {
       logger.error('ERROR POST api/recipes/', {error: err});
       return next(err);
@@ -32,7 +32,7 @@ router.post('/getRecipesWithIds', function(req, res, next) {
   try {
     Recipe.model.find({
       '_id': { $in: req.body.recipeIds }
-    }, function(err, recipes) {
+    }, '-datesUsedAsRecipeOfTheDay', function(err, recipes) {
       if(err) {
         logger.error('ERROR POST api/recipes/getRecipesWithIds', {error: err, body: req.body});
         return next(err);
@@ -53,7 +53,7 @@ router.post('/getRecipesWithIds', function(req, res, next) {
 router.post('/getRecipesOfType', function(req, res, next) {
   logger.info('START POST api/recipes/getRecipesOfType');
   try {
-    Recipe.model.find({recipeType: req.body.recipeType}, function(err, recipes) {
+    Recipe.model.find({recipeType: req.body.recipeType}, '-datesUsedAsRecipeOfTheDay', function(err, recipes) {
       if(err) {
         logger.error('ERROR POST api/recipes/getRecipesOfType', {error: err, body: req.body});
         return next(err);
@@ -74,7 +74,7 @@ router.post('/getRecipesOfType', function(req, res, next) {
 router.post('/getRecipesForCollection', function(req, res, next) {
   logger.info('START POST api/recipes/getRecipesForCollection');
   try {
-    Recipe.model.find({collectionIds: {$in: [req.body.collectionId]}, recipeType: 'Full'}, function(err, recipes) {
+    Recipe.model.find({collectionIds: {$in: [req.body.collectionId]}, recipeType: 'Full'}, '-datesUsedAsRecipeOfTheDay', function(err, recipes) {
       if(err) {
         logger.error('ERROR POST api/recipes/getRecipesForCollection', {error: err, body: req.body});
         return next(err);
@@ -132,10 +132,10 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
         }
         if(flag){
           if(recipes[k].recipeType === "AlaCarte") {
-            var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'ingredientList');
+            var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'ingredientList', 'manActiveTime', 'manTotalTime');
             retRecipes.push(pickedRecipe);
           } else {
-            var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime');
+            var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime');
             retRecipes.push(pickedRecipe);
           }
         }
