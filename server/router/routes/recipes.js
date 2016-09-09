@@ -128,6 +128,8 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
           }
           if(count < ingredientTypes[i].minNeeded){
             flag = false;
+          } else if(count < ingredientTypes[i].ingredients.length) {
+            recipes[k].setModifiedDisclaimer = true;
           }
         }
         if(flag){
@@ -135,7 +137,7 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
             var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'ingredientList', 'manActiveTime', 'manTotalTime');
             retRecipes.push(pickedRecipe);
           } else {
-            var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime');
+            var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'setModifiedDisclaimer');
             retRecipes.push(pickedRecipe);
           }
         }
