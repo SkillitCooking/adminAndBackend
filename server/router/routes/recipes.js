@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var logger = require('../../util/logger').serverLogger;
+var constants = require('../../util/constants');
 
 var mongoose = require('mongoose');
 var underscore = require('underscore');
@@ -96,37 +97,64 @@ router.post('/getRecipesForCollection', function(req, res, next) {
 /*Why not identify with ids?*/
 router.post('/getRecipesWithIngredients', function(req, res, next) {
   logger.info('START POST api/recipes/getRecipesWithIngredients');
-  Recipe.model.find((err, recipes) => {
+  Recipe.model.find({}, '-datesUsedAsRecipeOfTheDay -stepList -choiceSeasoningProfiles', (err, recipes) => {
     if(err) {
       logger.error('ERROR POST api/recipes/getRecipesWithIngredients', {error: err, body: req.body});
       return next(err);
     }
     try {
       var retRecipes = [];
+      retRecipes[0] = [];
       var ingredientIds = req.body.ingredientIds;
       for (var k = recipes.length - 1; k >= 0; k--) {
+        recipes[k].missingNames = [];
+        var recipeMissingIngredientCount = 0;
         var ingredientTypes = recipes[k].ingredientList.ingredientTypes;
         var flag = true;
         for (var i = ingredientTypes.length - 1; i >= 0; i--) {
           var count = 0;
+          if(ingredientTypes[i].ingredients.length > ingredientTypes[i].minNeeded) {
+            recipes[k].isNotOneToOne = true;
+          }
           for (var j = ingredientTypes[i].ingredients.length - 1; j >= 0; j--) {
             if(ingredientIds){
               var ingredientId = underscore.find(ingredientIds, function(ingred) {
                 return ingredientTypes[i].ingredients[j]._id.equals(ingred._id);
               });
               if(ingredientId) {
+                var formFound = false;
                 for (var l = ingredientTypes[i].ingredients[j].ingredientForms.length - 1; l >= 0; l--) {
                   var form = underscore.find(ingredientId.formIds, function(formId){
                     return ingredientTypes[i].ingredients[j].ingredientForms[l]._id.equals(formId);
                   });
                   if(form) {
                     count++;
+                    recipes[k].containsAtLeastOneIngredient = true;
+                    formFound = true;
+                  } 
+                }
+                if(!formFound) {
+                  if(ingredientTypes[i].ingredients[j].ingredientForms.length > 1) {
+                    recipes[k].missingNames.push(ingredientTypes[i].ingredients[j].name.pluralForm);
+                  } else {
+                    //assume that the converse of the above stated position is that length === 1
+                    if(ingredientTypes[i].ingredients[j].useFormNameForDisplay) {
+                      recipes[k].missingNames.push(ingredientTypes[i].ingredients[j].ingredientForms[0].name);
+                    } else {
+                      recipes[k].missingNames.push(ingredientTypes[i].ingredients[j].name.pluralForm);
+                    }
                   }
                 }
+              } else {
+                //mark ingredient
+                recipes[k].missingNames.push(ingredientTypes[i].ingredients[j].name.pluralForm);
               }
             }
           }
           if(count < ingredientTypes[i].minNeeded){
+            //get count difference aggregate with difference
+            //recipeCount
+            recipeMissingIngredientCount += (ingredientTypes[i].minNeeded - count);
             flag = false;
           } else if(count < ingredientTypes[i].ingredients.length) {
             recipes[k].setModifiedDisclaimer = true;
@@ -135,16 +163,36 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
         if(flag){
           if(recipes[k].recipeType === "AlaCarte") {
             var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'ingredientList', 'manActiveTime', 'manTotalTime');
-            retRecipes.push(pickedRecipe);
+            retRecipes[0].push(pickedRecipe);
           } else {
             var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'setModifiedDisclaimer');
-            retRecipes.push(pickedRecipe);
+            retRecipes[0].push(pickedRecipe);
+          }
+        } else {
+          if(!recipes[k].isNotOneToOne && recipes[k].containsAtLeastOneIngredient) {
+            if(!retRecipes[recipeMissingIngredientCount]) {
+              retRecipes[recipeMissingIngredientCount] = [];
+            }
+            if(recipes[k].recipeType !== constants.RECIPE_TYPES.ALACARTE) {
+              retRecipes[recipeMissingIngredientCount].push(recipes[k]);
+            }
           }
         }
       }
-      retRecipes = underscore.groupBy(retRecipes, "recipeType");
+      var recipesToReturn = [];
+      recipesToReturn = recipesToReturn.concat(retRecipes[0]);
+      var missingIngredientLevel = 1;
+      while(recipesToReturn.length < constants.MIN_NUM_RECIPES_RETURN) {
+        if(retRecipes[missingIngredientLevel] && retRecipes[missingIngredientLevel].length > 0) {
+          for (var i = retRecipes[missingIngredientLevel].length - 1; i >= 0; i--) {
+            recipesToReturn.push(underscore.pick(retRecipes[missingIngredientLevel][i], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'missingNames'));
+          }
+        }
+        missingIngredientLevel += 1;
+      }
+      recipesToReturn = underscore.groupBy(recipesToReturn, "recipeType");
       var retVal = {
-        data: retRecipes
+        data: recipesToReturn
       };
       logger.info('END POST api/recipes/getRecipesWithIngredients');
       res.json(retVal);
