@@ -97,6 +97,25 @@ router.get('/getLessonsForChapterConstruction', function(req, res, next) {
   });
 });
 
+router.post('/getLessonsWithIds', function(req, res, next) {
+  logger.info('START POST api/lessons/getLessonsWithIds');
+  try {
+    Lesson.model.find({
+      '_id': {$in: req.body.lessonIds}
+    }, function(err, lessons) {
+      if(err) {
+        logger.error('ERROR POST api/lessons/getLessonsWithIds', {error: err});
+        return next(err);
+      }
+      logger.info('END POST api/lessons/getLessonsWithIds');
+      res.json({data: lessons});
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in POST api/lessons/getLessonsWithIds', {error: error});
+    return next(error);
+  }
+});
+
 router.post('/', function(req, res, next) {
   logger.info('START POST api/lessons/');
   try {
