@@ -36,7 +36,7 @@ angular.module('SkillitAdminApp')
 
     $scope.save = function() {
       var totalTimeEstimate = $scope.timeEstimates.reduce(function(a, b) {
-        return a + b;
+        return parseInt(a, 10) + parseInt(b, 10);
       });
       chapterService.addNewChapter({
         name: $scope.chapter.name,

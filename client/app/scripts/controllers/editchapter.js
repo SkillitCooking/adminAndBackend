@@ -58,6 +58,24 @@ angular.module('SkillitAdminApp')
       $scope.changeSelectedChapter();
     };
 
+    /*$scope.updateChapterTimeEstimate = function() {
+      var lessonsToCompute = [];
+      for (var i = $scope.lessons.length - 1; i >= 0; i--) {
+        for (var j = $scope.chapter.lessonIds.length - 1; j >= 0; j--) {
+          if($scope.chapter.lessonIds[j] === $scope.lessons[i]._id){
+            lessonsToCompute.push($scope.lessons[i]);
+          }
+        }
+      }
+      console.log('lessons', lessonsToCompute);
+      $scope.chapterTimeEstimate = lessonsToCompute.map(function(lesson) {
+        return lesson.timeEstimate;
+      }).reduce(function(a, b) {
+        return parseInt(a, 10) + parseInt(b, 10);
+      });
+      console.log('estimate', $scope.chapterTimeEstimate);
+    };*/
+
     $scope.saveChanges = function() {
       chapterService.updateChapter({
         name: $scope.chapter.name,
