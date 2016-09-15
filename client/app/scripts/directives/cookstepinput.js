@@ -10,7 +10,7 @@ angular.module('SkillitAdminApp')
   .directive('cookStepInput', function () {
     return {
       templateUrl: 'views/cookstepinput.html',
-      scope: true,
+      scope: false,
       transclude: false,
       restrict: 'E',
       link: function (scope, element, attrs) {
@@ -20,6 +20,10 @@ angular.module('SkillitAdminApp')
         scope.showExampleText = false;
         scope.auxStepAdded = false;
         scope.cookTypes = ["Cook"];
+
+        scope.logStep = function() {
+          console.log('constructing Stpe', scope.constructingStep);
+        };
 
         if(scope.constructingStep.stepId) {
           //then step already exists, need to load stepSpecifics, productName

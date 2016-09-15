@@ -1,7 +1,7 @@
 <div ng-form="cookStepForm" class="bg-warning">
   <b>Cook Step</b><br/>
   CookType: <select name="cookTypeSelect" ng-model="constructingStep.stepSpecifics[0].val" ng-options="cookType for cookType in cookTypes" required></select><br/>
-  Step Duration: <input type="text" ng-model="constructingStep.stepDuration" required name="stepDurationInput" size="30" ng-pattern="integerval" /><br/>
+  Step Duration: <input type="text" ng-change="logStep()" ng-model="constructingStep.stepDuration" required name="stepDurationInput" size="30" ng-pattern="integerval" /><br/>
   Cook Duration: <input type="text" ng-model="constructingStep.stepSpecifics[1].val"  name="cookDurationInput" size="50" /><br/>
   Cook According To Instructions: <input type="checkbox" ng-model="constructingStep.stepSpecifics[2].val"/><br/>
   Ingredient Inputs: <step-input-form
