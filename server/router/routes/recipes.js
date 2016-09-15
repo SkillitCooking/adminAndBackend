@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var moment = require('moment');
 
 var logger = require('../../util/logger').serverLogger;
 var constants = require('../../util/constants');
@@ -22,7 +23,7 @@ router.get('/', function(req, res, next) {
       return next(err);
     }
     recipes.sort(function(a, b) {
-      return a.name < b.name;
+      return moment(a.dateModified).isBefore(b.dateModified);
     });
     logger.info('END GET api/recipes/');
     res.json({data: recipes});
