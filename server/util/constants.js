@@ -4,5 +4,11 @@ module.exports = Object.freeze({
     BYO: 'BYO',
     FULL: 'Full',
     ALACARTE: 'AlaCarte'
+  },
+  ITEM_TYPES: {
+    TIP: 'tip',
+    GLOSSARY: 'glossary',
+    HOWTOSHOP: 'howToShop',
+    TRAININGVIDEO: 'trainingVideo'
   }
 });

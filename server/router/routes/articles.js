@@ -25,6 +25,22 @@ router.get('/', function(req, res, next) {
   }
 });
 
+router.get('/:id', function(req, res, next) {
+  try {
+    logger.info('START GET api/articles/' + req.params.id);
+    Article.model.findById(req.params.id, function(err, article) {
+      if(err) {
+        logger.error('ERROR GET api/articles/' + req.params.id, {error: err});
+        return next(err);
+      }
+      res.json({data: article});
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in GET api/articles/:id', {error: error});
+    return next(error);
+  }
+});
+
 router.put('/:id', function(req, res, next) {
   try {
     logger.info('START PUT api/articles/' + req.params.id);

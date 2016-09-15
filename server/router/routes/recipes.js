@@ -21,6 +21,7 @@ router.get('/', function(req, res, next) {
       logger.error('ERROR POST api/recipes/', {error: err});
       return next(err);
     }
+    recipes.sort();
     logger.info('END GET api/recipes/');
     res.json({data: recipes});
   });
