@@ -6,7 +6,7 @@
     Select Ingredient: <select name="ingredientSelect" ng-model="selectedIngredient" ng-change="changeSelectedIngredient()" ng-options="ingredient as ingredient.name.standardForm for ingredient in ingredients"></select><br/><br/>
     Name: <input type="text" ng-model="ingredient.name.standardForm" size="50" required name="nameInput"/><br /><br />
     Input Category: <select name="inputCategorySelect" ng-model="ingredient.inputCategory" ng-options=
-    "category for category in inputCategories" ng-change="changeInputCategory()" required></select><br/><br/>
+    "category for category in inputCategories" ng-change="changeInputCategory()" ng-init="changeInputCategory()" required></select><br/><br/>
     Input SubCategory: <select name="inputSubCategorySelect" ng-model="ingredient.inputSubCategory" ng-options="subCategory for subCategory in inputSubCategories"></select><br/><br/>
     Plural Name: <input type="text" ng-model="ingredient.name.pluralForm" size="50" required  name="pluralFormInput" /><br/>
     Singular Name: <input type="text" ng-model="ingredient.name.singularForm" size="50" required name="singularFormInput" /><br/><br/>
