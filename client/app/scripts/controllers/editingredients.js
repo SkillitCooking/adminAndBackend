@@ -24,13 +24,15 @@ angular.module('SkillitAdminApp')
     });
 
     $scope.changeInputCategory = function() {
-      switch($scope.ingredient.inputCategory) {
-        case 'Protein':
-          $scope.inputSubCategories = ['Meat', 'Fish', 'Other'];
-          break;
-        default:
-          $scope.inputSubCategories = ['None'];
-          break;
+      if($scope.ingredient) {
+        switch($scope.ingredient.inputCategory) {
+          case 'Protein':
+            $scope.inputSubCategories = ['Meat', 'Fish', 'Other'];
+            break;
+          default:
+            $scope.inputSubCategories = ['None'];
+            break;
+        }
       }
     };
 
