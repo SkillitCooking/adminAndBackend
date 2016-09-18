@@ -20,9 +20,9 @@ angular.module('SkillitAdminApp')
       alert("Server Error: " + response.message);
     });
 
-    $scope.inForms = [
-    ];
+    $scope.inForms = [];
     $scope.inputCategories = ["Protein", "Vegetables", "Starches", "Other"];
+    $scope.inputSubCategories = [];
     $scope.cookingMethods = ["Bake", "Sautee", "Boil", "Steam", "SlowCook"];
 
     $scope.addCookingTime = function(ingredientForm) {
@@ -32,6 +32,17 @@ angular.module('SkillitAdminApp')
         maxTime: "",
         timesArePerSide: false
       });
+    };
+
+    $scope.changeInputCategory = function() {
+      switch($scope.ingredient.inputCategory) {
+        case 'Protein':
+          $scope.inputSubCategories = ['Meat', 'Fish', 'Other'];
+          break;
+        default:
+          $scope.inputSubCategories = ['None'];
+          break;
+      }
     };
 
     $scope.addIngredientForm = function() {
@@ -115,6 +126,7 @@ angular.module('SkillitAdminApp')
           ingredientForms: $scope.ingredient.ingredientForms,
           ingredientTips: $scope.ingredient.ingredientTips,
           inputCategory: $scope.ingredient.inputCategory,
+          inputSubCategory: $scope.ingredient.inputSubCategory,
           units: $scope.ingredient.units,
           unitIsASingleItem: $scope.ingredient.unitIsASingleItem,
           servingsPerUnit: $scope.ingredient.servingsPerUnit,

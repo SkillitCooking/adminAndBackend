@@ -11,6 +11,7 @@ angular.module('SkillitAdminApp')
   .controller('EditIngredientsCtrl', ['$window', '$scope', 'ingredientService', function ($window, $scope, ingredientService) {
     $scope.integerval = /^\d*$/;
     $scope.inputCategories = ["Protein", "Vegetables", "Starches", "Other"];
+    $scope.inputSubCategories = [];
     $scope.cookingMethods = ["Bake", "Sautee", "Boil", "Steam", "SlowCook"];
     $scope.stepTypes = ["Bake", "Boil", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "Heat", "Place", "PreheatOven", "Sautee", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir"];
     $scope.subTypes = [];
@@ -21,6 +22,17 @@ angular.module('SkillitAdminApp')
       console.log("Server Error: ", response);
       alert("Server Error: " + response.message);
     });
+
+    $scope.changeInputCategory = function() {
+      switch($scope.ingredient.inputCategory) {
+        case 'Protein':
+          $scope.inputSubCategories = ['Meat', 'Fish', 'Other'];
+          break;
+        default:
+          $scope.inputSubCategories = ['None'];
+          break;
+      }
+    };
 
     $scope.changeSelectedIngredient = function() {
       if($scope.selectedIngredient) {
@@ -140,6 +152,7 @@ angular.module('SkillitAdminApp')
         ingredientForms: $scope.ingredient.ingredientForms,
         ingredientTips: $scope.ingredient.ingredientTips,
         inputCategory: $scope.ingredient.inputCategory,
+        inputSubCategory: $scope.ingredient.inputSubCategory,
         units: $scope.ingredient.units,
         unitIsASingleItem: $scope.ingredient.unitIsASingleItem,
         servingsPerUnit: $scope.ingredient.servingsPerUnit,

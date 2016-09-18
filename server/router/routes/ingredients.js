@@ -36,6 +36,10 @@ router.get('/getIngredientsForSelection', function(req, res, next) {
       return next(err);
     }
     var ingredientSets = underscore.groupBy(ingredients, "inputCategory");
+    for (var key in ingredientSets) {
+      ingredientSets[key] = underscore.groupBy(ingredientSets[key], 'inputSubCategory');
+      
+    }
     var retData = {
       data: ingredientSets
     };
