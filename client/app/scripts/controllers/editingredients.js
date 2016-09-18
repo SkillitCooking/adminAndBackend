@@ -48,6 +48,7 @@ angular.module('SkillitAdminApp')
         }
         $scope.ingredientFormsIndicatorArray = new Array($scope.ingredient.ingredientForms.length);
         $scope.ingredientFormsIndicatorArray.fill(true);
+        $scope.changeInputCategory();
       }
     };
 
