@@ -38,7 +38,7 @@ angular.module('SkillitAdminApp')
       if($scope.ingredient) {
         switch($scope.ingredient.inputCategory) {
           case 'Protein':
-            $scope.inputSubCategories = ['Meat', 'Fish', 'Other'];
+            $scope.inputSubCategories = ['Meat', 'Seafood', 'Other'];
             break;
           default:
             $scope.inputSubCategories = ['None'];
