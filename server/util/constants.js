@@ -10,5 +10,10 @@ module.exports = Object.freeze({
     GLOSSARY: 'glossary',
     HOWTOSHOP: 'howToShop',
     TRAININGVIDEO: 'trainingVideo'
+  },
+  SIGN_IN_SOURCES: {
+    FACEBOOK: 'facebook',
+    GOOGLE: 'google',
+    EMAIL: 'email'
   }
 });
