@@ -15,5 +15,9 @@ module.exports = Object.freeze({
     FACEBOOK: 'facebook',
     GOOGLE: 'google',
     EMAIL: 'email'
+  },
+  STATUS_CODES: {
+    UNAUTHORIZED: 401,
+    UNPROCESSABLE: 422
   }
 });

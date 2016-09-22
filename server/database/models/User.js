@@ -3,6 +3,7 @@ var curUTCDate = require('../../util/dateLib').curUTCDate;
 
 var UserSchema = new mongoose.Schema({
   socialName: String,
+  socialUsername: String,
   curToken: String,
   socialEmail: String,
   email: String,
@@ -17,7 +18,9 @@ var UserSchema = new mongoose.Schema({
   lastLoginDate: {
     type: Date,
     default: curUTCDate
-  }
+  },
+  facebookId: String,
+  googleId: String
 });
 
 module.exports.model = mongoose.model('User', UserSchema);
