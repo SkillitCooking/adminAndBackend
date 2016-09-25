@@ -22,7 +22,6 @@ router.post('/getFavoriteRecipesForUser', function(req, res, next) {
           logger.error('ERROR POST api/favoriteRecipes/getFavoriteRecipesForUser - token', {error: error});
           return next(error);
         }
-        console.log(req.body);
         FavoriteRecipe.model.aggregate([{$match: {userId: mongoose.Types.ObjectId(req.body.userId)}}, 
           {$project: {timesUsed: {$size: '$datesUsed'}, recipeIds: 1, ingredientAndFormIds: 1, ingredientNames: 1, userId: 1, dateLastUsed: 1, dateCreated: 1, lastSeasoningProfileUsed: 1, name: 1, description: 1, mainPictureURL: 1, prepTime: 1, totalTime: 1}}], function(err, favRecipes) {
           if(err) {
