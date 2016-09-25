@@ -18,6 +18,7 @@ var articles = require('./models/Article.js');
 var lessons = require('./models/Lesson.js');
 var chapters = require('./models/Chapter.js');
 var users = require('./models/User.js');
+var favoriteRecipes = require('./models/FavoriteRecipe.js');
 
 // connections
 // may need to change the devDB to a compose devDB...
@@ -68,3 +69,4 @@ exports.articles = articles;
 exports.lessons = lessons;
 exports.chapters = chapters;
 exports.users = users;
+exports.favoriteRecipes = favoriteRecipes;

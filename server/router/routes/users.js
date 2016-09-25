@@ -155,24 +155,26 @@ router.post('/logout', function(req, res, next) {
         logger.error('ERROR POST api/users/logout');
         return next(err);
       }
+      if(user) {
       //token check
-      if(req.body.token !== user.curToken) {
-        var error = {
-          status: constants.STATUS_CODES.UNAUTHORIZED,
-          message: 'Credentials for method are missing'
-        };
-        logger.error('ERROR POST api/users/logout - token', {error: error});
-        return next(error);
-      }
-      user.curToken = null;
-      user.save(function(err, user, numAffected) {
-        if(err) {
-          logger.error('ERROR POST api/users/logout in user.save', {error: err});
-          return next(err);
+        if(req.body.token !== user.curToken) {
+          var error = {
+            status: constants.STATUS_CODES.UNAUTHORIZED,
+            message: 'Credentials for method are missing'
+          };
+          logger.error('ERROR POST api/users/logout - token', {error: error});
+          return next(error);
         }
-        logger.info('END POST api/users/logout');
-        res.json({data: user});
-      });
+        user.curToken = null;
+        user.save(function(err, user, numAffected) {
+          if(err) {
+            logger.error('ERROR POST api/users/logout in user.save', {error: err});
+            return next(err);
+          }
+          logger.info('END POST api/users/logout');
+          res.json({data: user});
+        });
+      }
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/users/logout', {error: error});
