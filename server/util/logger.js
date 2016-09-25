@@ -46,7 +46,7 @@ clientLogger = new (winston.Logger)({
     transports: [
       new (winston.transports.File)({
         name: 'client-error-logs',
-        filename: 'logs/client/clientErrors.log',
+        filename: '../logs/client/clientErrors.log',
         level: 'error',
         maxsize: 100 * 1024,
         maxFiles: 10
@@ -58,14 +58,14 @@ clientLogger = new (winston.Logger)({
     transports: [
       new (winston.transports.File)({
         name: 'api-logs',
-        filename: 'logs/api/callLogs/calls.log',
+        filename: '../logs/api/callLogs/calls.log',
         level: 'info',
         maxsize: 100 * 1024,
         maxFiles: 3
       }),
       new (winston.transports.File)({
         name: 'server-error-logs',
-        filename: 'logs/api/errors/errors.log',
+        filename: '../logs/api/errors/errors.log',
         level: 'error',
         maxsize: 100 * 1024,
         maxFiles: 5
