@@ -28,6 +28,7 @@ var router = require('./router')(app);
  * Global Rate Limiter settings
  */
 //limit to 10 requests per second per IP
+console.log('port: ', app.get('port'));
 if(app.get('env') === 'production') {
   var limiterClient = require('redis').createClient();
   var limiter = require('express-limiter')(app, limiterClient);
