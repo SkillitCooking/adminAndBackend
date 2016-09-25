@@ -27,7 +27,7 @@ var devDB = 'mongodb://dane:ALDSJFljk345j2@aws-us-east-1-portal.16.dblayer.com:1
 var productionDB = 'mongodb://dane:ALDSJFljk345j2@aws-us-east-1-portal.16.dblayer.com:10285/skillit-dev-db?ssl=true';
 var usedDB;
 //ssl information
-var ca = [fs.readFileSync('database/ssl/sslca.pem')];
+var ca = [fs.readFileSync('./ssl/sslca.pem')];
 var o = {
   server: {
     ssl: true,
