@@ -67,8 +67,13 @@ if(app.get('env') === 'development') {
 /**
  * Production and Staging Settings
  */
+if(app.get('env') === 'production') {
+  console.log('production');
+}
+if(app.get('env') === 'staging') {
+  console.log('staging');
+}
 if (app.get('env') === 'production' || app.get('env') === 'staging') {
-  console.log("production");
   //use more streamlined version for production
   app.use(express.static(path.join(__dirname, '/dist')));
   //get favicon from the right places
