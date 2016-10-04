@@ -3,6 +3,7 @@
  */
 var mongoose = require('mongoose');
 var fs = require('fs');
+var path = require('path');
 
 //models
 var dishes = require('./models/Dish.js');
@@ -24,25 +25,33 @@ var favoriteRecipes = require('./models/FavoriteRecipe.js');
 // may need to change the devDB to a compose devDB...
 // Maybe just use compose DB for both for now...
 var devDB = 'mongodb://dane:ALDSJFljk345j2@aws-us-east-1-portal.16.dblayer.com:10285/skillit-dev-db?ssl=true';
-var productionDB = 'mongodb://dane:ALDSJFljk345j2@aws-us-east-1-portal.16.dblayer.com:10285/skillit-dev-db?ssl=true';
+var productionDB = 'mongodb://dane:ALDSJFljk345j2@aws-us-west-2-portal.0.dblayer.com:15198/skillit-prod-db?ssl=true';
 var usedDB;
-//ssl information
-var ca = [fs.readFileSync('../database/ssl/sslca.pem')];
-var o = {
-  server: {
-    ssl: true,
-    sslCA: ca
-  }
-};
 
 //if in development
-if(process.env.NODE_ENV === 'development') {
+if(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'staging') {
+  //ssl information
+  var devCa = [fs.readFileSync(path.resolve(path.join(__dirname, 'ssl', 'sslca.pem')))];
+  var devO = {
+    server: {
+      ssl: true,
+      sslCA: devCa
+    }
+  };
   usedDB = devDB;
-  mongoose.connect(usedDB, o);
+  mongoose.connect(usedDB, devO);
 }
 
 //if in production
 if(process.env.NODE_ENV === 'production') {
+  //ssl information
+  var ca = [fs.readFileSync(path.resolve(path.join(__dirname, 'ssl', 'prodca.pem')))];
+  var o = {
+    server: {
+      ssl: true,
+      sslCA: ca
+    }
+  };
   usedDB = productionDB;
   mongoose.connect(usedDB, o);
 }
