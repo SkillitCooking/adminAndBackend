@@ -83,7 +83,8 @@ angular.module('SkillitAdminApp')
             case 'video':
               scope.contentSection.contentArray.push({
                 type: 'video',
-                url: scope.video.videoURL,
+                videoId: scope.video.videoId,
+                end: scope.video.end,
                 caption: scope.video.videoCaption
               });
               scope.contentIndicatorArray.push(false);

@@ -23,7 +23,8 @@
           Caption: <input type="text" ng-model="piece.caption" size="100" name="pictureCaptionURLInput" placeholder="Caption" /><br/><br/>
         </div>
         <div ng-switch-when="video">
-          URL: <input type="url" ng-model="piece.url" size="60" name="videoURLInput" placeholder="URL" /><br/>
+          VideoID: <input type="text" ng-model="piece.videoId" size="50" name="videoIdInput" placeholder="ID" /><br/>
+          End Time: <input type="text" ng-model="piece.end" size="50" name="videoEndInput" placeholder="End Time" /><br/>
           Caption: <input type="text" ng-model="piece.caption" size="100" name="videoCaptionURLInput" placeholder="Caption" />
         </div>
         <div ng-switch-default></div>

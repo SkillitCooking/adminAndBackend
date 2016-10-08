@@ -9,7 +9,6 @@ var TrainingVideo = db.trainingVideos;
 var Lesson = db.lessons;
 var Article = db.articles;
 
-
 /* GET all trainingVideos */
 router.get('/', function(req, res, next) {
   logger.info('START GET api/trainingVideos/');

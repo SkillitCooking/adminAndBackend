@@ -20,7 +20,9 @@ var GlossaryEntrySchema = new mongoose.Schema({
   },
   video: {
     url: String,
-    caption: String
+    caption: String,
+    end: String,
+    videoId: String
   },
   collectionIds: [ObjectId]
 });

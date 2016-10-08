@@ -5,6 +5,10 @@ var StepTipSchema = new mongoose.Schema({
   text: String,
   pictureURL: String,
   videoURL: String,
+  videoInfo: {
+    videoId: String,
+    end: String
+  },
   videoTitle: String
 });
 

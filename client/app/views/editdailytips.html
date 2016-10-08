@@ -8,7 +8,8 @@
     Text: <textarea ng-model="dailyTip.text" rows="4" cols="50" required name="textInput"></textarea><br/><br/>
     Picture: <input type="url" ng-model="dailyTip.picture.url" size="60" name="pictureURLInput" placeholder="URL" />
     <input type="text" ng-model="dailyTip.picture.caption" size="100" name="pictureCaptionInput" placeholder="Caption"/><br/><br/>
-    Video: <input type="url" ng-model="dailyTip.video.url" size="60" name="videoURLInput" placeholder="URL" />
+    Video: <input type="text" ng-model="dailyTip.video.videoId" size="60" name="videoIdInput" placeholder="URL" />
+    <input type="text" ng-model="dailyTip.video.end" size="40" name="videoEndInput" placeholder="End Time" />
     <input type="text" ng-model="dailyTip.video.caption" size="100" name="videoCaptionInput" placeholder="Caption"/><br/><br/>
     Collections: <select name="itemCollectionSelect" ng-model="curCollectionId" ng-options="collection._id as collection.name for collection in tipCollections"></select><br/>
     <ul>

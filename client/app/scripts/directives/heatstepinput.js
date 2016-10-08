@@ -53,6 +53,9 @@ angular.module('SkillitAdminApp')
         scope.addTip = function() {
           scope.tipAdded = !scope.tipAdded;
           scope.tipIsMinimized = true;
+          scope.stepTip = {
+            videoInfo: {}
+          };
         };
 
         scope.removeTip = function() {

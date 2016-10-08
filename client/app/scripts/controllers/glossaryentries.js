@@ -62,7 +62,7 @@ angular.module('SkillitAdminApp')
 
     $scope.glossaryEntrySanityCheck = function() {
       if($scope.glossaryEntry.collectionIds && $scope.glossaryEntry.collectionIds.length > 0) {
-        if($scope.glossaryEntry.picture.url && $scope.glossaryEntry.video.url) {
+        if($scope.glossaryEntry.picture.url && $scope.glossaryEntry.video.videoId) {
           return true;
         } else if($scope.glossaryEntry.picture.url) {
           if($scope.glossaryEntry.video.caption && $scope.glossaryEntry.video.caption !== ""){
@@ -70,7 +70,7 @@ angular.module('SkillitAdminApp')
           } else {
             return true;
           }
-        } else if($scope.glossaryEntry.video.url) {
+        } else if($scope.glossaryEntry.video.videoId) {
           if($scope.glossaryEntry.picture.caption && $scope.glossaryEntry.picture.caption !== "") {
             return false;
           } else {

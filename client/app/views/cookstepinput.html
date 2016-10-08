@@ -39,7 +39,8 @@
       Text: <textarea name="tipTextInput" ng-model="constructingStep.stepTip.text" rows="4" cols="50" ></textarea><br/>
       PictureURL: <input type="url" ng-model="constructingStep.stepTip.pictureURL" size="70" name="tipPictureInput" /><br/>
       VideoTitle: <input type="text" ng-model="constructingStep.stepTip.videoTitle" size="50" name="tipVideoTitleInput" /><br/>
-      VideoURL: <input type="url" ng-model="constructingStep.stepTip.videoURL" size="70" name="tipVideoUrlInput" /><br/>
+      VideoInfo: <input type="text" ng-model="constructingStep.stepTip.videoInfo.videoId" size="50" name="tipVideoIdInput" placeholder="ID" />
+      <input type="text" ng-model="constructingStep.stepTip.videoInfo.end" size="50" name="tipVideoEndInput" placeholder="End Time" /><br/>
     </div>
     <button class="btn btn-danger btn-xs" ng-click="removeTip()">Remove Tip</button>
   </div>

@@ -99,7 +99,8 @@ angular.module('SkillitAdminApp')
 
     $scope.addIngredientTip = function() {
       $scope.ingredientTips.push({
-        stepType: ""
+        stepType: "",
+        videoInfo: {}
       });
     };
 

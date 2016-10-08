@@ -7,6 +7,15 @@ var ContentSectionSchema = new mongoose.Schema();
 ContentSectionSchema.add({
   subTitle: String,
   contentArray: [mongoose.Schema.Types.Mixed]
+  /*
+  if type === 'text'
+  --> props: textChunks
+  textChunk props: text, linkedItem
+  if type === 'video'
+  --> props: videoId, end, caption
+  if type === 'picture'
+  --> url, caption
+   */
 });
 
 var ArticleSchema = new mongoose.Schema({

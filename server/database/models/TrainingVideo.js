@@ -15,7 +15,9 @@ var TrainingVideoSchema = new mongoose.Schema({
   },
   video: {
     url: String,
-    caption: String
+    caption: String,
+    end: String,
+    videoId: String
   },
   picture: {
     url: String,

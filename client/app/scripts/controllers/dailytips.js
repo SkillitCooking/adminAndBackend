@@ -63,7 +63,7 @@ angular.module('SkillitAdminApp')
 
     $scope.dailyTipSanityCheck = function() {
       if($scope.dailyTip.collectionIds && $scope.dailyTip.collectionIds.length > 0) {
-        if($scope.dailyTip.picture.url && $scope.dailyTip.video.url) {
+        if($scope.dailyTip.picture.url && $scope.dailyTip.video.videoId) {
           return true;
         } else if($scope.dailyTip.picture.url) {
           if($scope.dailyTip.video.caption && $scope.dailyTip.video.caption !== ""){
@@ -71,7 +71,7 @@ angular.module('SkillitAdminApp')
           } else {
             return true;
           }
-        } else if($scope.dailyTip.video.url) {
+        } else if($scope.dailyTip.video.videoId) {
           if($scope.dailyTip.picture.caption && $scope.dailyTip.picture.caption !== "") {
             return false;
           } else {

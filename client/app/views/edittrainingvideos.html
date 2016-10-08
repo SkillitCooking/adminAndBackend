@@ -5,7 +5,8 @@
   <form novalidate name="trainingVideoForm">
     Select Training Video: <select name="trainingVideoSelect" ng-model="selectedVideo" ng-change="changeSelectedVideo()" ng-options="video as video.title for video in videos"></select><br/><br/>
     Title: <input type="text" ng-model="trainingVideo.title" size="50" required name="titleInput"/><br /><br />
-    Video: <input type="url" ng-model="trainingVideo.video.url" size="60" name="videoURLInput" placeholder="URL" />
+    Video: <input type="text" ng-model="trainingVideo.video.videoId" size="60" name="videoIdInput" placeholder="ID" />
+    <input type="text" ng-model="trainingVideo.video.end" size="40" name="videoEndInput" placeholder="End Time" />
     <input type="text" ng-model="trainingVideo.video.caption" size="100" name="videoCaptionInput" placeholder="Caption"/><br/><br/> 
     Picture: <input type="url" ng-model="trainingVideo.picture.url" size="60" name="pictureURLInput" placeholder="URL" />
     <input type="text" ng-model="trainingVideo.picture.caption" size="100" name="pictureCaptionInput" placeholder="Caption"/><br/><br/>

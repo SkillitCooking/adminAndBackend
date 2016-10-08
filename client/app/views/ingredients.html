@@ -61,7 +61,8 @@
             PictureURL: <input type="url" ng-model="tip.stepTip.pictureURL" name="tipPic" size="70"/> <br />
             <span ng-show="tipForm.tipPic.$invalid">PictureURL must be a URL</span><br/>
             VideoTitle: <input type="text" ng-model="tip.stepTip.videoTitle" size="50" name="tipVidTitle"/><br />
-            VideoURL: <input type="url" ng-model="tip.stepTip.videoURL" name="tipVid"/> <br />
+            VideoInfo: <input type="text" ng-model="tip.stepTip.videoInfo.videoId" name="tipVidId" size="50" placeholder="ID" /> 
+            <input type="text" ng-model="tip.stepTip.videoInfo.end" name="tipVidEnd" size="50" placeholder="End Time" /><br />
             <span ng-show="tipForm.tipVid.$invalid">VideoURL must be a URL</span><br/>
           </div>
         </li>

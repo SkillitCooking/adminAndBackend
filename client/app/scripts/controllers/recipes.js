@@ -12,7 +12,8 @@ angular.module('SkillitAdminApp')
     $scope.integerval = /^\d*$/;
 
     $scope.recipe = {
-      canAddSeasoningProfile: true
+      canAddSeasoningProfile: true,
+      mainVideo: {}
     };
 
     itemCollectionService.getItemCollectionsForType('recipe').then(function(collections) {
@@ -317,7 +318,7 @@ angular.module('SkillitAdminApp')
           choiceSeasoningProfiles: $scope.recipe.choiceSeasoningProfiles,
           primaryIngredientType: $scope.recipe.primaryIngredientType,
           mainPictureURL: $scope.recipe.mainPictureURL,
-          mainVideoURL: $scope.recipe.mainVideoURL,
+          mainVideo: $scope.recipe.mainVideo,
           prepTime: $scope.recipe.prepTime,
           totalTime: $scope.recipe.totalTime,
           manActiveTime: $scope.recipe.manActiveTime,

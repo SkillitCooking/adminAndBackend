@@ -61,7 +61,7 @@ angular.module('SkillitAdminApp')
 
     $scope.trainingVideoSanityCheck = function() {
       //if video caption, then must be url
-      if(($scope.trainingVideo.video.url && $scope.trainingVideo.video.url !== "") && 
+      if(($scope.trainingVideo.video.videoId && $scope.trainingVideo.video.videoId !== "") && 
         ($scope.trainingVideo.picture.url && $scope.trainingVideo.picture.url !== "")) {
         if($scope.trainingVideo.collectionIds && $scope.trainingVideo.collectionIds.length > 0) {
           return true;

@@ -14,7 +14,8 @@
       <span>{{collection.name}}</span>
     </div><br/><br/>    
     Main Picture URL: <input type="url" ng-model="recipe.mainPictureURL" size="70" name="mainPicInput" required/><br/>
-    Main Video URL: <input type="url" ng-model="recipe.mainVideoURL" size="70" name="mainVidInput"/><br/><br/>
+    Main Video: <input type="text" ng-model="recipe.mainVideo.videoId" size="70" name="mainVidIdInput" placeholder="Video Id" />
+    <input type="text" ng-model="recipe.mainVideo.end" size="70" name="mainVidEndInput" placeholder="End Time" /><br/><br/>
     RecipeType: <select name="typeSelect" ng-model="recipe.recipeType" ng-options="recipeType for recipeType in recipeTypes" required></select>
     <span ng-show="recipeForm.typeSelect.$invalid">select a recipe type</span><br/><br/>
     RecipeCategory: <select name="categorySelect" ng-model="recipe.recipeCategory" ng-options="recipeCategory for recipeCategory in recipeCategories" required></select>
