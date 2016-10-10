@@ -78,7 +78,7 @@ angular.module('SkillitAdminApp')
       for (var i = typeArray.length - 1; i >= 0; i--) {
         $scope.lesson.itemIds.push({
           id: typeArray[i]._id,
-          itemType: $scope.itemType
+          type: $scope.itemType
         });
       }
     };
