@@ -13,6 +13,38 @@ var Recipe = db.recipes;
 /* Add Credentials appropriately when time comes */
 /* Add Error checking as well */
 
+router.post('/change', function(req, res, next) {
+  Recipe.model.find(function(err, recipes) {
+    if(err) {
+      console.log('error', err);
+      return next(err);
+    }
+    for (var i = recipes.length - 1; i >= 0; i--) {
+      var types = recipes[i].ingredientList.ingredientTypes;
+      for (var j = types.length - 1; j >= 0; j--) {
+        var ingreds = types[j].ingredients;
+        for (var k = ingreds.length - 1; k >= 0; k--) {
+          var tips = ingreds[k].ingredientTips;
+          for (var l = tips.length - 1; l >= 0; l--) {
+            if(tips[l].stepTip.videoURL && tips[l].stepTip.videoURL !== "") {
+              tips[l].stepTip.videoURL = undefined;
+            }
+          }
+        }
+      }
+      recipes[i].markModified('ingredientList');
+      recipes[i].save(function(err, recipe, numAffected) {
+        if(err) {
+          console.log('err', err);
+          return next(err);
+        }
+      });
+    }
+    res.json({message: 'success'});
+  });
+});
+
+
 /* GET all recipes */
 router.get('/', function(req, res, next) {
   logger.info('START GET api/recipes/');

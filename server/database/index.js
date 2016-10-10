@@ -24,7 +24,6 @@ var favoriteRecipes = require('./models/FavoriteRecipe.js');
 // connections
 // may need to change the devDB to a compose devDB...
 // Maybe just use compose DB for both for now...
-//var devDB = 'mongodb://dane:ALDSJFljk345j2@aws-us-east-1-portal.16.dblayer.com:10285/skillit-dev-db?ssl=true';
 var devDB = 'mongodb://dane:ALDSJFljk345j2@aws-us-east-1-portal.17.dblayer.com:15427/skillit-dev-db?ssl=true';
 var productionDB = 'mongodb://dane:ALDSJFljk345j2@aws-us-west-2-portal.0.dblayer.com:15198/skillit-prod-db?ssl=true';
 var usedDB;

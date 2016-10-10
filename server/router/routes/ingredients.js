@@ -13,6 +13,7 @@ var Recipe = db.recipes;
 /* Add Credentials appropriately when time comes */
 /* Add Error checking as well */
 
+
 /* GET ingredients listing. */
 router.get('/', function(req, res, next) {
   logger.info('START GET api/ingredients/');
