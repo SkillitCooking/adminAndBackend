@@ -9,41 +9,52 @@
  */
 angular.module('SkillitAdminApp')
   .controller('EditArticlesCtrl', ['$window', '$scope', 'articleService', 'dailyTipsService', 'glossaryService', 'trainingVideosService', 'howToShopService', function ($window, $scope, articleService, dailyTipsService, glossaryService, trainingVideosService, howToShopService) {
-    
-    articleService.getAllArticles().then(function(res) {
-      $scope.articles = res.data;
-    }, function(response) {
-      alert("Server Error - check console logs for details");
-      console.log("error response: ", response);
-    });
 
-    dailyTipsService.getAllDailyTips().then(function(data) {
-      $scope.tips = data.data;
-    }, function(response) {
-      alert("Server Error - check console logs for details");
-      console.log("error response: ", response);
-    });
+    $scope.serverType = 'DEVELOPMENT';
 
-    glossaryService.getAllGlossaryEntries().then(function(data) {
-      $scope.glossaryEntries = data.data;
-    }, function(response) {
-      alert("Server Error - check console logs for details");
-      console.log("error response: ", response);
-    });
+    $scope.reloadEntries = function(serverName) {
+      var isProd = false;
+      if(serverName === 'PRODUCTION') {
+        isProd = true;
+      }
+      $scope.serverType = serverName;
+      articleService.getAllArticles(isProd).then(function(res) {
+        $scope.articles = res.data;
+      }, function(response) {
+        alert("Server Error - check console logs for details");
+        console.log("error response: ", response);
+      });
 
-    trainingVideosService.getAllTrainingVideos().then(function(data) {
-      $scope.trainingVideos = data.data;
-    }, function(response) {
-      alert("Server Error - check console logs for details");
-      console.log("error response: ", response);
-    });
+      dailyTipsService.getAllDailyTips(isProd).then(function(data) {
+        $scope.tips = data.data;
+      }, function(response) {
+        alert("Server Error - check console logs for details");
+        console.log("error response: ", response);
+      });
 
-    howToShopService.getAllHowToShopEntries().then(function(data) {
-      $scope.howToShopEntries = data.data;
-    }, function(response) {
-      alert("Server Error - check console logs for details");
-      console.log("error response: ", response);
-    });
+      glossaryService.getAllGlossaryEntries(isProd).then(function(data) {
+        $scope.glossaryEntries = data.data;
+      }, function(response) {
+        alert("Server Error - check console logs for details");
+        console.log("error response: ", response);
+      });
+
+      trainingVideosService.getAllTrainingVideos(isProd).then(function(data) {
+        $scope.trainingVideos = data.data;
+      }, function(response) {
+        alert("Server Error - check console logs for details");
+        console.log("error response: ", response);
+      });
+
+      howToShopService.getAllHowToShopEntries(isProd).then(function(data) {
+        $scope.howToShopEntries = data.data;
+      }, function(response) {
+        alert("Server Error - check console logs for details");
+        console.log("error response: ", response);
+      });
+    };
+
+    $scope.reloadEntries('DEVELOPMENT');
 
     $scope.changeSelectedArticle = function() {
       //what needs to happen here?? At least copying selectedArticle into article...
@@ -79,12 +90,16 @@ angular.module('SkillitAdminApp')
       $scope.changeSelectedArticle();
     };
 
+    $scope.noServerSelected = function() {
+      return !$scope.useDevServer && !$scope.useProdServer;
+    };
+
     $scope.saveChanges = function() {
       articleService.updateArticle({
         title: $scope.article.title,
         contentSections: $scope.article.contentSections,
         _id: $scope.article._id
-      }).then(function(res) {
+      }, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         alert("Article successfully updated! Refresh page.");
         $window.location.reload(true);
       }, function(response) {
@@ -97,8 +112,10 @@ angular.module('SkillitAdminApp')
     $scope.deleteArticle = function() {
       articleService.deleteArticle({
         _id: $scope.article._id
-      }).then(function(res) {
+      }, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         var lessonStr = "";
+        //could probably be more thorough on below and alerts
+        res = res[0];
         if(res.affectedLessonIds && res.affectedLessonIds.length > 0) {
           lessonStr += " Affected Lesson Ids: \n" + res.affectedLessonIds.toString();
         }

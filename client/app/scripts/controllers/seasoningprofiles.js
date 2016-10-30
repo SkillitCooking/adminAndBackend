@@ -11,12 +11,23 @@ angular.module('SkillitAdminApp')
   .controller('SeasoningprofilesCtrl', ['$window', '$scope', 'seasoningService',
    function ($window, $scope, seasoningService) {
 
-    seasoningService.getAllSeasonings().then(function(seasonings){
-      $scope.profiles = seasonings.data;
-    }, function(response) {
-      console.log("Server Error: ", response);
-      alert("Server Error: " + response.message);
-    });
+    $scope.serverType = 'DEVELOPMENT';
+
+    $scope.reloadSeasonings = function(serverName) {
+      var isProd = false;
+      if(serverName === 'PRODUCTION') {
+        isProd = true;
+      }
+      $scope.serverType = serverName;
+      seasoningService.getAllSeasonings(isProd).then(function(seasonings){
+        $scope.profiles = seasonings.data;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
+    };
+
+    $scope.reloadSeasonings('DEVELOPMENT');
     
     //reset the form
     $scope.reset = function() {
@@ -33,7 +44,9 @@ angular.module('SkillitAdminApp')
       seasoningService.addNewSeasoning({ seasoningProfile: {
         name: $scope.seasoningProfile.name,
         spices: spicesArr
-      } }).then(function(seasoning) {
+      } }, $scope.useProdServer, $scope.useDevServer).then(function(seasoning) {
+        //could be more thorough below
+        seasoning = seasoning[0];
         $scope.profiles.push(seasoning);
         alert("Successfully saved seasoning");
         $scope.reset();

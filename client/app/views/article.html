@@ -3,6 +3,9 @@
   <a class="btn btn-link active" ng-href="#/article">Create</a>
   <a class="btn btn-link" ng-href="#/editArticles">Edit</a><br/>
   <form novalidate name="articleForm" >
+    <p>Tips, Glossaries, Videos, etc. are currently being pulled from the {{serverType}} server</p>
+    <button class="btn btn-primary" ng-click="reloadEntries('PRODUCTION')">Reload From Production</button>
+    <button class="btn btn-success" ng-click="reloadEntries('DEVELOPMENT')">Reload From Development</button><br/><br/>
     Title: <input type="text" ng-model="article.title" size="50" required name="titleInput" /><br/><br/>
     <div ng-form="contentForm">
       <contentsection></contentsection>
@@ -12,7 +15,11 @@
       <content-section-item section="section"></content-section-item>
       <button class="btn btn-danger btn-sm" ng-click="removeContentSection($index)">Remove</button>
     </div>
-    <button class="btn btn-success btn-large" ng-click="save()" ng-disabled="articleForm.$invalid">Save</button>
+    <div>
+      Use PRODUCTION Server: <input type="checkbox" ng-model="useProdServer" /><br/>
+      Use DEVELOPMENT Server: <input type="checkbox" ng-model="useDevServer" /><br/>
+    </div>
+    <button class="btn btn-success btn-large" ng-click="save()" ng-disabled="articleForm.$invalid || noServerSelected()">Save</button>
     <button class="btn btn-warning btn-large" ng-click="reset()">Reset</button>
   </form>
   <button class="btn btn-info btn-large" ng-show="!showArticlePreview" ng-click="togglePreview()">Preview Article</button>

@@ -8,22 +8,48 @@
  * Service in the SkillitAdminApp.
  */
 angular.module('SkillitAdminApp')
-  .factory('trainingVideosService', function (Restangular) {
+  .factory('trainingVideosService', function (Restangular, RestangularProductionService) {
     
     var baseTrainingVideos = Restangular.all('trainingVideos');
+    var baseProductionTrainingVideos = RestangularProductionService.all('trainingVideos');
 
     return {
-      getAllTrainingVideos: function() {
-        return baseTrainingVideos.customGET('/');
+      getAllTrainingVideos: function(useProd) {
+        if(useProd) {
+          return baseProductionTrainingVideos.customGET('/');
+        } else {
+          return baseTrainingVideos.customGET('/');
+        }
       },
-      addNewTrainingVideo: function(newVideo) {
-        return baseTrainingVideos.post(newVideo);
+      addNewTrainingVideo: function(newVideo, useProd, useDev) {
+        var promises = [];
+        if(useProd) {
+          promises.push(baseProductionTrainingVideos.post(newVideo));
+        }
+        if(useDev) {
+          promises.push(baseTrainingVideos.post(newVideo));
+        }
+        return Promise.all(promises);
       },
-      updateTrainingVideo: function(video) {
-        return baseTrainingVideos.customPUT({trainingVideo: video}, '/' + video._id);
+      updateTrainingVideo: function(video, useProd, useDev) {
+        var promises = [];
+        if(useProd) {
+          promises.push(baseProductionTrainingVideos.customPUT({trainingVideo: video}, '/' + video._id));
+        }
+        if(useDev) {
+          promises.push(baseTrainingVideos.customPUT({trainingVideo: video}, '/' + video._id));
+        }
+        return Promise.all(promises);
       },
-      deleteTrainingVideo: function(video) {
-        return baseTrainingVideos.customDELETE('/' + video._id);
+      deleteTrainingVideo: function(video, useProd, useDev) {
+        var promises = [];
+        if(useProd) {
+          promises.push(baseProductionTrainingVideos.customDELETE('/' + video._id));
+        }
+        if(useDev) {
+          baseTrainingVideos.customDELETE('/' + video._id);
+        }
+        return Promise.all(promises);
       }
     };
   });

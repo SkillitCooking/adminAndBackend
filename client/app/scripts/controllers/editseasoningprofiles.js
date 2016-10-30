@@ -9,12 +9,24 @@
  */
 angular.module('SkillitAdminApp')
   .controller('EditSeasoningProfilesCtrl', ['$window', '$scope', 'seasoningService', function ($window, $scope, seasoningService) {
-    seasoningService.getAllSeasonings().then(function(res) {
-      $scope.seasonings = res.data;
-    }, function(response) {
-      console.log("Server Error: ", response);
-      alert("Server Error: " + response.message);
-    });
+
+    $scope.serverType = 'DEVELOPMENT';
+
+    $scope.reloadProfiles = function(serverName) {
+      var isProd = false;
+      if(serverName === 'PRODUCTION') {
+        isProd = true;
+      }
+      $scope.serverType = serverName;
+      seasoningService.getAllSeasonings(isProd).then(function(res) {
+        $scope.seasonings = res.data;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
+    };
+
+    $scope.reloadProfiles('DEVELOPMENT');
 
     $scope.changeSelectedSeasoning = function() {
       if($scope.selectedSeasoning) {
@@ -39,7 +51,9 @@ angular.module('SkillitAdminApp')
         name: $scope.seasoningProfile.name,
         spices: $scope.seasoningProfile.spices,
         _id: $scope.seasoningProfile._id
-      }).then(function(res) {
+      }, $scope.useProdServer, $scope.useDevServer).then(function(res) {
+        //below could be better/more thorough
+        res = res[0];
         var recipeStr = "";
         if(res.affectedRecipeIds && res.affectedRecipeIds.length > 0) {
           recipeStr += " Affected Recipe Ids: \n" + res.affectedRecipeIds.toString();
@@ -54,7 +68,9 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.deleteSeasoningProfile = function() {
-      seasoningService.deleteSeasoning({_id: $scope.seasoningProfile._id}).then(function(res) {
+      seasoningService.deleteSeasoning({_id: $scope.seasoningProfile._id}, $scope.useProdServer, $scope.useDevServer).then(function(res) {
+        //below could be better
+        res = res[0];
         var recipeStr = "";
         if(res.affectedRecipeIds && res.affectedRecipeIds.length > 0) {
           recipeStr += " Affected Recipe Ids: \n" + res.affectedRecipeIds.toString();
@@ -66,6 +82,10 @@ angular.module('SkillitAdminApp')
         alert("Server Error: " + response.message);
         $window.location.reload(true);
       });
+    };
+
+    $scope.noServerSelected = function() {
+      return !$scope.useDevServer && !$scope.useProdServer;
     };
 
   }]);

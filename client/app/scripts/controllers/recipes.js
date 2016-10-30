@@ -11,38 +11,49 @@ angular.module('SkillitAdminApp')
   .controller('RecipeCtrl', ['$window', '$scope', 'recipeService', 'seasoningService', 'ingredientService', 'dishService', 'itemCollectionService', '_', function ($window, $scope, recipeService, seasoningService, ingredientService, dishService, itemCollectionService, _) {
     $scope.integerval = /^\d*$/;
 
+    $scope.serverType = 'DEVELOPMENT';
+
+    $scope.reloadStuff = function(serverName) {
+      var isProd = false;
+      if(serverName === 'PRODUCTION') {
+        isProd = true;
+      }
+      $scope.serverType = serverName;
+      itemCollectionService.getItemCollectionsForType('recipe', isProd).then(function(collections) {
+        $scope.recipeCollections = collections.data;
+      }, function(response) {
+        console.log("Server Error: ", response.message);
+        alert("Server Error: " + response.message);
+      });
+
+      seasoningService.getAllSeasonings(isProd).then(function(seasonings) {
+        $scope.seasoningProfiles = seasonings.data;
+      }, function(response) {
+        console.log("Server Error: ", response.message);
+        alert("Server Error: " + response.message);
+      });
+
+      ingredientService.getAllIngredients(isProd).then(function(ingredients) {
+        $scope.ingredients = ingredients;
+      }, function(response) {
+        console.log("Server Error: ", response.message);
+        alert("Server Error: " + response.message);
+      });
+
+      dishService.getAllDishes(isProd).then(function(dishes) {
+        $scope.dishes = dishes;
+      }, function(response) {
+        console.log("Server Error: ", response.message);
+        alert("Server Error: " + response.message);
+      });
+    };
+
+    $scope.reloadStuff('DEVELOPMENT');  
+
     $scope.recipe = {
       canAddSeasoningProfile: true,
       mainVideo: {}
     };
-
-    itemCollectionService.getItemCollectionsForType('recipe').then(function(collections) {
-      $scope.recipeCollections = collections.data;
-    }, function(response) {
-      console.log("Server Error: ", response.message);
-      alert("Server Error: " + response.message);
-    });
-
-    seasoningService.getAllSeasonings().then(function(seasonings) {
-      $scope.seasoningProfiles = seasonings.data;
-    }, function(response) {
-      console.log("Server Error: ", response.message);
-      alert("Server Error: " + response.message);
-    });
-
-    ingredientService.getAllIngredients().then(function(ingredients) {
-      $scope.ingredients = ingredients;
-    }, function(response) {
-      console.log("Server Error: ", response.message);
-      alert("Server Error: " + response.message);
-    });
-
-    dishService.getAllDishes().then(function(dishes) {
-      $scope.dishes = dishes;
-    }, function(response) {
-      console.log("Server Error: ", response.message);
-      alert("Server Error: " + response.message);
-    });
 
     $scope.stepTypes = ["Bake", "Boil", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "Heat", "Place", "PreheatOven", "Sautee", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir"];
     $scope.recipeTypes = ["AlaCarte", "BYO", "Full"];
@@ -252,6 +263,9 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.recipeSanityCheck = function() {
+      if(!$scope.useProdServer && !$scope.useDevServer) {
+        return false;
+      }
       if (!$scope.recipe.stepList || $scope.recipe.stepList.length === 0) {
         return false;
       }
@@ -327,7 +341,9 @@ angular.module('SkillitAdminApp')
           datesUsedAsRecipeOfTheDay: [],
           isRecipeOfTheDay: false
         }
-      }).then(function(recipe){
+      }, $scope.useProdServer, $scope.useDevServer).then(function(recipe){
+        //could be more thorough than below
+        recipe = recipe[0];
         var alertMsg = "Success! Recipe " + recipe.name + " was saved!";
         alert(alertMsg);
         $scope.reset();

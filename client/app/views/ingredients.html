@@ -3,6 +3,9 @@
   <a class="btn btn-link active" ng-href="#/ingredients">Create</a>
   <a class="btn btn-link" ng-href="#/editIngredients">Edit</a><br/>
   <form novalidate name="ingredientForm">
+    <p>Ingredients are currently being pulled from the {{serverType}} server</p>
+    <button class="btn btn-primary" ng-click="reloadIngredients('PRODUCTION')">Reload From Production</button>
+    <button class="btn btn-success" ng-click="reloadIngredients('DEVELOPMENT')">Reload From Development</button><br/><br/>
     Name: <input type="text" ng-model="ingredient.name.standardForm" size="50" required name="nameInput"/><br /><br />
     Input Category: <select name="inputCategorySelect" ng-model="ingredient.inputCategory" ng-options=
     "category for category in inputCategories" ng-change="changeInputCategory()" ng-init="changeInputCategory()" required></select><br/><br/>
@@ -70,6 +73,10 @@
       </ul>
     </div>
     <button class="btn btn-warning btn-sm" ng-click="addIngredientTip()">Add Ingredient Tip</button><br/><br/>
+    <div>
+      Use PRODUCTION Server: <input type="checkbox" ng-model="useProdServer" /><br/>
+      Use DEVELOPMENT Server: <input type="checkbox" ng-model="useDevServer" /><br/>
+    </div>
     <button class="btn btn-default" ng-click="reset()">Reset</button>
     <button class="btn btn-info" ng-click="preview()">Preview Ingredient</button>
     <button class="btn btn-success" ng-click="save()" ng-disabled="ingredientForm.$invalid || !ingredientSanityCheck()">Save</button>

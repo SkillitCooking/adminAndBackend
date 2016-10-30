@@ -3,6 +3,9 @@
   <a class="btn btn-link" ng-href="#/article">Create</a>
   <a class="btn btn-link active" ng-href="#/editArticles">Edit</a><br/>
   <form novalidate name="editArticleForm">
+    <p>Tips, Glossaries, Videos, etc. are currently being pulled from the {{serverType}} server</p>
+    <button class="btn btn-primary" ng-click="reloadEntries('PRODUCTION')">Reload From Production</button>
+    <button class="btn btn-success" ng-click="reloadEntries('DEVELOPMENT')">Reload From Development</button><br/><br/>
     Select Article: <select name="articleSelect" ng-model="selectedArticle" ng-change="changeSelectedArticle()" ng-options="article as article.title for article in articles"></select><br/>
     Title: <input type="text" ng-model="article.title" size="50" required name="titleInput" /><br/><br/>
     <div ng-repeat="contentSection in article.contentSections">
@@ -15,8 +18,12 @@
       <button class="btn btn-danger btn-sm" ng-click="removeContentSection($index)">Remove Section</button>
       <button class="btn btn-warning btn-sm" ng-click="toggleContentSection($index)">{{getContentSectionToggleText($index)}}</button>
     </div><br/><br/>
+    <div>
+      Use PRODUCTION Server: <input type="checkbox" ng-model="useProdServer" /><br/>
+      Use DEVELOPMENT Server: <input type="checkbox" ng-model="useDevServer" /><br/>
+    </div>
     <button class="btn btn-warning btn-large" ng-click="cancelChanges()">Cancel Changes</button>
-    <button class="btn btn-primary btn-large" ng-click="saveChanges()">Save Changes</button>
-    <button class="btn btn-danger btn-large" ng-click="deleteArticle()">Delete Article</button>
+    <button class="btn btn-primary btn-large" ng-click="saveChanges()" ng-disabled="noServerSelected()">Save Changes</button>
+    <button class="btn btn-danger btn-large" ng-click="deleteArticle()" ng-disabled="noServerSelected()">Delete Article</button>
   </form>
 </div>

@@ -9,16 +9,26 @@
  */
 angular.module('SkillitAdminApp')
   .controller('HowtoshopentryCtrl', ['$window', '$scope', 'howToShopService', 'itemCollectionService', function ($window, $scope, howToShopService, itemCollectionService) {
-    
-    itemCollectionService.getItemCollectionsForType('howToShop').then(function(collections) {
-      $scope.howToShopCollections = collections.data;
-    }, function(response) {
-      console.log("Server Error: ", response.message);
-      alert("Server Error: " + response.message);
-    });
 
-    $scope.howToShopEntry = {
+    $scope.serverType = 'DEVELOPMENT';
+
+    $scope.reloadCollections = function(serverName) {
+      var isProd = false;
+      if(serverName === 'PRODUCTION') {
+        isProd = true;
+      }
+      $scope.serverType = serverName;
+      itemCollectionService.getItemCollectionsForType('howToShop', isProd).then(function(collections) {
+        $scope.howToShopCollections = collections.data;
+      }, function(response) {
+        console.log("Server Error: ", response.message);
+        alert("Server Error: " + response.message);
+      });
     };
+
+    $scope.reloadCollections('DEVELOPMENT');
+
+    $scope.howToShopEntry = {};
     $scope.curCollectionId = "";
 
     $scope.removeCollection = function(index) {
@@ -61,7 +71,9 @@ angular.module('SkillitAdminApp')
           pictures: $scope.howToShopEntry.pictures,
           collectionIds: $scope.howToShopEntry.collectionIds
         }
-      }).then(function(entry) {
+      }, $scope.useProdServer, $scope.useDevServer).then(function(entry) {
+        //below could be more thorough
+        entry = entry[0];
         var alertMsg = "Success! Entry " + entry.data.title + " was saved!";
         alert(alertMsg);
         $scope.reset();
@@ -73,6 +85,9 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.howToShopEntrySanityCheck = function() {
+      if(!$scope.useProdServer && !$scope.useDevServer) {
+        return false;
+      }
       //for each of pictures, make sure at least url
       if($scope.howToShopEntry.collectionIds && $scope.howToShopEntry.collectionIds.length > 0) {
         if($scope.howToShopEntry.pictures) {

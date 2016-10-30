@@ -11,14 +11,25 @@ angular.module('SkillitAdminApp')
   .controller('IngredientCtrl', ['$window', '$scope', 'ingredientService', function ($window, $scope, ingredientService) {
     $scope.integerval = /^\d*$/;
 
-    $scope.ingredient = {name: {}};
+    $scope.serverType = 'DEVELOPMENT';
 
-    ingredientService.getAllIngredients().then(function(ingredients){
-      $scope.ingredients = ingredients;
-    }, function(response) {
-      console.log("Server Error: ", response.message);
-      alert("Server Error: " + response.message);
-    });
+    $scope.reloadIngredients = function(serverName) {
+      var isProd = false;
+      if(serverName === 'PRODUCTION') {
+        isProd = true;
+      }
+      $scope.serverType = serverName;
+      ingredientService.getAllIngredients(isProd).then(function(ingredients){
+        $scope.ingredients = ingredients;
+      }, function(response) {
+        console.log("Server Error: ", response.message);
+        alert("Server Error: " + response.message);
+      });
+    };
+
+    $scope.reloadIngredients('DEVELOPMENT');
+
+    $scope.ingredient = {name: {}};
 
     $scope.inForms = [];
     $scope.inputCategories = ["Protein", "Vegetables", "Starches", "Other"];
@@ -67,8 +78,7 @@ angular.module('SkillitAdminApp')
       $scope.inForms.splice(index, 1);
     };
 
-    $scope.ingredientTips = [
-    ];
+    $scope.ingredientTips = [];
 
     $scope.stepTypes = ["Bake", "Boil", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "Heat", "Place", "PreheatOven", "Sautee", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir"];
     $scope.subTypes = [];
@@ -105,6 +115,9 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.ingredientSanityCheck = function() {
+      if(!$scope.useProdServer && !$scope.useDevServer) {
+        return false;
+      }
       if($scope.ingredient.ingredientForms){
         return true;
       }
@@ -136,7 +149,9 @@ angular.module('SkillitAdminApp')
           useFormNameForDisplay: $scope.ingredient.useFormNameForDisplay,
           nameFormFlag: 'standardForm'
         }
-      }).then(function(ingredient) {
+      }, $scope.useProdServer, $scope.useDevServer).then(function(ingredient) {
+        //below could be more sophisticated
+        ingredient = ingredient[0];
         $scope.ingredients.push(ingredient);
         alert("Successfully saved ingredient");
         $scope.reset();

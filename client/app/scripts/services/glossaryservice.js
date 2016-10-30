@@ -8,22 +8,48 @@
  * Service in the SkillitAdminApp.
  */
 angular.module('SkillitAdminApp')
-  .factory('glossaryService', function (Restangular) {
+  .factory('glossaryService', function (Restangular, RestangularProductionService) {
     
     var baseGlossaryEntries = Restangular.all('glossaryEntries');
+    var baseProductionGlossaryEntries = RestangularProductionService.all('glossaryEntries');
 
     return {
-      getAllGlossaryEntries: function () {
-        return baseGlossaryEntries.customGET('/');
+      getAllGlossaryEntries: function (useProd) {
+        if(useProd) {
+          return baseProductionGlossaryEntries.customGET('/');
+        } else {
+          return baseGlossaryEntries.customGET('/');
+        }
       },
-      addNewGlossaryEntry: function (newEntry) {
-        return baseGlossaryEntries.post(newEntry);
+      addNewGlossaryEntry: function (newEntry, useProd, useDev) {
+        var promises = [];
+        if(useProd) {
+          promises.push(baseProductionGlossaryEntries.post(newEntry));
+        }
+        if(useDev) {
+          promises.push(baseGlossaryEntries.post(newEntry));
+        }
+        return Promise.all(promises);
       },
-      updateGlossaryEntry: function(entry) {
-        return baseGlossaryEntries.customPUT({entry: entry}, '/' + entry._id);
+      updateGlossaryEntry: function(entry, useProd, useDev) {
+        var promises = [];
+        if(useProd) {
+          promises.push(baseProductionGlossaryEntries.customPUT({entry: entry}, '/' + entry._id));
+        }
+        if(useDev) {
+          promises.push(baseGlossaryEntries.customPUT({entry: entry}, '/' + entry._id));
+        }
+        return Promise.all(promises);
       },
-      deleteGlossaryEntry: function(entry) {
-        return baseGlossaryEntries.customDELETE('/' + entry._id);
+      deleteGlossaryEntry: function(entry, useProd, useDev) {
+        var promises = [];
+        if(useProd) {
+          promises.push(baseProductionGlossaryEntries.customDELETE('/' + entry._id));
+        }
+        if(useDev) {
+          promises.push(baseGlossaryEntries.customDELETE('/' + entry._id));
+        }
+        return Promise.all(promises);
       }
     };
   });

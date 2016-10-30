@@ -11,45 +11,57 @@ angular.module('SkillitAdminApp')
   .controller('EditLessonsCtrl', ['$window', '$scope', 'lessonService', 'articleService', 'dailyTipsService', 'glossaryService', 'trainingVideosService', 'howToShopService', function ($window, $scope, lessonService, articleService, dailyTipsService, glossaryService, trainingVideosService, howToShopService) {
     $scope.itemTypes = ['tip', 'glossary', 'howToShop', 'trainingVideo'];
 
-    lessonService.getAllLessons().then(function(res) {
-      $scope.lessons = res.data;
-    }, function(response) {
-      alert("Server Error - check console logs for details");
-      console.log("error response: ", response);
-    });
+    $scope.serverType = 'DEVELOPMENT';
 
-    articleService.getArticlesTitleId().then(function(res) {
-      $scope.articles = res.data;
-    }, function(response) {
-      alert("Server Error - see console logs for details");
-      console.log("error response: ", response);
-    });
-    //need to fetch other items... will fetch whole things
-    dailyTipsService.getAllDailyTips().then(function(res) {
-      $scope.tips = res.data;
-    }, function(response) {
-      alert("Server Error - check console logs for details");
-      console.log("error response: ", response);
-    });
-    glossaryService.getAllGlossaryEntries().then(function(res) {
-      $scope.glossaryEntries = res.data;
-    }, function(response) {
-      alert("Server Error - check console logs for details");
-      console.log("error response: ", response);
-    });
-    trainingVideosService.getAllTrainingVideos().then(function(res) {
-      $scope.trainingVideos = res.data;
-    }, function(response) {
-      alert("Server Error - check console logs for details");
-      console.log("error response: ", response);
-    });
-    howToShopService.getAllHowToShopEntries().then(function(res) {
-      $scope.howToShopEntries = res.data;
-    }, function(response) {
-      alert("Server Error - check console logs for details");
-      console.log("error response: ", response);
-    });    
+    $scope.reloadLessons = function(serverName) {
+      var isProd = false;
+      if(serverName === 'PRODUCTION') {
+        isProd = true;
+      }
+      $scope.serverType = serverName;
+      lessonService.getAllLessons(isProd).then(function(res) {
+        $scope.lessons = res.data;
+      }, function(response) {
+        alert("Server Error - check console logs for details");
+        console.log("error response: ", response);
+      });
 
+      articleService.getArticlesTitleId(isProd).then(function(res) {
+        $scope.articles = res.data;
+      }, function(response) {
+        alert("Server Error - see console logs for details");
+        console.log("error response: ", response);
+      });
+      //need to fetch other items... will fetch whole things
+      dailyTipsService.getAllDailyTips(isProd).then(function(res) {
+        $scope.tips = res.data;
+      }, function(response) {
+        alert("Server Error - check console logs for details");
+        console.log("error response: ", response);
+      });
+      glossaryService.getAllGlossaryEntries(isProd).then(function(res) {
+        $scope.glossaryEntries = res.data;
+      }, function(response) {
+        alert("Server Error - check console logs for details");
+        console.log("error response: ", response);
+      });
+      trainingVideosService.getAllTrainingVideos(isProd).then(function(res) {
+        $scope.trainingVideos = res.data;
+      }, function(response) {
+        alert("Server Error - check console logs for details");
+        console.log("error response: ", response);
+      });
+      howToShopService.getAllHowToShopEntries(isProd).then(function(res) {
+        $scope.howToShopEntries = res.data;
+      }, function(response) {
+        alert("Server Error - check console logs for details");
+        console.log("error response: ", response);
+      });
+    };
+
+    $scope.reloadLessons('DEVELOPMENT');
+
+    
     $scope.changeSelectedLesson = function() {
       if($scope.selectedLesson) {
         $scope.lesson = angular.copy($scope.selectedLesson);
@@ -114,6 +126,10 @@ angular.module('SkillitAdminApp')
       $scope.lesson.itemIds.splice(index, 1);
     };
 
+    $scope.noServerSelected = function() {
+      return !$scope.useDev && !$scope.useProd;
+    };
+
     $scope.cancelChanges = function() {
       $scope.changeSelectedLesson();
     };
@@ -127,7 +143,7 @@ angular.module('SkillitAdminApp')
         articleId: $scope.lesson.articleId,
         itemIds: $scope.lesson.itemIds,
         _id: $scope.lesson._id
-      }).then(function(res) {
+      }, $scope.useProd, $scope.useDev).then(function(res) {
         alert("Lesson successfully updated! Refresh page.");
         $window.location.reload(true);
       }, function(response) {
@@ -138,8 +154,10 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.deleteLesson = function() {
-      lessonService.deleteLesson({_id: $scope.lesson._id}).then(function(res) {
+      lessonService.deleteLesson({_id: $scope.lesson._id}, $scope.useProd, $scope.useDev).then(function(res) {
         var chapterStr = "";
+        //could probably be a little more thorough on below and w/ alert...
+        res = res[0];
         if(res.affectedChapterIds && res.affectedChapterIds.length > 0) {
           chapterStr += " Affected ChapterIds: \n" + res.affectedChapterIds.toString();
         }

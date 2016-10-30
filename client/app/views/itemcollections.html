@@ -6,7 +6,11 @@
     Name: <input type="text" ng-model="itemCollection.name" size="50" required name="nameInput" /><br/><br/>
     Description: <textarea ng-model="itemCollection.description" rows="4" cols="50" required name="descriptionInput"></textarea><br/><br/>
     ItemType: <select name="itemTypeSelect" ng-model="itemCollection.itemType" ng-options="itemType as itemType for itemType in itemTypes" required></select><br/><br/>
-    <button class="btn btn-large btn-success" ng-click="save()" ng-disabled="itemCollectionsForm.$invalid">Save Collection</button>
+    <div>
+      Use PRODUCTION Server: <input type="checkbox" ng-model="useProdServer" /><br/>
+      Use DEVELOPMENT Server: <input type="checkbox" ng-model="useDevServer" /><br/>
+    </div>
+    <button class="btn btn-large btn-success" ng-click="save()" ng-disabled="itemCollectionsForm.$invalid || noServerSelected()">Save Collection</button>
   </form>
   <pre>
     {{itemCollection | json}}

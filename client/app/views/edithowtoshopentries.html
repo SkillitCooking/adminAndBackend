@@ -3,6 +3,9 @@
   <a class="btn btn-link" ng-href="#/howToShopEntry">Create</a>
   <a class="btn btn-link active" ng-href="#/editHowToShopEntries">Edit</a><br/>
   <form novalidate name="editHowToShopEntryForm">
+    <p>HowToShops and Collections are currently being pulled from the {{serverType}} server</p>
+    <button class="btn btn-primary" ng-click="reloadStuff('PRODUCTION')">Reload From Production</button>
+    <button class="btn btn-success" ng-click="reloadStuff('DEVELOPMENT')">Reload From Development</button><br/><br/>
     Select HowToShop Entry: <select name="howToShopEntrySelect" ng-model="selectedEntry" ng-change="changeSelectedEntry()" ng-options="entry as entry.title for entry in howToShopEntries"></select><br/><br/>
     Title: <input type="text" ng-model="howToShopEntry.title" size="50" required name="titleInput"/><br /><br />
     Text: <textarea ng-model="howToShopEntry.text" rows="4" cols="50" required name="textInput"></textarea><br/><br/>
@@ -22,8 +25,12 @@
       </div>
     </ul>
     <button ng-click="addCollection()">Add Collection</button><br/><br/>
+    <div>
+      Use PRODUCTION Server: <input type="checkbox" ng-model="useProdServer" /><br/>
+      Use DEVELOPMENT Server: <input type="checkbox" ng-model="useDevServer" /><br/>
+    </div>
     <button class="btn btn-large btn-warning" ng-click="cancelChanges()">Cancel Changes</button>
-    <button class="btn btn-large btn-primary" ng-click="saveChanges()">Save Changes</button>
-    <button class="btn btn-large btn-danger" ng-click="deleteEntry()">Delete Entry</button>
+    <button class="btn btn-large btn-primary" ng-click="saveChanges()" ng-disabled="noServerSelected()">Save Changes</button>
+    <button class="btn btn-large btn-danger" ng-click="deleteEntry()" ng-disabled="noServerSelected()">Delete Entry</button>
   </form>
 </div>

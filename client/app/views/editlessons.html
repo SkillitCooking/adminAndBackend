@@ -3,6 +3,9 @@
   <a class="btn btn-link" ng-href="#/lesson">Create</a>
   <a class="btn btn-link active" ng-href="#/editLessons">Edit</a><br/>
   <form novalidate name="editLessonsForm" ng-controller="EditLessonsCtrl">
+    <p>Tips, Glossaries, Videos, etc. are currently being pulled from the {{serverType}} server</p>
+    <button class="btn btn-primary" ng-click="reloadLessons('PRODUCTION')">Reload From Production</button>
+    <button class="btn btn-success" ng-click="reloadLessons('DEVELOPMENT')">Reload From Development</button><br/><br/>
     Select Lesson: <select name="lessonSelect" ng-model="selectedLesson" ng-change="changeSelectedLesson()" ng-options="lesson as lesson.name for lesson in lessons"></select><br/>
     Name: <input type="text" ng-model="lesson.name" size="50" required name="nameInput" /><br/><br/>
     Time Estimate (minutes): <input type="text" ng-model="lesson.timeEstimate" size="50" required name="timeEstimateInput" /> <br/><br/>
@@ -23,8 +26,12 @@
       <p>{{id.itemType}}: {{id.id}}</p>
       <button class="btn btn-xs btn-danger" ng-click="removeItemId($index)">Remove</button>
     </div>
+    <div>
+      Use PRODUCTION Server: <input type="checkbox" ng-model="useProd"/><br/>
+      Use DEVELOPMENT Server: <input type="checkbox" ng-model="useDev"/><br/>
+    </div>
     <button class="btn btn-warning btn-lg" ng-click="cancelChanges()">Cancel Changes</button>
-    <button class="btn btn-primary btn-lg" ng-click="saveChanges()">Save Changes</button>
-    <button class="btn btn-danger btn-lg" ng-click="deleteLesson()">Delete Lesson</button>
+    <button class="btn btn-primary btn-lg" ng-click="saveChanges()" ng-disabled="noServerSelected()">Save Changes</button>
+    <button class="btn btn-danger btn-lg" ng-click="deleteLesson()" ng-disabled="noServerSelected()">Delete Lesson</button>
   </form>
 </div>

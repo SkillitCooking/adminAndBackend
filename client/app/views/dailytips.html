@@ -3,6 +3,9 @@
   <a class="btn btn-link active" ng-href="#/dailyTips">Create</a>
   <a class="btn btn-link" ng-href="#/editDailyTips">Edit</a><br/>
   <form novalidate name="dailyTipsForm">
+    <p>Collections are currently being pulled from the {{serverType}} server</p>
+    <button class="btn btn-primary" ng-click="reloadStuff('PRODUCTION')">Reload From Production</button>
+    <button class="btn btn-success" ng-click="reloadStuff('DEVELOPMENT')">Reload From Development</button><br/><br/>
     Title: <input type="text" ng-model="dailyTip.title" size="50" required name="titleInput"/><br /><br />
     Text: <textarea ng-model="dailyTip.text" rows="4" cols="50" required name="textInput"></textarea><br/><br/>
     Picture: <input type="url" ng-model="dailyTip.picture.url" size="60" name="pictureURLInput" placeholder="URL" />
@@ -18,6 +21,10 @@
       </div>
     </ul>
     <button ng-click="addCollection()">Add Collection</button><br/><br/>
+    <div>
+      Use PRODUCTION Server: <input type="checkbox" ng-model="useProdServer" /><br/>
+      Use DEVELOPMENT Server: <input type="checkbox" ng-model="useDevServer" /><br/>
+    </div>
     <button class="btn btn-large btn-default" ng-click="reset()">Reset Form</button>
     <button class="btn btn-large btn-success" ng-click="save()" ng-disabled="dailyTipsForm.$invalid || !dailyTipSanityCheck()">Save Tip</button>
   </form>

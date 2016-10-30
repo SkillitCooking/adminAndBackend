@@ -9,20 +9,31 @@
  */
 angular.module('SkillitAdminApp')
   .controller('EditTrainingVideosCtrl', ['$window', '$scope', 'trainingVideosService', 'itemCollectionService', function ($window, $scope, trainingVideosService, itemCollectionService) {
-    
-    trainingVideosService.getAllTrainingVideos().then(function(res) {
-      $scope.videos = res.data;
-    }, function(response) {
-      console.log("Server Error: ", response);
-      alert("Server Error: " + response.message);
-    });
 
-    itemCollectionService.getItemCollectionsForType('trainingVideo').then(function(collections) {
-      $scope.trainingVideoCollections = collections.data;
-    }, function(response) {
-      console.log("Server Error: ", response.message);
-      alert("Server Error: " + response.message);
-    });
+    $scope.serverType = 'DEVELOPMENT';
+
+    $scope.reloadStuff = function(serverName) {
+      var isProd = false;
+      if(serverName === 'PRODUCTION') {
+        isProd = true;
+      }
+      $scope.serverType = serverName;
+        trainingVideosService.getAllTrainingVideos(isProd).then(function(res) {
+        $scope.videos = res.data;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
+
+      itemCollectionService.getItemCollectionsForType('trainingVideo', isProd).then(function(collections) {
+        $scope.trainingVideoCollections = collections.data;
+      }, function(response) {
+        console.log("Server Error: ", response.message);
+        alert("Server Error: " + response.message);
+      });
+    };
+
+    $scope.reloadStuff('DEVELOPMENT');
 
     $scope.changeSelectedVideo = function() {
       if($scope.selectedVideo) {
@@ -49,7 +60,9 @@ angular.module('SkillitAdminApp')
         picture: $scope.trainingVideo.picture,
         collectionIds: $scope.trainingVideo.collectionIds,
         _id: $scope.trainingVideo._id
-      }).then(function(res) {
+      }, $scope.useProdServer, $scope.useDevServer).then(function(res) {
+        //below could be better
+        res = res[0];
         var articleStr = "";
         if(res.affectedArticleIds && res.affectedArticleIds.length > 0) {
           articleStr = " Affected Articles that referenced Tip: \n" + res.affectedArticleIds.toString();
@@ -64,8 +77,10 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.deleteVideo = function() {
-      trainingVideosService.deleteTrainingVideo({_id: $scope.trainingVideo._id}).then(function(res) {
+      trainingVideosService.deleteTrainingVideo({_id: $scope.trainingVideo._id}, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         var extraText = "";
+        //below could be better/more thorough
+        res = res[0];
         if(res.affectedArticleIds && res.affectedArticleIds.length > 0) {
           extraText += " Affected ArticleIds: \n" + res.affectedArticleIds.toString() + "\n";
         }
@@ -79,5 +94,9 @@ angular.module('SkillitAdminApp')
         alert("Server Error: " + response.message);
         $window.location.reload(true);
       });
+    };
+
+    $scope.noServerSelected = function() {
+      return !$scope.useProdServer && !$scope.useDevServer;
     };
   }]);

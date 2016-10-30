@@ -9,13 +9,25 @@
  */
 angular.module('SkillitAdminApp')
   .controller('ChapterCtrl', ['$window', '$scope', 'lessonService', 'chapterService', function ($window, $scope, lessonService, chapterService) {
+    $scope.serverType = 'DEVELOPMENT';
+
+    $scope.reloadLessons = function(serverName) {
+      var isProd = false;
+      if(serverName === 'PRODUCTION') {
+        isProd = true;
+      }
+      $scope.serverType = serverName;
+      lessonService.getLessonsForChapterConstruction(isProd).then(function(data) {
+        $scope.lessons = data.lessons;
+      }, function(response) {
+        alert("Server Error - check console logs for details");
+        console.log("error response: ", response);
+      });
+    };
+
+    $scope.reloadLessons('DEVELOPMENT');
+
     //get lessons - need name, id, timeEstimate
-    lessonService.getLessonsForChapterConstruction().then(function(data) {
-      $scope.lessons = data.lessons;
-    }, function(response) {
-      alert("Server Error - check console logs for details");
-      console.log("error response: ", response);
-    });
 
     $scope.chapter = {};
 
@@ -43,8 +55,8 @@ angular.module('SkillitAdminApp')
         description: $scope.chapter.description,
         lessonIds: $scope.chapter.lessonIds,
         timeEstimate: totalTimeEstimate
-      }).then(function(data) {
-        var chapter = data.data;
+      }, $scope.useProdServer, $scope.useDevServer).then(function(data) {
+        var chapter = data[0].data;
         var alertMsg = "Success! Chapter " + chapter.name + " was saved!";
         alert(alertMsg);
         $scope.reset();
@@ -57,6 +69,10 @@ angular.module('SkillitAdminApp')
 
     $scope.reset = function() {
       $window.location.reload(true);
+    };
+
+    $scope.noServerSelected = function() {
+      return !$scope.useDevServer && !$scope.useProdServer;
     };
 
     //saving will involve timeEstimate calculation...

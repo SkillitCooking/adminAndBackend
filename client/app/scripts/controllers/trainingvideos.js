@@ -9,13 +9,24 @@
  */
 angular.module('SkillitAdminApp')
   .controller('TrainingvideosCtrl', ['$window', '$scope', 'trainingVideosService', 'itemCollectionService', function ($window, $scope, trainingVideosService, itemCollectionService) {
-    
-    itemCollectionService.getItemCollectionsForType('trainingVideo').then(function(collections) {
-      $scope.trainingVideoCollections = collections.data;
-    }, function(response) {
-      console.log("Server Error: ", response.message);
-      alert("Server Error: " + response.message);
-    });
+
+    $scope.serverType = 'DEVELOPMENT';
+
+    $scope.reloadCollections = function(serverName) {
+      var isProd = false;
+      if(serverName === 'PRODUCTION') {
+        isProd = true;
+      }
+      $scope.serverType = serverName;
+      itemCollectionService.getItemCollectionsForType('trainingVideo', isProd).then(function(collections) {
+        $scope.trainingVideoCollections = collections.data;
+      }, function(response) {
+        console.log("Server Error: ", response.message);
+        alert("Server Error: " + response.message);
+      });
+    };
+
+    $scope.reloadCollections('DEVELOPMENT');
 
     $scope.trainingVideo = {
       video: {},
@@ -48,7 +59,9 @@ angular.module('SkillitAdminApp')
           picture: $scope.trainingVideo.picture,
           collectionIds: $scope.trainingVideo.collectionIds
         }
-      }).then(function(video) {
+      }, $scope.useProdServer, $scope.useDevServer).then(function(video) {
+        //below could be more thorough
+        video = video[0];
         var alertMsg = "Success! Video " + video.data.title + " was saved!";
         alert(alertMsg);
         $scope.reset();
@@ -60,6 +73,9 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.trainingVideoSanityCheck = function() {
+      if(!$scope.useProdServer && !$scope.useDevServer) {
+        return false;
+      }
       //if video caption, then must be url
       if(($scope.trainingVideo.video.videoId && $scope.trainingVideo.video.videoId !== "") && 
         ($scope.trainingVideo.picture.url && $scope.trainingVideo.picture.url !== "")) {

@@ -17,6 +17,10 @@ angular.module('SkillitAdminApp')
       $window.location.reload(true);
     };
 
+    $scope.noServerSelected = function() {
+      return !$scope.useProdServer && !$scope.useDevServer;
+    };
+
     $scope.save = function() {
       itemCollectionService.addNewItemCollection({
         itemCollection: {
@@ -24,8 +28,9 @@ angular.module('SkillitAdminApp')
           description: $scope.itemCollection.description,
           itemType: $scope.itemCollection.itemType
         }
-      }).then(function(collection) {
-        console.log("collection: ", collection);
+      }, $scope.useProdServer, $scope.useDevServer).then(function(collection) {
+        //below could be better/more thorough
+        collection = collection[0];
         var alertMsg = "Success! Item Collection " + collection.data.name + " was saved!";
         alert(alertMsg);
         $scope.reset();

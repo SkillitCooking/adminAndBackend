@@ -3,11 +3,18 @@
   <a class="btn btn-link active" ng-href="#/seasoningprofiles">Create</a>
   <a class="btn btn-link" ng-href="#/editSeasoningProfiles">Edit</a><br/>
   <form novalidate name="seasoningForm">
+    <p>Seasonings are currently being pulled from the {{serverType}} server</p>
+    <button class="btn btn-primary" ng-click="reloadSeasonings('PRODUCTION')">Reload From Production</button>
+    <button class="btn btn-success" ng-click="reloadSeasonings('DEVELOPMENT')">Reload From Development</button><br/><br/>
     Name: <input type="text" ng-model="seasoningProfile.name" size="50" required name="nameInput"/><br /><br />
     Spices: <input type="text" ng-model="seasoningProfile.spices" size="70" required name="spiceInput"><br />
-    <p>Comma separated values (e.g. spice1,spice2,spice3) </p><br />
+    <p>Comma separated values (e.g. spice1,spice2,spice3) </p><br /><br/>
+    <div>
+      Use PRODUCTION Server: <input type="checkbox" ng-model="useProdServer" /><br/>
+      Use DEVELOPMENT Server: <input type="checkbox" ng-model="useDevServer" /><br/>
+    </div>
     <input type="button" class="btn btn-md" ng-click="reset()" value="Reset" />
-    <input type="button" class="btn btn-md btn-success" ng-click="save()" value="Save" ng-disabled="seasoningForm.$invalid"/>
+    <input type="button" class="btn btn-md btn-success" ng-click="save()" value="Save" ng-disabled="seasoningForm.$invalid || noServerSelected()"/>
   </form>
   <br />
   <h2>Current Seasoning Profiles</h2>

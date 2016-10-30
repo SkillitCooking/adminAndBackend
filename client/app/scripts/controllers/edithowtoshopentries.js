@@ -9,20 +9,31 @@
  */
 angular.module('SkillitAdminApp')
   .controller('EditHowToShopEntriesCtrl', ['$window', '$scope', 'howToShopService', 'itemCollectionService', function ($window, $scope, howToShopService, itemCollectionService) {
-    
-    howToShopService.getAllHowToShopEntries().then(function(res) {
-      $scope.howToShopEntries = res.data;
-    }, function(response) {
-      console.log("Server Error: ", response);
-      alert("Server Error: " + response.message);
-    });
 
-    itemCollectionService.getItemCollectionsForType('howToShop').then(function(collections) {
-      $scope.howToShopCollections = collections.data;
-    }, function(response) {
-      console.log("Server Error: ", response);
-      alert("Server Error: " + response.message);
-    });
+    $scope.serverType = 'DEVELOPMENT';
+
+    $scope.reloadStuff = function(serverName) {
+      var isProd = false;
+      if(serverName === 'PRODUCTION') {
+        isProd = true;
+      }
+      $scope.serverType = serverName;
+      howToShopService.getAllHowToShopEntries(isProd).then(function(res) {
+        $scope.howToShopEntries = res.data;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
+
+      itemCollectionService.getItemCollectionsForType('howToShop', isProd).then(function(collections) {
+        $scope.howToShopCollections = collections.data;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
+    };
+
+    $scope.reloadStuff('DEVELOPMENT');
 
     $scope.changeSelectedEntry = function() {
       if($scope.selectedEntry) {
@@ -57,8 +68,10 @@ angular.module('SkillitAdminApp')
         pictures: $scope.howToShopEntry.pictures,
         collectionIds: $scope.howToShopEntry.collectionIds,
         _id: $scope.howToShopEntry._id
-      }).then(function(res) {
+      }, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         var articleStr = "";
+        //could be more thorough below
+        res = res[0];
         if(res.affectedArticleIds && res.affectedArticleIds.length > 0) {
           articleStr = " Affected Articles that referenced Tip: \n" + res.affectedArticleIds.toString();
         }
@@ -72,8 +85,10 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.deleteEntry = function() {
-      howToShopService.deleteHowToShopEntry({_id: $scope.howToShopEntry._id}).then(function(res) {
+      howToShopService.deleteHowToShopEntry({_id: $scope.howToShopEntry._id}, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         var extraText = "";
+        //below could be more thorough
+        res = res[0];
         if(res.affectedArticleIds && res.affectedArticleIds.length > 0) {
           extraText += " Affected ArticleIds: \n" + res.affectedArticleIds.toString() + "\n";
         }
@@ -87,5 +102,9 @@ angular.module('SkillitAdminApp')
         alert("Server Error: " + response.message);
         $window.location.reload(true);
       });
+    };
+
+    $scope.noServerSelected = function() {
+      return !$scope.useProdServer && !$scope.useDevServer;
     };
   }]);

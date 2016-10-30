@@ -85,7 +85,7 @@ router.get('/:id', function(req, res, next) {
 router.put('/:id', function(req, res, next) {
   try {
     logger.info('START PUT api/seasoningProfiles/' + req.params.id);
-    req.seasoningProfile.dateModified = Date.parse(new Date().toUTCString());
+    req.body.seasoningProfile.dateModified = Date.parse(new Date().toUTCString());
     SeasoningProfile.model.findByIdAndUpdate(req.params.id, req.body.seasoningProfile, {new: true, setDefaultsOnInsert: true}, function(err, profile) {
       if (err) {
         logger.error('ERROR PUT api/seasoningProfiles/' + req.params.id, {error: err, body: req.body});

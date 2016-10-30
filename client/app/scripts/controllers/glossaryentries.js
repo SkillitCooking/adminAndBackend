@@ -9,13 +9,24 @@
  */
 angular.module('SkillitAdminApp')
   .controller('GlossaryentriesCtrl', ['$window', '$scope', 'glossaryService', 'itemCollectionService', function ($window, $scope, glossaryService, itemCollectionService) {
-    
-    itemCollectionService.getItemCollectionsForType('glossary').then(function(collections) {
-      $scope.glossaryCollections = collections.data;
-    }, function(response) {
-      console.log("Server Error: ", response);
-      alert("Server Error: " + response.message);
-    });
+
+    $scope.serverType = 'DEVELOPMENT';
+
+    $scope.reloadCollections = function(serverName) {
+      var isProd = false;
+      if(serverName === 'PRODUCTION') {
+        isProd = true;
+      }
+      $scope.serverType = serverName;
+        itemCollectionService.getItemCollectionsForType('glossary', isProd).then(function(collections) {
+        $scope.glossaryCollections = collections.data;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
+    };
+
+    $scope.reloadCollections('DEVELOPMENT');
 
     $scope.glossaryEntry = {
       picture: {},
@@ -49,7 +60,9 @@ angular.module('SkillitAdminApp')
           video: $scope.glossaryEntry.video,
           collectionIds: $scope.glossaryEntry.collectionIds
         }
-      }).then(function(entry) {
+      }, $scope.useProdServer, $scope.useDevServer).then(function(entry) {
+        //could be more thorough below
+        entry = entry[0];
         var alertMsg = "Success! Tip " + entry.data.title + " was saved!";
         alert(alertMsg);
         $scope.reset();
@@ -61,6 +74,9 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.glossaryEntrySanityCheck = function() {
+      if(!$scope.useProdServer && !$scope.useDevServer) {
+        return false;
+      }
       if($scope.glossaryEntry.collectionIds && $scope.glossaryEntry.collectionIds.length > 0) {
         if($scope.glossaryEntry.picture.url && $scope.glossaryEntry.video.videoId) {
           return true;

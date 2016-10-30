@@ -3,6 +3,9 @@
   <a class="btn btn-link active" ng-href="#/chapter">Create</a>
   <a class="btn btn-link" ng-href="#/editChapter">Edit</a><br/>
   <form novalidate name="chapterForm">
+    <p>Lessons are currently being pulled from the {{serverType}} server</p>
+    <button class="btn btn-primary" ng-click="reloadLessons('PRODUCTION')">Reload From Production</button>
+    <button class="btn btn-success" ng-click="reloadLessons('DEVELOPMENT')">Reload From Development</button><br/><br/>
     Name: <input type="text" ng-model="chapter.name" size="50" required name="nameInput"><br/><br/>
     Description: <textarea ng-model="chapter.description" rows="4" cols="50" required name="descriptionInput"></textarea><br/><br/>
     Select Lesson: <select name="lessonSelect" ng-model="selectedLesson" ng-options="lesson.name for lesson in lessons"></select><br/><br/>
@@ -11,7 +14,11 @@
       <p>{{id}}</p>
       <button class="btn btn-xs btn-danger" ng-click="removeLesson($index)">Remove</button>
     </div>
-    <button class="btn btn-primary btn-lg" ng-click="save()">Save</button>
+    <div>
+      Use PRODUCTION Server: <input type="checkbox" ng-model="useProdServer" /><br/>
+      Use DEVELOPMENT Server: <input type="checkbox" ng-model="useDevServer" /><br/>
+    </div>
+    <button class="btn btn-primary btn-lg" ng-click="save()" ng-disabled="noServerSelected()">Save</button>
     <button class="btn btn-danger btn-lg" ng-click="reset()">Reset</button>
   </form>
   <h4>Preview</h4>

@@ -16,12 +16,23 @@ angular.module('SkillitAdminApp')
     $scope.stepTypes = ["Bake", "Boil", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "Heat", "Place", "PreheatOven", "Sautee", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir"];
     $scope.subTypes = [];
 
-    ingredientService.getAllIngredients().then(function(ingredients) {
-      $scope.ingredients = ingredients;
-    }, function(response) {
-      console.log("Server Error: ", response);
-      alert("Server Error: " + response.message);
-    });
+    $scope.serverType = 'DEVELOPMENT';
+
+    $scope.reloadIngredients = function(serverName) {
+      var isProd = false;
+      if(serverName === 'PRODUCTION') {
+        isProd = true;
+      }
+      $scope.serverType = serverName;
+      ingredientService.getAllIngredients(isProd).then(function(ingredients) {
+        $scope.ingredients = ingredients;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
+    };
+
+    $scope.reloadIngredients('DEVELOPMENT');
 
     $scope.changeInputCategory = function() {
       if($scope.ingredient) {
@@ -150,6 +161,10 @@ angular.module('SkillitAdminApp')
       $scope.changeSelectedIngredient();
     };
 
+    $scope.noServerSelected = function() {
+      return !$scope.useProdServer && !$scope.useDevServer;
+    };
+
     $scope.saveChanges = function() {
       ingredientService.updateIngredient({
         name: $scope.ingredient.name,
@@ -163,8 +178,10 @@ angular.module('SkillitAdminApp')
         nameFormFlag: 'standardForm',
         useFormNameForDisplay: $scope.ingredient.useFormNameForDisplay,
         _id: $scope.ingredient._id
-      }).then(function(res) {
+      }, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         var recipeStr = "";
+        //below could be more thorough
+        res = res[0];
         if(res.affectedRecipeIds && res.affectedRecipeIds.length > 0) {
           recipeStr += " Affected Recipe Ids: \n" + res.affectedRecipeIds.toString();
         }
@@ -178,8 +195,10 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.deleteIngredient = function() {
-      ingredientService.deleteIngredient({_id: $scope.ingredient._id}).then(function(res) {
+      ingredientService.deleteIngredient({_id: $scope.ingredient._id}, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         var recipeStr = "";
+        //below could be more thorough
+        res = res[0];
         if(res.affectedRecipeIds && res.affectedRecipeIds.length > 0) {
           recipeStr += " Affected Recipe Ids: \n" + res.affectedRecipeIds.toString();
         }

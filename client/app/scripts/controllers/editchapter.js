@@ -9,20 +9,31 @@
  */
 angular.module('SkillitAdminApp')
   .controller('EditChapterCtrl', ['$window', '$scope', 'chapterService', 'lessonService', function ($window, $scope, chapterService, lessonService) {
-    
-    chapterService.getAllChapters().then(function(res) {
-      $scope.chapters = res.data;
-    }, function(response) {
-      alert("Server Error - check console logs for details");
-      console.log("error response: ", response);
-    });
 
-    lessonService.getLessonsForChapterConstruction().then(function(res) {
-      $scope.lessons = res.lessons;
-    }, function(response) {
-      alert("Server Error - check console logs for details");
-      console.log("error response: ", response);
-    });
+    $scope.serverType = 'DEVELOPMENT';
+
+    $scope.reloadStuff = function(serverName) {
+      var isProd = false;
+      if(serverName === 'PRODUCTION') {
+        isProd = true;
+      }
+      $scope.serverType = serverName;
+      chapterService.getAllChapters(isProd).then(function(res) {
+        $scope.chapters = res.data;
+      }, function(response) {
+        alert("Server Error - check console logs for details");
+        console.log("error response: ", response);
+      });
+
+      lessonService.getLessonsForChapterConstruction(isProd).then(function(res) {
+        $scope.lessons = res.lessons;
+      }, function(response) {
+        alert("Server Error - check console logs for details");
+        console.log("error response: ", response);
+      });
+    };
+
+    $scope.reloadStuff('DEVELOPMENT');
 
     $scope.changeSelectedChapter = function() {
       if($scope.selectedChapter) {
@@ -83,7 +94,7 @@ angular.module('SkillitAdminApp')
         lessonIds: $scope.chapter.lessonIds,
         timeEstimate: $scope.chapterTimeEstimate,
         _id: $scope.chapter._id
-      }).then(function(res) {
+      }, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         alert("Chapter successfully updated! Refresh page.");
         $window.location.reload(true);
       }, function(response) {
@@ -94,7 +105,7 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.deleteChapter = function() {
-      chapterService.deleteChapter({_id: $scope.chapter._id}).then(function(res) {
+      chapterService.deleteChapter({_id: $scope.chapter._id}, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         alert("Chapter successfully deleted! Refresh page.");
         $window.location.reload(true);
       }, function(response) {
@@ -102,5 +113,9 @@ angular.module('SkillitAdminApp')
         console.log("error response: ", response);
         $window.location.reload(true);
       });
+    };
+
+    $scope.noServerSelected = function() {
+      return !$scope.useDevServer && !$scope.useProdServer;
     };
   }]);

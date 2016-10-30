@@ -3,12 +3,19 @@
   <a class="btn btn-link" ng-href="#/dishes">Create</a>
   <a class="btn btn-link active" ng-href="#/editDishes">Edit</a><br/>
   <form novalidate name="editDishForm">
+    <p>Dishes are currently being pulled from the {{serverType}} server</p>
+    <button class="btn btn-primary" ng-click="reloadDishes('PRODUCTION')">Reload From Production</button>
+    <button class="btn btn-success" ng-click="reloadDishes('DEVELOPMENT')">Reload From Development</button><br/><br/>
     Select Dish: <select name="dishSelect" ng-model="selectedDish" ng-change="changeSelectedDish()" ng-options="dish as dish.name for dish in dishes"></select><br/><br/>
     Name: <input type="text" ng-model="dish.name" size="50" required name="nameInput" /><br /><br />
     IngredientCapacity: <input type="text" ng-model="dish.ingredientCapacity" size="30" required name="capacityInput" ng-pattern="integerval"/>
     <span ng-show="dishForm.capacityInput.$invalid">Please enter a number</span><br/><br/>
+    <div>
+      Use PRODUCTION Server: <input type="checkbox" ng-model="useProdServer" /><br/>
+      Use DEVELOPMENT Server: <input type="checkbox" ng-model="useDevServer" /><br/>
+    </div>
     <button class="btn btn-warning btn-large" ng-click="cancelChanges()">Cancel Changes</button>
-    <button class="btn btn-primary btn-large" ng-click="saveChanges()">Save Changes</button>
-    <button class="btn btn-danger btn-large" ng-click="deleteDish()">Delete Dish</button>
+    <button class="btn btn-primary btn-large" ng-click="saveChanges()" ng-disabled="noServerSelected()">Save Changes</button>
+    <button class="btn btn-danger btn-large" ng-click="deleteDish()" ng-disabled="noServerSelected()">Delete Dish</button>
   </form>
 </div>

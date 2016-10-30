@@ -21,51 +21,62 @@ angular.module('SkillitAdminApp')
     $scope.constructingStep.stepInputs = {};
     $scope.selectedIngredientForms = [];
     $scope.selectedRecipe = {};
-    
-    recipeService.getAllRecipes().then(function(res) {
-      $scope.recipes = [];
-      for (var i = res.data.length - 1; i >= 0; i--) {
-        $scope.recipes.push({
-          label: res.data[i].name,
-          value: res.data[i]
-        });
+
+    $scope.serverType = 'DEVELOPMENT';
+
+    $scope.reloadStuff = function(serverName) {
+      var isProd = false;
+      if(serverName === 'PRODUCTION') {
+        isProd = true;
       }
-    }, function(response){
-      console.log('server error', response);
-      alert("Server Error: " + response.message);
-    });
+      $scope.serverType = serverName;
+      recipeService.getAllRecipes(isProd).then(function(res) {
+        $scope.recipes = [];
+        for (var i = res.data.length - 1; i >= 0; i--) {
+          $scope.recipes.push({
+            label: res.data[i].name,
+            value: res.data[i]
+          });
+        }
+      }, function(response){
+        console.log('server error', response);
+        alert("Server Error: " + response.message);
+      });
 
-    itemCollectionService.getItemCollectionsForType('recipe').then(function(res) {
-      $scope.recipeCollections = res.data;
-    }, function(response) {
-      console.log("Server Error: ", response);
-      alert("Server Error: " + response.message);
-    });
+      itemCollectionService.getItemCollectionsForType('recipe', isProd).then(function(res) {
+        $scope.recipeCollections = res.data;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
 
-    seasoningService.getAllSeasonings().then(function(res) {
-      $scope.seasoningProfiles = res.data;
-    }, function(response) {
-      console.log("Server Error: ", response);
-      alert("Server Error: " + response.message);
-    });
+      seasoningService.getAllSeasonings(isProd).then(function(res) {
+        $scope.seasoningProfiles = res.data;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
 
-    ingredientService.getAllIngredients().then(function(ingredients) {
-      $scope.ingredients = ingredients;
-    }, function(response) {
-      console.log("Server Error: ", response);
-      alert("Server Error: " + response.message);
-    });
+      ingredientService.getAllIngredients(isProd).then(function(ingredients) {
+        $scope.ingredients = ingredients;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
 
-    dishService.getAllDishes().then(function(dishes) {
-      $scope.dishes = dishes;
-    }, function(response) {
-      console.log("Server Error: ", response);
-      alert("Server Error: " + response.message);
-    });
+      dishService.getAllDishes(isProd).then(function(dishes) {
+        $scope.dishes = dishes;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
+    };
+    
+    $scope.reloadStuff('DEVELOPMENT');
 
     $scope.reloadRecipes = function() {
       $scope.showSelectRecipe = true;
-      recipeService.getAllRecipes().then(function(res) {
+      recipeService.getAllRecipes(isProd).then(function(res) {
         $scope.recipes = res.data;
       }, function(response){
         console.log('server error', response);
@@ -410,7 +421,7 @@ angular.module('SkillitAdminApp')
         datesUsedAsRecipeOfTheDay: $scope.recipe.datesUsedAsRecipeOfTheDay,
         isRecipeOfTheDay: $scope.recipe.isRecipeOfTheDay,
         _id: $scope.recipe._id
-      }).then(function(res) {
+      }, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         alert("Recipe successfully updated!");
         $window.location.reload(true);
       }, function(response) {
@@ -421,7 +432,7 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.deleteRecipe = function() {
-      recipeService.deleteRecipe({_id: $scope.recipe._id}).then(function(res) {
+      recipeService.deleteRecipe({_id: $scope.recipe._id}, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         alert("Recipe successfully deleted");
         $window.location.reload(true);
       }, function(response) {
@@ -492,7 +503,7 @@ angular.module('SkillitAdminApp')
           datesUsedAsRecipeOfTheDay: [],
           isRecipeOfTheDay: false
         }
-      }).then(function(recipe) {
+      }, $scope.useProdServer, $scope.useDevServer).then(function(recipe) {
         alert('Success! Recipe ' + recipe.name + 'was saved! Refresh form.');
         $window.location.reload(true);
       }, function(response) {
@@ -500,6 +511,10 @@ angular.module('SkillitAdminApp')
         alert("Server Error: " + response.message);
         $window.location.reload(true);
       });
+    };
+
+    $scope.noServerSelected = function() {
+      return !$scope.useProdServer && !$scope.useDevServer;
     };
 
   }]);

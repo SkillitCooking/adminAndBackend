@@ -12,20 +12,31 @@ angular.module('SkillitAdminApp')
 
     $scope.itemTypes = $scope.itemTypes = ["dailyTip", "trainingVideo", "howToShop", "glossary", "recipe"];
 
-    itemCollectionService.getAllItemCollections().then(function(res) {
-      var groupedCollections = res.data;
-      $scope.collections = [];
-      for(var key in groupedCollections) {
-        var group = groupedCollections[key];
-        for (var i = group.length - 1; i >= 0; i--) {
-          group[i].displayName = group[i].name + " -- " + key;
-          $scope.collections.push(group[i]);
-        }
+    $scope.serverType = 'DEVELOPMENT';
+
+    $scope.reloadCollections = function(serverName) {
+      var isProd = false;
+      if(serverName === 'PRODUCTION') {
+        isProd = true;
       }
-    }, function(response) {
-      console.log("Server Error: ", response);
-      alert("Server Error: " + response.message);
-    });
+      $scope.serverType = serverName;
+      itemCollectionService.getAllItemCollections(isProd).then(function(res) {
+        var groupedCollections = res.data;
+        $scope.collections = [];
+        for(var key in groupedCollections) {
+          var group = groupedCollections[key];
+          for (var i = group.length - 1; i >= 0; i--) {
+            group[i].displayName = group[i].name + " -- " + key;
+            $scope.collections.push(group[i]);
+          }
+        }
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
+    };
+
+    $scope.reloadCollections('DEVELOPMENT');
 
     $scope.changeSelectedCollection = function() {
       if($scope.selectedCollection) {
@@ -37,13 +48,17 @@ angular.module('SkillitAdminApp')
       $scope.changeSelectedCollection();
     };
 
+    $scope.noServerSelected = function() {
+      return !$scope.useProdServer && !$scope.useDevServer;
+    };
+
     $scope.saveChanges = function() {
       itemCollectionService.updateItemCollection({
         name: $scope.itemCollection.name,
         description: $scope.itemCollection.description,
         itemType: $scope.itemCollection.itemType,
         _id: $scope.itemCollection._id
-      }).then(function(res) {
+      }, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         alert("ItemCollection successfully updated! Refresh page.");
         $window.location.reload(true);
       }, function(response) {
@@ -54,7 +69,9 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.deleteCollection = function() {
-      itemCollectionService.deleteItemCollection({_id: $scope.itemCollection._id}).then(function(res) {
+      itemCollectionService.deleteItemCollection({_id: $scope.itemCollection._id}, $scope.useProdServer, $scope.useDevServer).then(function(res) {
+        //could be more thorough below...
+        res = res[0];
         var affectedStr = "";
         switch(res.type) {
           case "tips":

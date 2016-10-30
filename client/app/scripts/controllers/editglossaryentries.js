@@ -9,20 +9,31 @@
  */
 angular.module('SkillitAdminApp')
   .controller('EditGlossaryEntriesCtrl', ['$window', '$scope', 'glossaryService', 'itemCollectionService', function ($window, $scope, glossaryService, itemCollectionService) {
-    
-    glossaryService.getAllGlossaryEntries().then(function(res) {
-      $scope.glossaryEntries = res.data;
-    }, function(response) {
-      console.log("Server Error: ", response);
-      alert("Server Error: " + response.message);
-    });
 
-    itemCollectionService.getItemCollectionsForType('glossary').then(function(collections) {
-      $scope.glossaryCollections = collections.data;
-    }, function(response) {
-      console.log("Server Error: ", response);
-      alert("Server Error: " + response.message);
-    });
+    $scope.serverType = 'DEVELOPMENT';
+
+    $scope.reloadStuff = function(serverName) {
+      var isProd = false;
+      if(serverName === 'PRODUCTION') {
+        isProd = true;
+      }
+      $scope.serverType = serverName;
+      glossaryService.getAllGlossaryEntries(isProd).then(function(res) {
+        $scope.glossaryEntries = res.data;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
+
+      itemCollectionService.getItemCollectionsForType('glossary', isProd).then(function(collections) {
+        $scope.glossaryCollections = collections.data;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
+    };
+
+    $scope.reloadStuff('DEVELOPMENT');
 
     $scope.changeSelectedEntry = function() {
       if($scope.selectedEntry) {
@@ -50,8 +61,10 @@ angular.module('SkillitAdminApp')
         video: $scope.entry.video,
         collectionIds: $scope.entry.collectionIds,
         _id: $scope.entry._id
-      }).then(function(res) {
+      }, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         var articleStr = "";
+        //could be more thorough below
+        res = res[0];
         if(res.affectedArticleIds && res.affectedArticleIds.length > 0) {
           articleStr = " Affected Articles that referenced Tip: \n" + res.affectedArticleIds.toString();
         }
@@ -65,8 +78,10 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.deleteGlossary = function() {
-      glossaryService.deleteGlossaryEntry({_id: $scope.entry._id}).then(function(res) {
+      glossaryService.deleteGlossaryEntry({_id: $scope.entry._id}, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         var extraText = "";
+        //could be more thorough below
+        res = res[0];
         if(res.affectedArticleIds && res.affectedArticleIds.length > 0) {
           extraText += " Affected ArticleIds: \n" + res.affectedArticleIds.toString() + "\n";
         }
@@ -80,6 +95,10 @@ angular.module('SkillitAdminApp')
         alert("Server Error: " + response.message);
         $window.location.reload(true);
       });
+    };
+
+    $scope.noServerSelected = function() {
+      return !$scope.useProdServer && !$scope.useDevServer;
     };
 
   }]);

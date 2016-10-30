@@ -8,25 +8,55 @@
  * Service in the SkillitAdminApp.
  */
 angular.module('SkillitAdminApp')
-  .factory('itemCollectionService', function (Restangular) {
+  .factory('itemCollectionService', function (Restangular, RestangularProductionService) {
     
     var baseItemCollections = Restangular.all('itemCollections');
+    var baseProductionItemCollections = RestangularProductionService.all('itemCollections');
 
     return {
-      getAllItemCollections: function () {
-        return baseItemCollections.customGET('/');
+      getAllItemCollections: function (useProd) {
+        if(useProd) {
+          return baseProductionItemCollections.customGET('/');
+        } else {
+          return baseItemCollections.customGET('/');
+        }
       },
-      addNewItemCollection: function (newItemCollection) {
-        return baseItemCollections.post(newItemCollection);
+      addNewItemCollection: function (newItemCollection, useProd, useDev) {
+        var promises = [];
+        if(useProd) {
+          promises.push(baseProductionItemCollections.post(newItemCollection));
+        }
+        if(useDev) {
+          promises.push(baseItemCollections.post(newItemCollection));
+        }
+        return Promise.all(promises);
       },
-      getItemCollectionsForType: function (itemType) {
-        return baseItemCollections.customPOST({itemType: itemType}, 'getCollectionsForItemType');
+      getItemCollectionsForType: function (itemType, useProd) {
+        if(useProd) {
+          return baseProductionItemCollections.customPOST({itemType: itemType}, 'getCollectionsForItemType');
+        } else {
+          return baseItemCollections.customPOST({itemType: itemType}, 'getCollectionsForItemType');
+        }
       },
-      updateItemCollection: function(collection) {
-        return baseItemCollections.customPUT({collection: collection}, '/' + collection._id);
+      updateItemCollection: function(collection, useProd, useDev) {
+        var promises = [];
+        if(useProd) {
+          promises.push(baseProductionItemCollections.customPUT({collection: collection}, '/' + collection._id));
+        }
+        if(useDev) {
+          promises.push(baseItemCollections.customPUT({collection: collection}, '/' + collection._id));
+        }
+        return Promise.all(promises);
       },
-      deleteItemCollection: function(collection) {
-        return baseItemCollections.customDELETE('/' + collection._id);
+      deleteItemCollection: function(collection, useProd, useDev) {
+        var promises = [];
+        if(useProd) {
+          promises.push(baseProductionItemCollections.customDELETE('/' + collection._id));
+        }
+        if(useDev) {
+          promises.push(baseItemCollections.customDELETE('/' + collection._id));
+        }
+        return Promise.all(promises);
       }
     };
   });

@@ -9,20 +9,31 @@
  */
 angular.module('SkillitAdminApp')
   .controller('EditDailytipsCtrl', ['$window', '$scope', 'dailyTipsService', 'itemCollectionService', function ($window, $scope, dailyTipsService, itemCollectionService) {
-    
-    dailyTipsService.getAllDailyTips().then(function(res) {
-      $scope.tips = res.data;
-    }, function(response) {
-      console.log("Server Error: ", response);
-      alert("Server Error: " + response.message);
-    });
 
-    itemCollectionService.getItemCollectionsForType('dailyTip').then(function(res) {
-      $scope.tipCollections = res.data;
-    }, function(response) {
-      console.log("Server Error: ", response);
-      alert("Server Error: " + response.message);
-    });
+    $scope.serverType = 'DEVELOPMENT';
+
+    $scope.reloadStuff = function(serverName) {
+      var isProd = false;
+      if(serverName === 'PRODUCTION') {
+        isProd = true;
+      }
+      $scope.serverType = serverName;
+      dailyTipsService.getAllDailyTips(isProd).then(function(res) {
+        $scope.tips = res.data;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
+
+      itemCollectionService.getItemCollectionsForType('dailyTip', isProd).then(function(res) {
+        $scope.tipCollections = res.data;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
+    };
+
+    $scope.reloadStuff('DEVELOPMENT');
 
     $scope.changeSelectedTip = function() {
       if($scope.selectedTip) {
@@ -52,9 +63,10 @@ angular.module('SkillitAdminApp')
         hasBeenDailyTip: $scope.dailyTip.hasBeenDailyTip,
         isTipOfTheDay: $scope.dailyTip.isTipOfTheDay,
         _id: $scope.dailyTip._id
-      }).then(function(res) {
+      }, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         var articleStr = "";
-        console.log('affected: ', res.affectedArticleIds);
+        //below could be more thorough, representative on alert...
+        res = res[0];
         if(res.affectedArticleIds && res.affectedArticleIds.length > 0) {
           articleStr = " Affected Articles that referenced Tip: \n" + res.affectedArticleIds.toString();
         }
@@ -68,8 +80,10 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.deleteDailyTip = function() {
-      dailyTipsService.deleteDailyTip({_id: $scope.dailyTip._id}).then(function(res) {
+      dailyTipsService.deleteDailyTip({_id: $scope.dailyTip._id}, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         var extraText = "";
+        //below could be more thorough...
+        res = res[0];
         if(res.affectedArticleIds && res.affectedArticleIds.length > 0) {
           extraText += " Affected ArticleIds: \n" + res.affectedArticleIds.toString() + "\n";
         }
@@ -83,5 +97,9 @@ angular.module('SkillitAdminApp')
         alert("Server Error: " + response.message);
         $window.location.reload(true);
       });
+    };
+
+    $scope.noServerSelected = function() {
+      return !$scope.useDevServer && !$scope.useProdServer;
     };
   }]);

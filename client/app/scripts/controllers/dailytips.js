@@ -9,13 +9,24 @@
  */
 angular.module('SkillitAdminApp')
   .controller('DailytipsCtrl', ['$window', '$scope', 'dailyTipsService', 'itemCollectionService', function ($window, $scope, dailyTipsService, itemCollectionService) {
-    
-    itemCollectionService.getItemCollectionsForType('dailyTip').then(function(collections) {
-      $scope.tipCollections = collections.data;
-    }, function(response) {
-      console.log("Server Error: ", response.message);
-      alert("Server Error: " + response.message);
-    });
+
+    $scope.serverType = 'DEVELOPMENT';
+
+    $scope.reloadStuff = function(serverName) {
+      var isProd = false;
+      if(serverName === 'PRODUCTION') {
+        isProd = true;
+      }
+      $scope.serverType = serverName;
+      itemCollectionService.getItemCollectionsForType('dailyTip', isProd).then(function(collections) {
+        $scope.tipCollections = collections.data;
+      }, function(response) {
+        console.log("Server Error: ", response.message);
+        alert("Server Error: " + response.message);
+      });
+    };
+
+    $scope.reloadStuff('DEVELOPMENT');
 
     $scope.dailyTip = {
       picture: {},
@@ -50,7 +61,7 @@ angular.module('SkillitAdminApp')
           hasBeenDailyTip: false,
           isTipOfTheDay: false
         }
-      }).then(function(tip) {
+      }, $scope.useProdServer, $scope.useDevServer).then(function(tip) {
         var alertMsg = "Success! Tip " + tip.data.title + " was saved!";
         alert(alertMsg);
         $scope.reset();
@@ -62,6 +73,9 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.dailyTipSanityCheck = function() {
+      if(!$scope.useProdServer && !$scope.useDevServer) {
+        return false;
+      } 
       if($scope.dailyTip.collectionIds && $scope.dailyTip.collectionIds.length > 0) {
         if($scope.dailyTip.picture.url && $scope.dailyTip.video.videoId) {
           return true;

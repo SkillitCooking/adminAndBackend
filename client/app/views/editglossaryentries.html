@@ -3,6 +3,9 @@
   <a class="btn btn-link" ng-href="#/glossaryEntries">Create</a>
   <a class="btn btn-link active" ng-href="#/editGlossaryEntries">Edit</a><br/>
   <form novalidate name="editGlossaryEntriesForm">
+    <p>Glossaries and Collections are currently being pulled from the {{serverType}} server</p>
+    <button class="btn btn-primary" ng-click="reloadStuff('PRODUCTION')">Reload From Production</button>
+    <button class="btn btn-success" ng-click="reloadStuff('DEVELOPMENT')">Reload From Development</button><br/><br/>
     Select Glossary Entry: <select name="glossaryEntrySelect" ng-model="selectedEntry" ng-change="changeSelectedEntry()" ng-options="entry as entry.title for entry in glossaryEntries"></select><br/><br/>
     Title: <input type="text" ng-model="entry.title" size="50" required name="titleInput"/><br /><br />
     Text: <textarea ng-model="entry.text" rows="4" cols="50" required name="textInput"></textarea><br/><br/>
@@ -19,8 +22,12 @@
       </div>
     </ul>
     <button ng-click="addCollection()">Add Collection</button><br/><br/>
+    <div>
+      Use PRODUCTION Server: <input type="checkbox" ng-model="useProdServer" /><br/>
+      Use DEVELOPMENT Server: <input type="checkbox" ng-model="useDevServer" /><br/>
+    </div>
     <button class="btn btn-warning btn-large" ng-click="cancelChanges()">Cancel Changes</button>
-    <button class="btn btn-primary btn-large" ng-click="saveChanges()">Save Changes</button>
-    <button class="btn btn-danger btn-large" ng-click="deleteGlossary()">Delete Entry</button>
+    <button class="btn btn-primary btn-large" ng-click="saveChanges()" ng-disabled="noServerSelected()">Save Changes</button>
+    <button class="btn btn-danger btn-large" ng-click="deleteGlossary()" ng-disabled="noServerSelected()">Delete Entry</button>
   </form>
 </div>

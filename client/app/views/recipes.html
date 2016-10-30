@@ -4,6 +4,9 @@
   <a class="btn btn-link active" ng-href="#/recipes">Create</a>
   <a class="btn btn-link" ng-href="#/editRecipes">Edit + Duplicate</a><br/>
   <form novalidate name="recipeForm" ng-controller="RecipeCtrl">
+    <p>Collections, Ingredients, Dishes, Seasonings are currently being pulled from the {{serverType}} server</p>
+    <button class="btn btn-primary" ng-click="reloadStuff('PRODUCTION')">Reload From Production</button>
+    <button class="btn btn-success" ng-click="reloadStuff('DEVELOPMENT')">Reload From Development</button><br/><br/>
     Name: <input type="text" ng-model="recipe.name" size="50" ng-focus="logRecipeName()" ng-blur="updateRecipeName()" required name="nameInput"/> 
     <span ng-show="recipeForm.nameInput.$invalid">give the recipe a name</span><br /> <br />
     Description: <textarea ng-model="recipe.description" rows="4" cols="50" required name="descInput"></textarea>
@@ -117,6 +120,10 @@
         <equipmentprep-step-item ng-if="step.stepType === 'EquipmentPrep'"></equipmentprep-step-item>
         <button ng-if="$last" ng-click="removeStep()">Remove Step</button>
       </div><br/><br/>
+      <div>
+        Use PRODUCTION Server: <input type="checkbox" ng-model="useProdServer" /><br/>
+        Use DEVELOPMENT Server: <input type="checkbox" ng-model="useDevServer" /><br/>
+      </div>
       <button class="btn btn-large btn-warning" ng-click="reset()">Reset Recipe Form</button>
       <button class="btn btn-large btn-info" ng-click="preview()">Preview Recipe</button>
       <button class="btn btn-large btn-success" ng-click="save()" ng-disabled="recipeForm.$invalid || !recipeSanityCheck()">Save Recipe</button>

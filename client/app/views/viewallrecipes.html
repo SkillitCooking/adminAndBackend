@@ -1,4 +1,7 @@
 <div>
+  <p>Recipes are currently being pulled from the {{serverType}} server</p>
+  <button class="btn btn-primary" ng-click="reloadRecipes('PRODUCTION')">Reload From Production</button>
+  <button class="btn btn-success" ng-click="reloadRecipes('DEVELOPMENT')">Reload From Development</button><br/><br/>
   <div ng-repeat="recipe in recipes">
     <b>{{recipe.name}}  </b>
     <button ng-if="!isExpandedArr[$index]" ng-click="toggleRecipeExpansion($index)" class="btn btn-info btn-sm">Expand Recipe</button><br/><br/>
