@@ -15,7 +15,8 @@ var ChapterSchema = new mongoose.Schema({
   dateCreated: {
     type: Date,
     default: curUTCDate
-  }
+  },
+  pictureURL: String
 });
 
 module.exports.model = mongoose.model('Chapter', ChapterSchema);

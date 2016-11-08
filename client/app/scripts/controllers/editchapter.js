@@ -93,6 +93,7 @@ angular.module('SkillitAdminApp')
         description: $scope.chapter.description,
         lessonIds: $scope.chapter.lessonIds,
         timeEstimate: $scope.chapterTimeEstimate,
+        pictureURL: $scope.chapter.pictureURL,
         _id: $scope.chapter._id
       }, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         alert("Chapter successfully updated! Refresh page.");

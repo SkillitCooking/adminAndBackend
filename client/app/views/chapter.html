@@ -8,6 +8,7 @@
     <button class="btn btn-success" ng-click="reloadLessons('DEVELOPMENT')">Reload From Development</button><br/><br/>
     Name: <input type="text" ng-model="chapter.name" size="50" required name="nameInput"><br/><br/>
     Description: <textarea ng-model="chapter.description" rows="4" cols="50" required name="descriptionInput"></textarea><br/><br/>
+    Picture URL: <input type="url" placeholder="URL" ng-model="chapter.pictureURL" size="60" name="pictureURLInput" /><br/><br/>
     Select Lesson: <select name="lessonSelect" ng-model="selectedLesson" ng-options="lesson.name for lesson in lessons"></select><br/><br/>
     <button class="btn btn-sm btn-warning" ng-click="addLesson()">Add Lesson</button><br/><br/>
     Added Lesson Ids: <div ng-repeat="id in chapter.lessonIds">

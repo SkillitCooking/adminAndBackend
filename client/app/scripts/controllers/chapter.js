@@ -54,7 +54,8 @@ angular.module('SkillitAdminApp')
         name: $scope.chapter.name,
         description: $scope.chapter.description,
         lessonIds: $scope.chapter.lessonIds,
-        timeEstimate: totalTimeEstimate
+        timeEstimate: totalTimeEstimate,
+        pictureURL: $scope.chapter.pictureURL
       }, $scope.useProdServer, $scope.useDevServer).then(function(data) {
         var chapter = data[0].data;
         var alertMsg = "Success! Chapter " + chapter.name + " was saved!";

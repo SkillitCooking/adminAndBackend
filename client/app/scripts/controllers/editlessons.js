@@ -142,6 +142,7 @@ angular.module('SkillitAdminApp')
         isArticle: $scope.lesson.isArticle,
         articleId: $scope.lesson.articleId,
         itemIds: $scope.lesson.itemIds,
+        pictureURL: $scope.lesson.pictureURL,
         _id: $scope.lesson._id
       }, $scope.useProd, $scope.useDev).then(function(res) {
         alert("Lesson successfully updated! Refresh page.");

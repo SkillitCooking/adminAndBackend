@@ -18,7 +18,8 @@ var LessonSchema = new mongoose.Schema({
   dateModified: {
     type: Date,
     default: curUTCDate
-  }
+  },
+  pictureURL: String
 });
 
 module.exports.model = mongoose.model('Lesson', LessonSchema);

@@ -117,7 +117,8 @@ angular.module('SkillitAdminApp')
         description: $scope.lesson.description,
         isArticle: $scope.lesson.isArticle,
         articleId: $scope.lesson.articleId,
-        itemIds: $scope.lesson.itemIds
+        itemIds: $scope.lesson.itemIds,
+        pictureURL: $scope.lesson.pictureURL
       }, $scope.useProd, $scope.useDev).then(function(data) {
         var lesson = data[0].data;
         var alertMsg = "Success! Lesson " + lesson.name + " was saved!";

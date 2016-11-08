@@ -9,6 +9,7 @@
     Name: <input type="text" ng-model="lesson.name" size="50" required name="nameInput" /><br/><br/>
     Time Estimate (minutes): <input type="text" ng-model="lesson.timeEstimate" size="50" required name="timeEstimateInput" /><br/><br/>
     Description: <textarea ng-model="lesson.description" rows="4" cols="50" required name="descriptionInput"></textarea><br/><br/>
+    Picture URL: <input type="url" placeholder="URL" ng-model="lesson.pictureURL" size="60" name="pictureURLInput" /><br/><br/>
     Is Article? <input type="checkbox" ng-model="lesson.isArticle" /><br/><br/>
     <s ng-show="!getArticleLabel()">Article:</s> 
     <span ng-show="getArticleLabel()">Article:</span>

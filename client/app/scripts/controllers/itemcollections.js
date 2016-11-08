@@ -26,7 +26,8 @@ angular.module('SkillitAdminApp')
         itemCollection: {
           name: $scope.itemCollection.name,
           description: $scope.itemCollection.description,
-          itemType: $scope.itemCollection.itemType
+          itemType: $scope.itemCollection.itemType,
+          pictureURL: $scope.itemCollection.pictureURL
         }
       }, $scope.useProdServer, $scope.useDevServer).then(function(collection) {
         //below could be better/more thorough

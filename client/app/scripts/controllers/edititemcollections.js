@@ -57,6 +57,7 @@ angular.module('SkillitAdminApp')
         name: $scope.itemCollection.name,
         description: $scope.itemCollection.description,
         itemType: $scope.itemCollection.itemType,
+        pictureURL: $scope.itemCollection.pictureURL,
         _id: $scope.itemCollection._id
       }, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         alert("ItemCollection successfully updated! Refresh page.");
