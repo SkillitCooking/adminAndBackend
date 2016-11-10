@@ -11,6 +11,8 @@ angular.module('SkillitAdminApp')
   .controller('ChapterCtrl', ['$window', '$scope', 'lessonService', 'chapterService', function ($window, $scope, lessonService, chapterService) {
     $scope.serverType = 'DEVELOPMENT';
 
+    $scope.integerval = /^\d*$/;
+
     $scope.reloadLessons = function(serverName) {
       var isProd = false;
       if(serverName === 'PRODUCTION') {

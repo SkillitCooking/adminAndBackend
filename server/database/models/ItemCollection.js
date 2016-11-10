@@ -13,7 +13,9 @@ var ItemCollectionSchema = new mongoose.Schema({
     type: Date,
     default: curUTCDate
   },
-  pictureURL: String
+  pictureURL: String,
+  orderPreference: Number,
+  isBYOCollection: Boolean
 });
 
 module.exports.model = mongoose.model('ItemCollection', ItemCollectionSchema);

@@ -10,6 +10,7 @@
 angular.module('SkillitAdminApp')
   .controller('ItemcollectionsCtrl', ['$window', '$scope', 'itemCollectionService', function ($window, $scope, itemCollectionService) {
     
+    $scope.integerval = /^\d*$/;
     $scope.itemCollection = {};
     $scope.itemTypes = ["dailyTip", "trainingVideo", "howToShop", "glossary", "recipe"];
 
@@ -22,12 +23,18 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.save = function() {
+      if(!$scope.itemCollection.orderPreference) {
+        //some signal
+        $scope.itemCollection.orderPreference = -1;
+      }
       itemCollectionService.addNewItemCollection({
         itemCollection: {
           name: $scope.itemCollection.name,
           description: $scope.itemCollection.description,
           itemType: $scope.itemCollection.itemType,
-          pictureURL: $scope.itemCollection.pictureURL
+          pictureURL: $scope.itemCollection.pictureURL,
+          orderPreference: $scope.itemCollection.orderPreference,
+          isBYOCollection: $scope.itemCollection.isBYOCollection,
         }
       }, $scope.useProdServer, $scope.useDevServer).then(function(collection) {
         //below could be better/more thorough

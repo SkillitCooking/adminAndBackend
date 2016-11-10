@@ -6,6 +6,8 @@
     Name: <input type="text" ng-model="itemCollection.name" size="50" required name="nameInput" /><br/><br/>
     Description: <textarea ng-model="itemCollection.description" rows="4" cols="50" required name="descriptionInput"></textarea><br/><br/>
     Picture URL: <input type="url" placeholder="URL" ng-model="itemCollection.pictureURL" size="60" name="pictureURLInput" /><br/><br/>
+    Order Preference: <input type="text" ng-pattern="integerval" ng-model="itemCollection.orderPreference" size="30" name="orderPreferenceInput"/><br/><br/>
+    Is BYO Collection? <input type="checkbox" ng-model="itemCollection.isBYOCollection"/><br/><br/>
     ItemType: <select name="itemTypeSelect" ng-model="itemCollection.itemType" ng-options="itemType as itemType for itemType in itemTypes" required></select><br/><br/>
     <div>
       Use PRODUCTION Server: <input type="checkbox" ng-model="useProdServer" /><br/>

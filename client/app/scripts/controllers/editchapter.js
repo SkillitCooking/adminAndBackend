@@ -10,6 +10,8 @@
 angular.module('SkillitAdminApp')
   .controller('EditChapterCtrl', ['$window', '$scope', 'chapterService', 'lessonService', function ($window, $scope, chapterService, lessonService) {
 
+    $scope.integerval = /^\d*$/;
+
     $scope.serverType = 'DEVELOPMENT';
 
     $scope.reloadStuff = function(serverName) {

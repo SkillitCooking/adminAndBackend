@@ -10,6 +10,7 @@
 angular.module('SkillitAdminApp')
   .controller('EditItemCollectionsCtrl', ['$window', '$scope', 'itemCollectionService', function ($window, $scope, itemCollectionService) {
 
+    $scope.integerval = /^\d*$/;
     $scope.itemTypes = $scope.itemTypes = ["dailyTip", "trainingVideo", "howToShop", "glossary", "recipe"];
 
     $scope.serverType = 'DEVELOPMENT';
@@ -53,11 +54,16 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.saveChanges = function() {
+      if(!$scope.itemCollection.orderPreference) {
+        $scope.itemCollection.orderPreference = -1;
+      }
       itemCollectionService.updateItemCollection({
         name: $scope.itemCollection.name,
         description: $scope.itemCollection.description,
         itemType: $scope.itemCollection.itemType,
         pictureURL: $scope.itemCollection.pictureURL,
+        orderPreference: $scope.itemCollection.orderPreference,
+        isBYOCollection: $scope.itemCollection.isBYOCollection,
         _id: $scope.itemCollection._id
       }, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         alert("ItemCollection successfully updated! Refresh page.");
