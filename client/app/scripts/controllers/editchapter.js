@@ -90,12 +90,16 @@ angular.module('SkillitAdminApp')
     };*/
 
     $scope.saveChanges = function() {
+      if(!$scope.chapter.orderPreference) {
+        $scope.chapter.orderPreference = -1;
+      }
       chapterService.updateChapter({
         name: $scope.chapter.name,
         description: $scope.chapter.description,
         lessonIds: $scope.chapter.lessonIds,
         timeEstimate: $scope.chapterTimeEstimate,
         pictureURL: $scope.chapter.pictureURL,
+        orderPreference: $scope.chapter.orderPreference,
         _id: $scope.chapter._id
       }, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         alert("Chapter successfully updated! Refresh page.");

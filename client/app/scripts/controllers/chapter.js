@@ -52,12 +52,16 @@ angular.module('SkillitAdminApp')
       var totalTimeEstimate = $scope.timeEstimates.reduce(function(a, b) {
         return parseInt(a, 10) + parseInt(b, 10);
       });
+      if(!$scope.chapter.orderPreference) {
+        $scope.chapter.orderPreference = -1;
+      }
       chapterService.addNewChapter({
         name: $scope.chapter.name,
         description: $scope.chapter.description,
         lessonIds: $scope.chapter.lessonIds,
         timeEstimate: totalTimeEstimate,
-        pictureURL: $scope.chapter.pictureURL
+        pictureURL: $scope.chapter.pictureURL,
+        orderPreference: $scope.chapter.orderPreference
       }, $scope.useProdServer, $scope.useDevServer).then(function(data) {
         var chapter = data[0].data;
         var alertMsg = "Success! Chapter " + chapter.name + " was saved!";
