@@ -1,0 +1,24 @@
+<div>
+  <h2>Edit Dietary Preference</h2>
+  <a class="btn btn-link" ng-href="#/dietaryPreferences">Create</a>
+  <a class="btn btn-link active" ng-href="#/editDietaryPreferences">Edit</a>
+  <form novalidate name="editDietaryPreferenceForm">
+    <p>Dietary Preferences and Ingredients are currently being pulled from the {{serverType}}</p>
+    <button class="btn btn-primary" ng-click="reloadEntries('PRODUCTION')">Reload From Production</button>
+    <button class="btn btn-success" ng-click="reloadEntries('DEVELOPMENT')">Reload From Development</button><br/><br/>
+    Select Dietary Preference: <select name="seasoningSelect" ng-model="selectedDietaryPreference" ng-change="changeSelectedDietaryPreference()" ng-options="preference as preference.title for preference in dietaryPreferences"></select><br/><br/>
+    Title: <input type="text" ng-model="dietaryPreference.title" size="50" required name="titleInput" /><br/><br/>
+    Outlaw Ingredients: <br/>
+    <div ng-repeat="ingredient in ingredients">
+      <input type="checkbox" ng-model="ingredient.useInPreference" />
+      <span>{{ingredient.name.standardForm}}</span>
+    </div><br/><br/>
+    <div>
+      Use PRODUCTION Server: <input type="checkbox" ng-model="useProdServer" /><br/>
+      Use DEVELOPMENT Server: <input type="checkbox" ng-model="useDevServer" /><br/>
+    </div>
+    <button class="btn btn-large btn-warning" ng-click="cancelChanges()">Cancel Changes</button>
+    <button class="btn btn-large btn-success" ng-click="saveChanges()" ng-disabled="noServerSelected()">Save Changes</button>
+    <button class="btn btn-large btn-danger" ng-click="deleteDietaryPreference()" ng-disabled="noServerSelected()">Delete Dietary Preference</button>
+  </form>
+</div>

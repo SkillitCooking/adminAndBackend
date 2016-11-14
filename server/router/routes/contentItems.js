@@ -16,7 +16,7 @@ var HowToShopEntry = db.howToShopEntries;
 var TrainingVideo = db.trainingVideos;
 
 router.post('/getItemsWithTypesAndIds', function(req, res, next) {
-  logger.info('START POST api/contentItems/');
+  logger.info('START POST api/contentItems/getItemsWithTypesAndIds');
   try {
     //don't mutate req.body.items - this is order preserving
     //first, divide on basis of type

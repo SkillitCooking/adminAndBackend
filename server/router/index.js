@@ -19,5 +19,6 @@ module.exports = function (app) {
   app.use('/api/chapters', require('./routes/chapters'));
   app.use('/api/users', require('./routes/users'));
   app.use('/api/favoriteRecipes', require('./routes/favoriteRecipes'));
+  app.use('/api/dietaryPreferences', require('./routes/dietaryPreferences'));
   app.use('/api/clientLogging', require('./routes/clientLogging'));
 };

@@ -1,6 +1,8 @@
 var mongoose = require('mongoose');
 var curUTCDate = require('../../util/dateLib').curUTCDate;
 
+var DietaryPreference = require('./DietaryPreference');
+
 var UserSchema = new mongoose.Schema({
   socialName: String,
   socialUsername: String,
@@ -20,7 +22,8 @@ var UserSchema = new mongoose.Schema({
     default: curUTCDate
   },
   facebookId: String,
-  googleId: String
+  googleId: String,
+  dietaryPreferences: [DietaryPreference.schema]
 });
 
 module.exports.model = mongoose.model('User', UserSchema);

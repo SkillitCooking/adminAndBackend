@@ -153,6 +153,16 @@ angular
         controller: 'EditTrainingVideosCtrl',
         controllerAs: 'editTrainingVideos'
       })
+      .when('/dietaryPreferences', {
+        templateUrl: 'views/dietarypreferences.html',
+        controller: 'DietaryPreferencesCtrl',
+        controllerAs: 'dietaryPreferences'
+      })
+      .when('/editDietaryPreferences', {
+        templateUrl: 'views/editdietarypreferences.html',
+        controller: 'EditDietaryPreferencesCtrl',
+        controllerAs: 'editDietaryPreferences'
+      })
       .otherwise({
         redirectTo: '/'
       });
