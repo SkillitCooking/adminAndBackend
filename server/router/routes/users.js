@@ -208,6 +208,9 @@ router.post('/updatePersonalInfo', function(req, res, next) {
       if(req.body.age) {
         user.age = req.body.age;
       }
+      if(req.body.dietaryPreferences) {
+        user.dietaryPreferences = req.body.dietaryPreferences;
+      }
       user.save(function(err, user, numAffected) {
         if(err) {
           logger.error('ERROR POST api/users/updatePersonalInfo', {error: err});
