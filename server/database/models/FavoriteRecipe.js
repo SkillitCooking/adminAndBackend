@@ -22,7 +22,12 @@ var FavoriteRecipeSchema = new mongoose.Schema({
   name: String,
   mainPictureURL: String,
   prepTime: String,
-  totalTime: String
+  totalTime: String,
+  isUnfavorited: {
+    type: Boolean,
+    default: false
+  },
+  dateUnfavorited: Date
 });
 
 module.exports.model = mongoose.model('FavoriteRecipe', FavoriteRecipeSchema);
