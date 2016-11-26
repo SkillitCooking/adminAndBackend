@@ -37,6 +37,15 @@ router.get('/', function(req, res, next) {
   });
 });
 
+router.get('/getSingle', function(req, res, next) {
+  Recipe.model.findOne({}, '-datesUsedAsRecipeOfTheDay', function(err, recipe) {
+    if(err) {
+      return next(err);
+    }
+    res.json({data: recipe})
+  })
+});
+
 /* get recipes with ids */
 /* expects req.body to wrap the array... */
 router.post('/getRecipesWithIds', function(req, res, next) {
@@ -86,7 +95,8 @@ router.post('/getRecipesOfType', function(req, res, next) {
 router.post('/getRecipesForCollection', function(req, res, next) {
   logger.info('START POST api/recipes/getRecipesForCollection');
   try {
-    Recipe.model.find({collectionIds: {$in: [req.body.collectionId]}, recipeType: 'Full'}, '-datesUsedAsRecipeOfTheDay', function(err, recipes) {
+    var skipNumber = req.body.pageNumber * constants.RECIPES_PER_PAGE;
+    Recipe.model.find({collectionIds: {$in: [req.body.collectionId]}, recipeType: 'Full'}, '-datesUsedAsRecipeOfTheDay', {skip: skipNumber}, function(err, recipes) {
       if(err) {
         logger.error('ERROR POST api/recipes/getRecipesForCollection', {error: err, body: req.body});
         return next(err);

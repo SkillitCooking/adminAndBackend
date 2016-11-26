@@ -19,5 +19,6 @@ module.exports = Object.freeze({
   STATUS_CODES: {
     UNAUTHORIZED: 401,
     UNPROCESSABLE: 422
-  }
+  },
+  RECIPES_PER_PAGE: 10
 });

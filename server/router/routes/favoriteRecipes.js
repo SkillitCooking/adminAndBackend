@@ -51,7 +51,6 @@ router.post('/getFavoriteRecipesForUser', function(req, res, next) {
       }
     });
   } catch (error) {
-    console.log('thl', error);
     logger.error('ERROR - exception in POST api/favoriteRecipes/getFavoriteRecipesForUser', {error: error});
     return next(error);
   }
