@@ -27,25 +27,56 @@ router.get('/', function(req, res, next) {
   });
 });
 
+function createIngredientSets(ingredients) {
+  var ingredientSets = underscore.groupBy(ingredients, "inputCategory");
+  for (var key in ingredientSets) {
+    ingredientSets[key] = underscore.groupBy(ingredientSets[key], 'inputSubCategory');
+  }
+  var retData = {
+    data: ingredientSets
+  };
+  return retData;
+}
+
 /* GET getIngredientsForSelection */
 /* Organizes ingredients by inputCategory*/
-router.get('/getIngredientsForSelection', function(req, res, next) {
-  logger.info('START GET api/ingredients/getIngredientsForSelection');
+router.POST('/getIngredientsForSelection', function(req, res, next) {
+  logger.info('START POST api/ingredients/getIngredientsForSelection');
   Ingredient.model.find(function (err, ingredients) {
     if(err) {
-      logger.error('ERROR GET api/ingredients/getIngredientsForSelection', {error: err});
+      logger.error('ERROR POST api/ingredients/getIngredientsForSelection', {error: err});
       return next(err);
     }
-    var ingredientSets = underscore.groupBy(ingredients, "inputCategory");
-    for (var key in ingredientSets) {
-      ingredientSets[key] = underscore.groupBy(ingredientSets[key], 'inputSubCategory');
-      
+    if(req.body.userId && req.body.userToken) {
+      User.model.findById(req.body.userId, function(err, user) {
+        if(err) {
+          logger.error('ERROR POST api/ingredients/getIngredientsForSelection', {error: err});
+          return next(err);
+        }
+        if(req.body.token !== user.curToken) {
+          var error = {
+            status: constants.STATUS_CODES.UNAUTHORIZED,
+            message: 'Credentials for method are missing'
+          };
+          logger.error('ERROR POST api/ingredients/getIngredientsForSelection - token', {error: error});
+          return next(error);
+        }
+        var outlawIngredients = [];
+        for (var i = user.dietaryPreferences.length - 1; i >= 0; i--) {
+          outlawIngredients = outlawIngredients.concat(user.dietaryPreferences[i].outlawIngredients);
+        }
+        ingredients = underscore.reject(ingredients, function(ingredient) {
+          return underscore.contains(outlawIngredients, ingredient.name.standardForm);
+        });
+        var retData = createIngredientSets(ingredients);
+        logger.info('END POST api/ingredients.getIngredientsForSelection');
+        res.json('END POST api/ingredients/getIngredientsForSelection');
+      });
+    } else {
+      var retData = createIngredientSets(ingredients);
+      logger.info('END POST api/ingredients/getIngredientsForSelection');
+      res.json(retData);
     }
-    var retData = {
-      data: ingredientSets
-    };
-    logger.info('END GET api/ingredients/getIngredientsForSelection');
-    res.json(retData);
   });
 });
 
