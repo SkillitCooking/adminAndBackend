@@ -40,7 +40,8 @@ function createIngredientSets(ingredients) {
 
 /* GET getIngredientsForSelection */
 /* Organizes ingredients by inputCategory*/
-router.POST('/getIngredientsForSelection', function(req, res, next) {
+router.get('/getIngredientsForSelection', function(req, res, next) {
+  console.log('here');
   logger.info('START POST api/ingredients/getIngredientsForSelection');
   Ingredient.model.find(function (err, ingredients) {
     if(err) {

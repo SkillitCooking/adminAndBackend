@@ -42,8 +42,8 @@ router.get('/getSingle', function(req, res, next) {
     if(err) {
       return next(err);
     }
-    res.json({data: recipe})
-  })
+    res.json({data: recipe});
+  });
 });
 
 /* get recipes with ids */
@@ -96,7 +96,7 @@ router.post('/getRecipesForCollection', function(req, res, next) {
   logger.info('START POST api/recipes/getRecipesForCollection');
   try {
     var skipNumber = req.body.pageNumber * constants.RECIPES_PER_PAGE;
-    Recipe.model.find({collectionIds: {$in: [req.body.collectionId]}, recipeType: 'Full'}, '-datesUsedAsRecipeOfTheDay', {skip: skipNumber}, function(err, recipes) {
+    Recipe.model.find({collectionIds: {$in: [req.body.collectionId]}, recipeType: 'Full'}, '-datesUsedAsRecipeOfTheDay', {skip: skipNumber, limit: constants.RECIPES_PER_PAGE}, function(err, recipes) {
       if(err) {
         logger.error('ERROR POST api/recipes/getRecipesForCollection', {error: err, body: req.body});
         return next(err);
@@ -104,6 +104,11 @@ router.post('/getRecipesForCollection', function(req, res, next) {
       var retVal = {
         data: recipes
       };
+      if(recipes.length < constants.RECIPES_PER_PAGE){
+        retVal.hasMoreToLoad = false;
+      } else {
+        retVal.hasMoreToLoad = true;
+      }
       logger.info('END POST api/recipes/getRecipesForCollection');
       res.json(retVal);
     });
@@ -116,17 +121,36 @@ router.post('/getRecipesForCollection', function(req, res, next) {
 /* this could get to be a bit of a load on the server as the number of recipes scales up... However, at the given moment, when we really are only going to be dealing with a number of recipes on the level of like 50-100 at max, we're probably OK, given the complexity of handling this full query on the Mongo side */
 /* A future iteration will probably have some Mongo query that will reduce the returned set while performing further processing on the server*/
 /*Why not identify with ids?*/
+
 router.post('/getRecipesWithIngredients', function(req, res, next) {
   logger.info('START POST api/recipes/getRecipesWithIngredients');
-  Recipe.model.find({}, '-datesUsedAsRecipeOfTheDay -stepList -choiceSeasoningProfiles', (err, recipes) => {
+  Recipe.model.find({
+    "ingredientList.ingredientTypes": {
+      "$elemMatch": {
+        "ingredients": {
+          "$elemMatch": {
+            "_id": {"$in": req.body.ingredientIds}
+          }
+        }
+      }
+    }
+  }, '-datesUsedAsRecipeOfTheDay -stepList -choiceSeasoningProfiles', (err, recipes) => {
     if(err) {
       logger.error('ERROR POST api/recipes/getRecipesWithIngredients', {error: err, body: req.body});
       return next(err);
     }
     try {
-      var recipesToReturn = [];
+      var recipesToReturn = {
+        [constants.RECIPE_TYPES.ALACARTE]: [],
+        [constants.RECIPE_TYPES.BYO]: [],
+        [constants.RECIPE_TYPES.FULL]: []
+      };
       var retRecipes = [];
-      retRecipes[0] = [];
+      retRecipes[0] = {
+        [constants.RECIPE_TYPES.ALACARTE]: [],
+        [constants.RECIPE_TYPES.BYO]: [],
+        [constants.RECIPE_TYPES.FULL]: []
+      };
       var ingredientIds = req.body.ingredientIds;
       if(req.body.ingredientIds && req.body.ingredientIds.length > 0) {
         for (var k = recipes.length - 1; k >= 0; k--) {
@@ -200,37 +224,61 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
             }
           }
           if(flag){
-            if(recipes[k].recipeType === "AlaCarte") {
+            if(recipes[k].recipeType === constants.RECIPE_TYPES.ALACARTE) {
               var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'ingredientList', 'manActiveTime', 'manTotalTime');
-              retRecipes[0].push(pickedRecipe);
+              retRecipes[0][pickedRecipe.recipeType].push(pickedRecipe);
             } else {
               var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'setModifiedDisclaimer');
-              retRecipes[0].push(pickedRecipe);
+              retRecipes[0][pickedRecipe.recipeType].push(pickedRecipe);
             }
           } else {
             if(!recipes[k].isNotOneToOne && recipes[k].containsAtLeastOneIngredient) {
               if(!retRecipes[recipeMissingIngredientCount]) {
-                retRecipes[recipeMissingIngredientCount] = [];
+                retRecipes[recipeMissingIngredientCount] = {
+                  [constants.RECIPE_TYPES.ALACARTE]: [],
+                  [constants.RECIPE_TYPES.FULL]: [],
+                  [constants.RECIPE_TYPES.BYO]: []
+                };
               }
               if(recipes[k].recipeType !== constants.RECIPE_TYPES.ALACARTE) {
-                retRecipes[recipeMissingIngredientCount].push(recipes[k]);
+                retRecipes[recipeMissingIngredientCount][recipes[k].recipeType].push(recipes[k]);
               }
             }
           }
         }
-        recipesToReturn = recipesToReturn.concat(retRecipes[0]);
+        recipesToReturn[constants.RECIPE_TYPES.ALACARTE] = recipesToReturn[constants.RECIPE_TYPES.ALACARTE].concat(retRecipes[0][constants.RECIPE_TYPES.ALACARTE]);
+        recipesToReturn[constants.RECIPE_TYPES.BYO] = recipesToReturn[constants.RECIPE_TYPES.BYO].concat(retRecipes[0][constants.RECIPE_TYPES.BYO]);
+        recipesToReturn[constants.RECIPE_TYPES.FULL] = recipesToReturn[constants.RECIPE_TYPES.FULL].concat(retRecipes[0][constants.RECIPE_TYPES.FULL]);
         var missingIngredientLevel = 1;
         var recipesAdded = 0;
-        while(recipesToReturn.length < constants.MIN_NUM_RECIPES_RETURN) {
-          if(retRecipes[missingIngredientLevel] && retRecipes[missingIngredientLevel].length > 0) {
-            for (var i = retRecipes[missingIngredientLevel].length - 1; i >= 0; i--) {
-              recipesToReturn.push(underscore.pick(retRecipes[missingIngredientLevel][i], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'missingIngredients'));
+        while(recipesToReturn[constants.RECIPE_TYPES.FULL].length < constants.MINIMUM_FULL_RECIPES_RETURN) {
+          if(retRecipes[missingIngredientLevel] && retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL].length > 0) {
+            for (var i = retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL].length - 1; i >= 0; i--) {
+              recipesToReturn[constants.RECIPE_TYPES.FULL].push(underscore.pick(retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL][i], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'missingIngredients'));
               recipesAdded += 1;
             }
           }
           missingIngredientLevel += 1;
         }
-        recipesToReturn = underscore.groupBy(recipesToReturn, "recipeType");
+        recipesToReturn[constants.RECIPE_TYPES.FULL] = underscore.groupBy(recipesToReturn[constants.RECIPE_TYPES.FULL], "recipeCategory");
+        for(var key in recipesToReturn[constants.RECIPE_TYPES.FULL]) {
+          //trim below
+          if(recipesToReturn[constants.RECIPE_TYPES.FULL][key].length > constants.RECIPE_CATEGORY_PAGE_SIZE) {
+            var extraRecipeIds = underscore.map(recipesToReturn[constants.RECIPE_TYPES.FULL][key].slice(constants.RECIPE_CATEGORY_PAGE_SIZE), function(recipe) {
+              return recipe._id;
+            });
+            recipesToReturn[constants.RECIPE_TYPES.FULL][key] = {
+              recipes: recipesToReturn[constants.RECIPE_TYPES.FULL][key].slice(0, constants.RECIPE_CATEGORY_PAGE_SIZE),
+              additionalRecipeIds: extraRecipeIds,
+              hasMoreToLoad: true
+            };
+          } else {
+            recipesToReturn[constants.RECIPE_TYPES.FULL][key] = {
+              recipes: recipesToReturn[constants.RECIPE_TYPES.FULL][key],
+              hasMoreToLoad: false
+            }
+          }
+        }
       }
       var retVal = {
         data: recipesToReturn
@@ -244,6 +292,41 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
   });
 });
 
+router.post('/getMoreRecipesForCategory', function(req, res, next) {
+  logger.info('START POST api/recipes/getMoreRecipesForCategory');
+  try {
+    Recipe.model.find({
+      "_id": {"$in": req.body.recipeIds},
+    }, '-datesUsedAsRecipeOfTheDay -stepList -choiceSeasoningProfiles', (err, recipes) => {
+      if(err) {
+        logger.error('ERROR - POST api/recipes/getMoreRecipesForCategory', {error: err});
+        return next(err);
+      }
+      var retRecipes, additionalRecipeIds;
+      if(recipes.length > constants.RECIPE_CATEGORY_PAGE_SIZE) {
+        retRecipes = recipes.slice(0, constants.RECIPE_CATEGORY_PAGE_SIZE);
+        var additionalRecipeIds = underscore.map(recipes.slice(constants.RECIPE_CATEGORY_PAGE_SIZE), function(recipe) {
+          return recipe._id;
+        });
+        retRecipes = {
+          recipes: retRecipes,
+          additionalRecipeIds: additionalRecipeIds,
+          hasMoreToLoad: true
+        };
+      } else {
+        retRecipes = {
+          recipes: recipes,
+          additionalRecipeIds: [],
+          hasMoreToLoad: false
+        };
+      }
+      res.json({data: retRecipes});
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in POST api/recipes/getMoreRecipesForCategory', {error: error});
+    return next(error);
+  }
+});
 
 /* POST /recipes - create a single new recipe */
 /* Check for same recipe, but send back an an error and do noting if same name found */
