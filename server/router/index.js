@@ -20,5 +20,8 @@ module.exports = function (app) {
   app.use('/api/users', require('./routes/users'));
   app.use('/api/favoriteRecipes', require('./routes/favoriteRecipes'));
   app.use('/api/dietaryPreferences', require('./routes/dietaryPreferences'));
+  app.use('/api/ingredientsUsed', require('./routes/ingredientsUsed'));
+  app.use('/api/mealsCooked', require('./routes/mealsCooked'));
+  app.use('/api/seasoningUsed', require('./routes/seasoningUsed'));
   app.use('/api/clientLogging', require('./routes/clientLogging'));
 };

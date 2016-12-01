@@ -21,6 +21,9 @@ var chapters = require('./models/Chapter.js');
 var users = require('./models/User.js');
 var favoriteRecipes = require('./models/FavoriteRecipe.js');
 var dietaryPreferences = require('./models/DietaryPreference.js');
+var mealsCooked = require('./models/MealsCooked.js');
+var ingredientsUsed = require('./models/IngredientsUsed.js');
+var seasoningUsed = require('./models/SeasoningUsed.js');
 
 // connections
 // may need to change the devDB to a compose devDB...
@@ -81,3 +84,6 @@ exports.chapters = chapters;
 exports.users = users;
 exports.favoriteRecipes = favoriteRecipes;
 exports.dietaryPreferences = dietaryPreferences;
+exports.mealsCooked = mealsCooked;
+exports.ingredientsUsed = ingredientsUsed;
+exports.seasoningUsed = seasoningUsed;
