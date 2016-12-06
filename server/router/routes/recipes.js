@@ -380,12 +380,24 @@ function processRecipes(req, recipes, recipesToReturn, outlawIngredients) {
 
 router.post('/getRecipesWithIngredients', function(req, res, next) {
   logger.info('START POST api/recipes/getRecipesWithIngredients');
+  var ingredientFormIds = [];
+  if(req.body.ingredientIds) {
+    for (var i = req.body.ingredientIds.length - 1; i >= 0; i--) {
+      ingredientFormIds = ingredientFormIds.concat(req.body.ingredientIds[i].formIds);
+    }
+  }
+  console.log('forms: ', ingredientFormIds);
   Recipe.model.find({
     "ingredientList.ingredientTypes": {
       "$elemMatch": {
         "ingredients": {
           "$elemMatch": {
-            "_id": {"$in": req.body.ingredientIds}
+            "_id": {"$in": req.body.ingredientIds},
+            "ingredientForms": {
+              "$elemMatch": {
+                "_id": {"$in": ingredientFormIds}
+              }
+            }
           }
         }
       }
