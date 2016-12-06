@@ -8,6 +8,7 @@ var mongoose = require('mongoose');
 var underscore = require('underscore');
 var db = require('../../database');
 var Recipe = db.recipes;
+var User = db.users;
 
 /* Add response 'success' signal when time comes */
 /* Add Credentials appropriately when time comes */
@@ -74,17 +75,62 @@ router.post('/getRecipesWithIds', function(req, res, next) {
 router.post('/getRecipesOfType', function(req, res, next) {
   logger.info('START POST api/recipes/getRecipesOfType');
   try {
-    Recipe.model.find({recipeType: req.body.recipeType}, '-datesUsedAsRecipeOfTheDay', function(err, recipes) {
-      if(err) {
-        logger.error('ERROR POST api/recipes/getRecipesOfType', {error: err, body: req.body});
-        return next(err);
-      }
-      var retVal = {
-        data: recipes
-      };
-      logger.info('END POST api/recipes/getRecipesOfType');
-      res.json(retVal);
-    });
+    if(req.body.userId && req.body.userToken) {
+      User.model.findById(req.body.userId, function(err, user) {
+        if(err) {
+          logger.error('ERROR POST api/recipes/getRecipesOfType/', {error: err});
+          return next(err);
+        }
+        if(req.body.userToken !== user.curToken) {
+          var error = {
+            status: constants.STATUS_CODES.UNAUTHORIZED,
+            message: 'Credentials for method are missing'
+          };
+          logger.error('ERROR POST api/recipes/getRecipesOfType/', {error: err});
+          return next(err);
+        }
+        var outlawIngredients = [];
+        for (var i = user.dietaryPreferences.length - 1; i >= 0; i--) {
+          outlawIngredients = outlawIngredients.concat(user.dietaryPreferences[i].outlawIngredients);
+        }
+        Recipe.model.find({
+          recipeType: req.body.recipeType,
+          "ingredientList.ingredientTypes": {
+              "$not": {
+                "$elemMatch": {
+                  "ingredients": {
+                    "$elemMatch": {
+                      "name.standardForm": {"$in": outlawIngredients}
+                    }
+                  }
+                }
+              }
+            }
+        }, '-datesUsedAsRecipeOfTheDay', function(err, recipes) {
+          if(err) {
+            logger.error('ERROR POST api/recipes/getRecipesOfType', {error: err, body: req.body});
+            return next(err);
+          }
+          var retVal = {
+            data: recipes
+          };
+          logger.info('END POST api/recipes/getRecipesOfType');
+          res.json(retVal);
+        });
+      });
+    } else {
+      Recipe.model.find({recipeType: req.body.recipeType}, '-datesUsedAsRecipeOfTheDay', function(err, recipes) {
+        if(err) {
+          logger.error('ERROR POST api/recipes/getRecipesOfType', {error: err, body: req.body});
+          return next(err);
+        }
+        var retVal = {
+          data: recipes
+        };
+        logger.info('END POST api/recipes/getRecipesOfType');
+        res.json(retVal);
+      });
+    }
   } catch (error) {
     logger.error('ERROR - exception in POST api/recipes/getRecipesOfType', {error: error});
     return next(error);
@@ -96,22 +142,86 @@ router.post('/getRecipesForCollection', function(req, res, next) {
   logger.info('START POST api/recipes/getRecipesForCollection');
   try {
     var skipNumber = req.body.pageNumber * constants.RECIPES_PER_PAGE;
-    Recipe.model.find({collectionIds: {$in: [req.body.collectionId]}, recipeType: 'Full'}, '-datesUsedAsRecipeOfTheDay', {skip: skipNumber, limit: constants.RECIPES_PER_PAGE}, function(err, recipes) {
-      if(err) {
-        logger.error('ERROR POST api/recipes/getRecipesForCollection', {error: err, body: req.body});
-        return next(err);
-      }
-      var retVal = {
-        data: recipes
-      };
-      if(recipes.length < constants.RECIPES_PER_PAGE){
-        retVal.hasMoreToLoad = false;
-      } else {
-        retVal.hasMoreToLoad = true;
-      }
-      logger.info('END POST api/recipes/getRecipesForCollection');
-      res.json(retVal);
-    });
+    if(req.body.userId && req.body.userToken) {
+      User.model.findById(req.body.userId, function(err, user) {
+        if(err) {
+          logger.error('ERROR POST api/ingredients/getRecipesForCollection', {error: err});
+          return next(err);
+        }
+        if(req.body.userToken !== user.curToken) {
+          var error = {
+            status: constants.STATUS_CODES.UNAUTHORIZED,
+            message: 'Credentials for method are missing'
+          };
+          logger.error('ERROR POST api/recipes/getRecipesForCollection - token', {error: error});
+          return next(error);
+        }
+        var outlawIngredients = [];
+        for (var i = user.dietaryPreferences.length - 1; i >= 0; i--) {
+          outlawIngredients = outlawIngredients.concat(user.dietaryPreferences[i].outlawIngredients);
+        }
+        var query;
+        if(outlawIngredients.length === 0) {
+          query = {
+            collectionIds: {$in: [req.body.collectionId]},
+            recipeType: 'Full'
+          };
+        } else {
+          query = {
+            "ingredientList.ingredientTypes": {
+              "$not": {
+                "$elemMatch": {
+                  "$or": [
+                    {"ingredients": {
+                      "$elemMatch": {
+                        "name.standardForm": {"$in": outlawIngredients}
+                      }
+                    }},
+                    {"minNeeded": {"$gt": 0}}
+                  ]
+                }
+              }
+            },
+            collectionIds: {$in: [req.body.collectionId]},
+            recipeType: 'Full'
+          };
+        }
+        Recipe.model.find(query, '-datesUsedAsRecipeOfTheDay', {skip: skipNumber, limit: constants.RECIPES_PER_PAGE}, function(err, recipes) {
+          if(err) {
+            logger.error('ERROR POST api/recipes/getRecipesForCollection', {error: err, body: req.body});
+            return next(err);
+          }
+          var retVal = {
+            data: recipes
+          };
+          if(recipes.length < constants.RECIPES_PER_PAGE){
+            retVal.hasMoreToLoad = false;
+          } else {
+            retVal.hasMoreToLoad = true;
+          }
+          logger.info('END POST api/recipes/getRecipesForCollection');
+          res.json(retVal);
+        });
+      });
+    } else {
+      //then no credentials provided...
+      Recipe.model.find({collectionIds: {$in: [req.body.collectionId]}, recipeType: 'Full'}, '-datesUsedAsRecipeOfTheDay', {skip: skipNumber, limit: constants.RECIPES_PER_PAGE}, function(err, recipes) {
+        if(err) {
+          logger.error('ERROR POST api/recipes/getRecipesForCollection', {error: err, body: req.body});
+          return next(err);
+        }
+        var retVal = {
+          data: recipes
+        };
+        if(recipes.length < constants.RECIPES_PER_PAGE){
+          retVal.hasMoreToLoad = false;
+        } else {
+          retVal.hasMoreToLoad = true;
+        }
+        logger.info('END POST api/recipes/getRecipesForCollection');
+        res.json(retVal);
+      });
+    }
   } catch(error) {
     logger.error('ERROR - exception in POST api/recipes/getRecipesForCollection', {error: error});
     return next(error);
@@ -122,37 +232,16 @@ router.post('/getRecipesForCollection', function(req, res, next) {
 /* A future iteration will probably have some Mongo query that will reduce the returned set while performing further processing on the server*/
 /*Why not identify with ids?*/
 
-router.post('/getRecipesWithIngredients', function(req, res, next) {
-  logger.info('START POST api/recipes/getRecipesWithIngredients');
-  Recipe.model.find({
-    "ingredientList.ingredientTypes": {
-      "$elemMatch": {
-        "ingredients": {
-          "$elemMatch": {
-            "_id": {"$in": req.body.ingredientIds}
-          }
-        }
-      }
-    }
-  }, '-datesUsedAsRecipeOfTheDay -stepList -choiceSeasoningProfiles', (err, recipes) => {
-    if(err) {
-      logger.error('ERROR POST api/recipes/getRecipesWithIngredients', {error: err, body: req.body});
-      return next(err);
-    }
-    try {
-      var recipesToReturn = {
-        [constants.RECIPE_TYPES.ALACARTE]: [],
-        [constants.RECIPE_TYPES.BYO]: [],
-        [constants.RECIPE_TYPES.FULL]: []
-      };
-      var retRecipes = [];
-      retRecipes[0] = {
-        [constants.RECIPE_TYPES.ALACARTE]: [],
-        [constants.RECIPE_TYPES.BYO]: [],
-        [constants.RECIPE_TYPES.FULL]: []
-      };
-      var ingredientIds = req.body.ingredientIds;
-      if(req.body.ingredientIds && req.body.ingredientIds.length > 0) {
+function processRecipes(req, recipes, recipesToReturn, outlawIngredients) {
+  console.log('outlawIngredients: ', outlawIngredients);
+  var retRecipes = [];
+  retRecipes[0] = {
+    [constants.RECIPE_TYPES.ALACARTE]: [],
+    [constants.RECIPE_TYPES.BYO]: [],
+    [constants.RECIPE_TYPES.FULL]: []
+  };
+  var ingredientIds = req.body.ingredientIds;
+  if(req.body.ingredientIds && req.body.ingredientIds.length > 0) {
         for (var k = recipes.length - 1; k >= 0; k--) {
           recipes[k].missingIngredients = [];
           var recipeMissingIngredientCount = 0;
@@ -164,6 +253,13 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
               recipes[k].isNotOneToOne = true;
             }
             for (var j = ingredientTypes[i].ingredients.length - 1; j >= 0; j--) {
+              if(outlawIngredients && outlawIngredients.length > 0 && ingredientTypes[i].minNeeded != 0) {
+                if(underscore.some(outlawIngredients, function(ingredName) {
+                  return ingredientTypes[i].ingredients[j].name.standardForm == ingredName;
+                })) {
+                  recipes[k].hasOutlawIngredient = true;
+                }
+              }
               if(ingredientIds){
                 var ingredientId = underscore.find(ingredientIds, function(ingred) {
                   return ingredientTypes[i].ingredients[j]._id.equals(ingred._id);
@@ -232,7 +328,7 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
               retRecipes[0][pickedRecipe.recipeType].push(pickedRecipe);
             }
           } else {
-            if(!recipes[k].isNotOneToOne && recipes[k].containsAtLeastOneIngredient) {
+            if(!recipes[k].isNotOneToOne && recipes[k].containsAtLeastOneIngredient && !recipes[k].hasOutlawIngredient) {
               if(!retRecipes[recipeMissingIngredientCount]) {
                 retRecipes[recipeMissingIngredientCount] = {
                   [constants.RECIPE_TYPES.ALACARTE]: [],
@@ -280,11 +376,71 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
           }
         }
       }
-      var retVal = {
-        data: recipesToReturn
-      };
-      logger.info('END POST api/recipes/getRecipesWithIngredients');
-      res.json(retVal);
+}
+
+router.post('/getRecipesWithIngredients', function(req, res, next) {
+  logger.info('START POST api/recipes/getRecipesWithIngredients');
+  Recipe.model.find({
+    "ingredientList.ingredientTypes": {
+      "$elemMatch": {
+        "ingredients": {
+          "$elemMatch": {
+            "_id": {"$in": req.body.ingredientIds}
+          }
+        }
+      }
+    }
+  }, '-datesUsedAsRecipeOfTheDay -stepList -choiceSeasoningProfiles', (err, recipes) => {
+    if(err) {
+      logger.error('ERROR POST api/recipes/getRecipesWithIngredients', {error: err, body: req.body});
+      return next(err);
+    }
+    try {
+      if(req.body.userId && req.body.userToken) {
+        //then user
+        User.model.findById(req.body.userId, function(err, user) {
+          if(err) {
+            logger.error('ERROR POST api/recipes/getRecipesWithIngredients', {error: err});
+            return next(err);
+          }
+          if(req.body.userToken !== user.curToken) {
+            var error = {
+              status: constants.STATUS_CODES.UNAUTHORIZED,
+              message: 'Credentials for method are missing'
+            };
+            logger.error('ERROR POST api/recipes/getRecipesWithIngredients - token', {error: error});
+            return next(error);
+          }
+          var outlawIngredients = [];
+          for (var i = user.dietaryPreferences.length - 1; i >= 0; i--) {
+            outlawIngredients = outlawIngredients.concat(user.dietaryPreferences[i].outlawIngredients);
+          }
+          var recipesToReturn = {
+            [constants.RECIPE_TYPES.ALACARTE]: [],
+            [constants.RECIPE_TYPES.BYO]: [],
+            [constants.RECIPE_TYPES.FULL]: []
+          };
+          processRecipes(req, recipes, recipesToReturn, outlawIngredients);
+          var retVal = {
+            data: recipesToReturn
+          };
+          logger.info('END POST api/recipes/getRecipesWithIngredients');
+          res.json(retVal);
+        });
+      } else {
+        //then no user
+        var recipesToReturn = {
+          [constants.RECIPE_TYPES.ALACARTE]: [],
+          [constants.RECIPE_TYPES.BYO]: [],
+          [constants.RECIPE_TYPES.FULL]: []
+        };
+        processRecipes(req, recipes, recipesToReturn);
+        var retVal = {
+          data: recipesToReturn
+        };
+        logger.info('END POST api/recipes/getRecipesWithIngredients');
+        res.json(retVal);
+      }
     } catch (error) {
       logger.error('ERROR - exception in POST api/recipes/getRecipesWithIngredients', {error: error});
       return next(error);

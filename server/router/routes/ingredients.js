@@ -2,12 +2,14 @@ var express = require('express');
 var router = express.Router();
 
 var logger = require('../../util/logger').serverLogger;
+var constants = require('../../util/constants');
 
 var mongoose = require('mongoose');
 var underscore = require('underscore');
 var db = require('../../database');
 var Ingredient = db.ingredients;
 var Recipe = db.recipes;
+var User = db.users;
 
 /* Add response 'success' signal when time comes */
 /* Add Credentials appropriately when time comes */
@@ -40,8 +42,7 @@ function createIngredientSets(ingredients) {
 
 /* GET getIngredientsForSelection */
 /* Organizes ingredients by inputCategory*/
-router.get('/getIngredientsForSelection', function(req, res, next) {
-  console.log('here');
+router.post('/getIngredientsForSelection', function(req, res, next) {
   logger.info('START POST api/ingredients/getIngredientsForSelection');
   Ingredient.model.find(function (err, ingredients) {
     if(err) {
@@ -54,7 +55,7 @@ router.get('/getIngredientsForSelection', function(req, res, next) {
           logger.error('ERROR POST api/ingredients/getIngredientsForSelection', {error: err});
           return next(err);
         }
-        if(req.body.token !== user.curToken) {
+        if(req.body.userToken !== user.curToken) {
           var error = {
             status: constants.STATUS_CODES.UNAUTHORIZED,
             message: 'Credentials for method are missing'
@@ -70,8 +71,8 @@ router.get('/getIngredientsForSelection', function(req, res, next) {
           return underscore.contains(outlawIngredients, ingredient.name.standardForm);
         });
         var retData = createIngredientSets(ingredients);
-        logger.info('END POST api/ingredients.getIngredientsForSelection');
-        res.json('END POST api/ingredients/getIngredientsForSelection');
+        logger.info('END POST api/ingredients/getIngredientsForSelection');
+        res.json(retData);
       });
     } else {
       var retData = createIngredientSets(ingredients);
