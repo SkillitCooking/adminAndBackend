@@ -1,6 +1,8 @@
 var mongoose = require('mongoose');
 var curUTCDate = require('../../util/dateLib').curUTCDate;
 
+var ObjectId = mongoose.Schema.Types.ObjectId;
+
 var ItemCollectionSchema = new mongoose.Schema({
   name: String,
   itemType: String,
@@ -15,7 +17,8 @@ var ItemCollectionSchema = new mongoose.Schema({
   },
   pictureURL: String,
   orderPreference: Number,
-  isBYOCollection: Boolean
+  isBYOCollection: Boolean,
+  dietaryPreferenceIds: [ObjectId] 
 });
 
 module.exports.model = mongoose.model('ItemCollection', ItemCollectionSchema);

@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var logger = require('../../util/logger').serverLogger;
+var constants = require('../../util/constants');
 
 var mongoose = require('mongoose');
 var underscore = require('underscore');
@@ -12,6 +13,7 @@ var GlossaryEntry = db.glossaryEntries;
 var HowToShopEntry = db.howToShopEntries;
 var TrainingVideo = db.trainingVideos;
 var Recipe = db.recipes;
+var User = db.users;
 
 /* Add response 'success' signal when time comes */
 /* Add Credentials appropriately when time comes */
@@ -276,19 +278,56 @@ router.post('/', function(req, res, next) {
 router.post('/getCollectionsForItemType', function(req, res, next) {
   logger.info('START POST api/itemCollections/getCollectionsForItemType');
   try {
-    ItemCollection.model.find({
-      "itemType": req.body.itemType
-    }, function(err, collections) {
-      if(err) {
-        logger.error('ERROR POST api/itemCollections/getCollectionsForItemType', {error: err, body: req.body});
-        return next(err);
-      }
-      var retVal = {
-        data: collections
-      };
-      logger.info('END POST api/itemCollections/getCollectionsForItemType');
-      res.json(retVal);
-    });
+    if(req.body.itemType && req.body.userId && req.body.userToken) {
+      User.model.findById(req.body.userId, function(err, user) {
+        if(err) {
+          logger.error('ERROR POST api/itemCollections/getCollectionsForItemType - user', {error: err});
+          return next(err);
+        }
+        if(req.body.userToken !== user.curToken) {
+          var error = {
+            status: constants.STATUS_CODES.UNAUTHORIZED,
+            message: 'Credentials for method are missing'
+          };
+          logger.error('ERROR POST api/itemCollections/getCollectionsForItemType - token', {error: error});
+          return next(error);
+        }
+        var dietaryPreferenceIds = [];
+        for (var i = user.dietaryPreferences.length - 1; i >= 0; i--) {
+          dietaryPreferenceIds.push(user.dietaryPreferences[i]._id);
+        }
+        ItemCollection.model.find({
+          "dietaryPreferenceIds": {
+            "$nin": dietaryPreferenceIds
+          },
+          "itemType": req.body.itemType
+        }, function(err, collections) {
+          if(err) {
+            logger.error('ERROR POST api/itemCollections/getCollectionsForItemType', {error: err});
+            return next(err);
+          }
+          var retVal = {
+            data: collections
+          };
+          logger.info('END POST api/itemCollections/getCollectionsForItemType');
+          res.json(retVal);
+        });
+      });
+    } else {
+      ItemCollection.model.find({
+        "itemType": req.body.itemType
+      }, function(err, collections) {
+        if(err) {
+          logger.error('ERROR POST api/itemCollections/getCollectionsForItemType', {error: err, body: req.body});
+          return next(err);
+        }
+        var retVal = {
+          data: collections
+        };
+        logger.info('END POST api/itemCollections/getCollectionsForItemType');
+        res.json(retVal);
+      });
+    }
   } catch (error) {
     logger.error('ERROR - exception in POST api/itemCollections/getCollectionsForItemType', {error: error});
     return next(error);

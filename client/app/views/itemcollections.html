@@ -3,11 +3,19 @@
   <a class="btn btn-link active" ng-href="#/itemCollections">Create</a>
   <a class="btn btn-link" ng-href="#/editItemCollections">Edit</a><br/>
   <form novalidate name="itemCollectionsForm">
+    <p>Dietary Preferences are currently being pulled from the {{serverType}} server</p>
+    <button class="btn btn-primary" ng-click="reloadCollections('PRODUCTION')">Reload From Production</button>
+    <button class="btn btn-success" ng-click="reloadCollections('DEVELOPMENT')">Reload From Development</button><br/><br/>
     Name: <input type="text" ng-model="itemCollection.name" size="50" required name="nameInput" /><br/><br/>
     Description: <textarea ng-model="itemCollection.description" rows="4" cols="50" required name="descriptionInput"></textarea><br/><br/>
     Picture URL: <input type="url" placeholder="URL" ng-model="itemCollection.pictureURL" size="60" name="pictureURLInput" /><br/><br/>
     Order Preference: <input type="text" ng-pattern="integerval" ng-model="itemCollection.orderPreference" size="30" name="orderPreferenceInput"/><br/><br/>
     Is BYO Collection? <input type="checkbox" ng-model="itemCollection.isBYOCollection"/><br/><br/>
+    Incompatible Dietary Preferences: <br/>
+    <div ng-repeat="preference in dietaryPreferences">
+      <input type="checkbox" ng-model="preference.addToCollection" />
+      <span>{{preference.title}}</span>
+    </div><br/><br/>
     ItemType: <select name="itemTypeSelect" ng-model="itemCollection.itemType" ng-options="itemType as itemType for itemType in itemTypes" required></select><br/><br/>
     <div>
       Use PRODUCTION Server: <input type="checkbox" ng-model="useProdServer" /><br/>

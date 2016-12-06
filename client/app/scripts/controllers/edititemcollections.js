@@ -8,14 +8,14 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('EditItemCollectionsCtrl', ['$window', '$scope', 'itemCollectionService', function ($window, $scope, itemCollectionService) {
+  .controller('EditItemCollectionsCtrl', ['$window', '$scope', 'itemCollectionService', 'dietaryPreferenceService', function ($window, $scope, itemCollectionService, dietaryPreferenceService) {
 
     $scope.integerval = /^\d*$/;
     $scope.itemTypes = $scope.itemTypes = ["dailyTip", "trainingVideo", "howToShop", "glossary", "recipe"];
 
     $scope.serverType = 'DEVELOPMENT';
 
-    $scope.reloadCollections = function(serverName) {
+    $scope.reloadStuff = function(serverName) {
       var isProd = false;
       if(serverName === 'PRODUCTION') {
         isProd = true;
@@ -35,12 +35,25 @@ angular.module('SkillitAdminApp')
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
       });
+      dietaryPreferenceService.getAllDietaryPreferences(isProd).then(function(res) {
+        $scope.dietaryPreferences = res.data;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
     };
 
-    $scope.reloadCollections('DEVELOPMENT');
+    $scope.reloadStuff('DEVELOPMENT');
 
     $scope.changeSelectedCollection = function() {
       if($scope.selectedCollection) {
+        for (var i = $scope.selectedCollection.dietaryPreferenceIds.length - 1; i >= 0; i--) {
+          for (var j = $scope.dietaryPreferences.length - 1; j >= 0; j--) {
+            if($scope.selectedCollection.dietaryPreferenceIds[i] == $scope.dietaryPreferences[j]._id) {
+              $scope.dietaryPreferences[j].addToCollection = true;
+            }
+          }
+        }
         $scope.itemCollection = angular.copy($scope.selectedCollection);
       }
     };
@@ -57,6 +70,12 @@ angular.module('SkillitAdminApp')
       if(!$scope.itemCollection.orderPreference) {
         $scope.itemCollection.orderPreference = -1;
       }
+      var dietaryPreferenceIds = [];
+      for (var i = $scope.dietaryPreferences.length - 1; i >= 0; i--) {
+        if($scope.dietaryPreferences[i].addToCollection) {
+          dietaryPreferenceIds.push($scope.dietaryPreferences[i]._id);
+        }
+      }
       itemCollectionService.updateItemCollection({
         name: $scope.itemCollection.name,
         description: $scope.itemCollection.description,
@@ -64,6 +83,7 @@ angular.module('SkillitAdminApp')
         pictureURL: $scope.itemCollection.pictureURL,
         orderPreference: $scope.itemCollection.orderPreference,
         isBYOCollection: $scope.itemCollection.isBYOCollection,
+        dietaryPreferenceIds: dietaryPreferenceIds,
         _id: $scope.itemCollection._id
       }, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         alert("ItemCollection successfully updated! Refresh page.");
