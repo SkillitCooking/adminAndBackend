@@ -233,7 +233,6 @@ router.post('/getRecipesForCollection', function(req, res, next) {
 /*Why not identify with ids?*/
 
 function processRecipes(req, recipes, recipesToReturn, outlawIngredients) {
-  console.log('outlawIngredients: ', outlawIngredients);
   var retRecipes = [];
   retRecipes[0] = {
     [constants.RECIPE_TYPES.ALACARTE]: [],
@@ -350,7 +349,9 @@ function processRecipes(req, recipes, recipesToReturn, outlawIngredients) {
         while(recipesToReturn[constants.RECIPE_TYPES.FULL].length < constants.MINIMUM_FULL_RECIPES_RETURN) {
           if(retRecipes[missingIngredientLevel] && retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL].length > 0) {
             for (var i = retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL].length - 1; i >= 0; i--) {
-              recipesToReturn[constants.RECIPE_TYPES.FULL].push(underscore.pick(retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL][i], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'missingIngredients'));
+              var recipeToAdd = underscore.pick(retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL][i], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'missingIngredients');
+              recipeToAdd.usesMissingIngredients = true;
+              recipesToReturn[constants.RECIPE_TYPES.FULL].push(recipeToAdd);
               recipesAdded += 1;
             }
           }
@@ -372,7 +373,7 @@ function processRecipes(req, recipes, recipesToReturn, outlawIngredients) {
             recipesToReturn[constants.RECIPE_TYPES.FULL][key] = {
               recipes: recipesToReturn[constants.RECIPE_TYPES.FULL][key],
               hasMoreToLoad: false
-            }
+            };
           }
         }
       }
@@ -386,7 +387,6 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
       ingredientFormIds = ingredientFormIds.concat(req.body.ingredientIds[i].formIds);
     }
   }
-  console.log('forms: ', ingredientFormIds);
   Recipe.model.find({
     "ingredientList.ingredientTypes": {
       "$elemMatch": {
