@@ -191,6 +191,14 @@ router.post('/updatePersonalInfo', function(req, res, next) {
         logger.error('ERROR POST api/users/updatePersonalInfo', {error: err});
         return next(err);
       }
+      if(!user) {
+        var error = {
+          status: constants.STATUS_CODES.UNPROCESSABLE,
+          message: 'No user for given id'
+        };
+        logger.error('ERROR POST api/users/updatePersonalInfo - no user found', {error: error});
+        return next(error);
+      }
       if(req.body.token !== user.curToken) {
         var error = {
           status: constants.STATUS_CODES.UNAUTHORIZED,
@@ -234,6 +242,14 @@ router.post('/getPersonalInfo', function(req, res, next) {
       if (err) {
         logger.error('ERROR POST api/users/getPersonalInfo', {error: err});
         return next(err);
+      }
+      if(!user) {
+        var error = {
+          status: constants.STATUS_CODES.UNPROCESSABLE,
+          message: 'No user for given id'
+        };
+        logger.error('ERROR POST api/users/getPersonalInfo - no user found', {error: error});
+        return next(error);
       }
       if(req.body.token !== user.curToken) {
         var error = {

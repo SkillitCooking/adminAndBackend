@@ -5,20 +5,21 @@
   <a class="btn btn-link" ng-href="#/editRecipes">Edit + Duplicate</a><br/>
   <!--copy selectedRecipe over to recipe - that way original model doesn't change-->
   <form novalidate name="editRecipeForm" ng-controller="EditRecipesCtrl">
+    <p>Objects are currently being loaded from the {{serverType}} server</p>
     Use: <br/>
     <label>
-      <input type="radio" ng-model="useProd" ng-click="reloadStuff('PRODUCTION')" ng-value="true">
+      <input type="radio" ng-model="fetchObj.useProd" ng-click="reloadStuff('PRODUCTION')" ng-value="true">
       Production
     </label>
     <label>
-      <input type="radio" ng-model="useProd" ng-click="reloadStuff('DEVELOPMENT')" ng-value="false">
+      <input type="radio" ng-model="fetchObj.useProd" ng-click="reloadStuff('DEVELOPMENT')" ng-value="false">
       Development
     </label> <br/>
-    <input type="text" ng-model="fetchId" size="50" placeholder="Recipe Id">
+    <input type="text" ng-model="fetchObj.fetchId" size="50" placeholder="Recipe Id">
     <br/><span>OR</span><br/>
-    <input type="text" ng-model="fetchName" size="50" placeholder="Recipe Name">
+    <input type="text" ng-model="fetchObj.fetchName" size="50" placeholder="Recipe Name">
     <br/>
-    <button class="btn btn-primary" ng-click="fetchRecipe()">Fetch</button>
+    <button class="btn btn-primary" ng-click="fetchRecipe()">Fetch</button><br/><br/>
     Name: <input type="text" ng-model="recipe.name" size="50" required ng-focus="logRecipeName()" ng-blur="updateRecipeName()" name="nameInput"/> 
     <span ng-show="recipeForm.nameInput.$invalid">give the recipe a name</span><br /> <br />
     Description: <textarea ng-model="recipe.description" rows="4" cols="50" required name="descInput"></textarea>

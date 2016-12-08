@@ -63,6 +63,7 @@ router.get('/getAllRecipesNameId', function(req, res, next) {
 router.post('/getSingleRecipe', function(req, res, next) {
   logger.info('START POST api/recipes/getSingleRecipe/');
   var query;
+  console.log(req.body);
   if(req.body.id) {
     query = {
       _id: req.body.id
@@ -70,7 +71,7 @@ router.post('/getSingleRecipe', function(req, res, next) {
   } else {
     query = {
       name: req.body.name
-    }
+    };
   }
   Recipe.model.findOne(query, '-datesUsedAsRecipeOfTheDay', function(err, recipe) {
     if(err) {
@@ -124,6 +125,14 @@ router.post('/getRecipesOfType', function(req, res, next) {
         if(err) {
           logger.error('ERROR POST api/recipes/getRecipesOfType/', {error: err});
           return next(err);
+        }
+        if(!user) {
+          var error = {
+            status: constants.STATUS_CODES.UNPROCESSABLE,
+            message: 'No user for given id'
+          };
+          logger.error('ERROR POST api/recipes/getRecipesOfType - no user found', {error: error});
+          return next(error);
         }
         if(req.body.userToken !== user.curToken) {
           var error = {
@@ -191,6 +200,14 @@ router.post('/getRecipesForCollection', function(req, res, next) {
         if(err) {
           logger.error('ERROR POST api/ingredients/getRecipesForCollection', {error: err});
           return next(err);
+        }
+        if(!user) {
+          var error = {
+            status: constants.STATUS_CODES.UNPROCESSABLE,
+            message: 'No user for given id'
+          };
+          logger.error('ERROR POST api/recipes/getRecipesForCollection - no user found', {error: error});
+          return next(error);
         }
         if(req.body.userToken !== user.curToken) {
           var error = {
@@ -458,6 +475,14 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
           if(err) {
             logger.error('ERROR POST api/recipes/getRecipesWithIngredients', {error: err});
             return next(err);
+          }
+          if(!user) {
+            var error = {
+              status: constants.STATUS_CODES.UNPROCESSABLE,
+              message: 'No user for given id'
+            };
+            logger.error('ERROR POST api/recipes/getRecipesWithIngredients - no user found', {error: error});
+            return next(error);
           }
           if(req.body.userToken !== user.curToken) {
             var error = {

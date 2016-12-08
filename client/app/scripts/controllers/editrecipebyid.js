@@ -60,8 +60,12 @@ angular.module('SkillitAdminApp')
       });
     };
 
+    $scope.reloadStuff('DEVELOPMENT');
+
+    $scope.fetchObj = {};
+
     $scope.fetchRecipe = function() {
-      recipeService.getSingleRecipe($scope.fetchId, $scope.fetchName, $scope.useProd).then(function(res) {
+      recipeService.getSingleRecipe($scope.fetchObj.fetchId, $scope.fetchObj.fetchName, $scope.fetchObj.useProd).then(function(res) {
         $scope.selectedRecipe = res.data;
         $scope.changeSelectedRecipe();
       }, function(response) {
@@ -126,6 +130,7 @@ angular.module('SkillitAdminApp')
           types[i].ingredientMinimizedIndicator.fill(true);
         }
         if($scope.recipeCollections) {
+          console.log('her', $scope.recipeCollections);
           for (var i = $scope.recipe.collectionIds.length - 1; i >= 0; i--) {
             var index = _.findIndex($scope.recipeCollections, function(collection) {
               return collection._id === $scope.recipe.collectionIds[i];
@@ -136,6 +141,7 @@ angular.module('SkillitAdminApp')
           }
         }
         if($scope.seasoningProfiles) {
+          console.log('ler', $scope.seasoningProfiles);
           for (var i = $scope.recipe.choiceSeasoningProfiles.length - 1; i >= 0; i--) {
             var index = _.findIndex($scope.seasoningProfiles, function(profile) {
               return profile._id === $scope.recipe.choiceSeasoningProfiles[i]._id;

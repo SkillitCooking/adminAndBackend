@@ -284,6 +284,14 @@ router.post('/getCollectionsForItemType', function(req, res, next) {
           logger.error('ERROR POST api/itemCollections/getCollectionsForItemType - user', {error: err});
           return next(err);
         }
+        if(!user) {
+          var error = {
+            status: constants.STATUS_CODES.UNPROCESSABLE,
+            message: 'No user for given id'
+          };
+          logger.error('ERROR POST api/itemCollections/getCollectionsForItemType - no user found', {error: error});
+          return next(error);
+        }
         if(req.body.userToken !== user.curToken) {
           var error = {
             status: constants.STATUS_CODES.UNAUTHORIZED,
