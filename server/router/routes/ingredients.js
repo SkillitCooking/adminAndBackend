@@ -40,6 +40,28 @@ function createIngredientSets(ingredients) {
   return retData;
 }
 
+/* GET getIngredientsForSelection legacy*/
+/* Organizes ingredients by inputCategory*/
+router.get('/getIngredientsForSelection', function(req, res, next) {
+  logger.info('START GET api/ingredients/getIngredientsForSelection');
+  Ingredient.model.find(function (err, ingredients) {
+    if(err) {
+      logger.error('ERROR GET api/ingredients/getIngredientsForSelection', {error: err});
+      return next(err);
+    }
+    var ingredientSets = underscore.groupBy(ingredients, "inputCategory");
+    for (var key in ingredientSets) {
+      ingredientSets[key] = underscore.groupBy(ingredientSets[key], 'inputSubCategory');
+      
+    }
+    var retData = {
+      data: ingredientSets
+    };
+    logger.info('END GET api/ingredients/getIngredientsForSelection');
+    res.json(retData);
+  });
+});
+
 /* GET getIngredientsForSelection */
 /* Organizes ingredients by inputCategory*/
 router.post('/getIngredientsForSelection', function(req, res, next) {
