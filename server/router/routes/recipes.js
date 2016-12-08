@@ -38,6 +38,50 @@ router.get('/', function(req, res, next) {
   });
 });
 
+router.get('/getAllRecipesNameId', function(req, res, next) {
+  logger.info('START GET api/recipes/getAllRecipesNameId/');
+  Recipe.model.find({}, '_id name', function(err, recipes) {
+    if(err) {
+      logger.error('ERROR GET api/recipes/getAllRecipesNameId', {error: err});
+      return next(err);
+    }
+    recipes.sort(function(a, b) {
+      if(a.name < b.name) {
+        return 1;
+      }
+      if(b.name < a.name) {
+        return -1;
+      }
+      if(a.name === b.name) {
+        return 0;
+      }
+    });
+    res.json({data: recipes});
+  });
+});
+
+router.post('/getSingleRecipe', function(req, res, next) {
+  logger.info('START POST api/recipes/getSingleRecipe/');
+  var query;
+  if(req.body.id) {
+    query = {
+      _id: req.body.id
+    };
+  } else {
+    query = {
+      name: req.body.name
+    }
+  }
+  Recipe.model.findOne(query, '-datesUsedAsRecipeOfTheDay', function(err, recipe) {
+    if(err) {
+      logger.error('ERROR POST api/recipes/getSingleRecipe/', {error: err});
+      return next(err);
+    }
+    logger.info('END POST api/recipes/getSingleRecipe/');
+    res.json({data: recipe});
+  });
+});
+
 router.get('/getSingle', function(req, res, next) {
   Recipe.model.findOne({}, '-datesUsedAsRecipeOfTheDay', function(err, recipe) {
     if(err) {

@@ -24,6 +24,20 @@ angular.module('SkillitAdminApp')
           return baseRecipes.customGET('/');
         }
       },
+      getSingleRecipe: function(id, name, useProd) {
+        if(useProd) {
+          return baseProductionRecipes.customPOST({id: id, name: name}, 'getSingleRecipe');
+        } else {
+          return baseRecipes.customPOST({id: id, name: name}, 'getSingleRecipe');
+        }
+      },
+      getAllRecipesNameId: function(useProd) {
+        if(useProd) {
+          return baseProductionRecipes.customGET('/getAllRecipesNameId');
+        } else {
+          return baseRecipes.customGET('/getAllRecipesNameId');
+        }
+      },
       addNewRecipe: function(newRecipe, useProd, useDev) {
         var promises = [];
         if(useProd) {

@@ -3,48 +3,8 @@
   <button class="btn btn-primary" ng-click="reloadRecipes('PRODUCTION')">Reload From Production</button>
   <button class="btn btn-success" ng-click="reloadRecipes('DEVELOPMENT')">Reload From Development</button><br/><br/>
   <div ng-repeat="recipe in recipes">
-    <b>{{recipe.name}}  </b>
-    <button ng-if="!isExpandedArr[$index]" ng-click="toggleRecipeExpansion($index)" class="btn btn-info btn-sm">Expand Recipe</button><br/><br/>
-    <button ng-if="isExpandedArr[$index]" class="btn btn-warning btn-sm" ng-click="toggleRecipeExpansion($index)">Minimize Recipe</button><br/><br/>
-    <div ng-if="isExpandedArr[$index]">
-      <em>Description: </em>
-      <p>{{recipe.description}}</p>
-      <em>Prep Time</em>
-      <p>{{recipe.prepTime}}</p>
-      <em>Total Time</em>
-      <p>{{recipe.totalTime}}</p>
-      <em>RecipeType: </em>
-      <p>{{recipe.recipeType}}</p>
-      <em>RecipeCategory: </em>
-      <p>{{recipe.recipeCategory}}</p>
-      <em>Primary Cooking Method</em>
-      <p>{{recipe.primaryCookingMethod}}</p>
-      <em>Other Cooking Methods</em>
-      <span ng-repeat="method in recipe.otherCookingMethods">{{method}} -- </span><br/>
-      <em>Can Add Seasoning: </em>
-      <p>{{recipe.canAddSeasoningProfile}}</p>
-      <em ng-if="recipe.defaultSeasoningProfile">Default Seasoning: </em>
-      <p ng-if="recipe.defaultSeasoningProfile">{{recipe.defaultSeasoningProfile}}</p>
-      <b>Ingredient List</b><br/>
-      <em>Ingredient Types:</em><br/>
-      <div ng-repeat="type in recipe.ingredientList.ingredientTypes">
-        <p>TypeName: {{type.typeName}}</p>
-        <p>MinNeeded: {{type.minNeeded}}</p>
-        <p>Ingredients: </p>
-        <div ng-repeat="ingredient in type.ingredients">
-          <p>Name: {{ingredient.name}}</p>
-          <p>IngredientForms:</p>
-          <span ng-repeat="form in ingredient.ingredientForms">{{form.name}} -- </span>
-        </div>
-      </div>
-      <em>Equipment Needed</em>
-      <div ng-repeat="dish in equimentNeeded">
-        <span>{{dish.name}} -- </span>
-      </div>
-      <em>Step List</em><br/>
-      <div ng-repeat="step in recipe.stepList">
-        {{$index}}. <pre>{{step | json}}</pre>
-      </div>
-    </div>
+    <p>name: {{recipe.name}}</p>
+    <p>id: {{recipe._id}}</p>
+    <p>------------------</p>
   </div>
 </div>

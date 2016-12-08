@@ -18,7 +18,7 @@ angular.module('SkillitAdminApp')
         isProd = true;
       }
       $scope.serverType = serverName;
-      recipeService.getAllRecipes(isProd).then(function(recipes) {
+      recipeService.getAllRecipesNameId(isProd).then(function(recipes) {
         $scope.recipes = recipes.data;
         $scope.isExpandedArr = [];
         $scope.isExpandedArr.fill(false);

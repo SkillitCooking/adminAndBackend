@@ -163,6 +163,11 @@ angular
         controller: 'EditDietaryPreferencesCtrl',
         controllerAs: 'editDietaryPreferences'
       })
+      .when('/editRecipeById', {
+        templateUrl: 'views/editrecipebyid.html',
+        controller: 'EditrecipebyidCtrl',
+        controllerAs: 'editRecipeById'
+      })
       .otherwise({
         redirectTo: '/'
       });

@@ -1,15 +1,24 @@
 <div>
   <h2>Edit Recipe</h2>
   <a class="btn btn-link" ng-href="#/recipes">Create</a>
-  <a class="btn btn-link" ng-href="#/editRecipeById">Edit by Id</a>
-  <a class="btn btn-link active" ng-href="#/editRecipes">Edit + Duplicate</a><br/>
+  <a class="btn btn-link active" ng-href="#/editRecipeById">Edit by Id</a>
+  <a class="btn btn-link" ng-href="#/editRecipes">Edit + Duplicate</a><br/>
   <!--copy selectedRecipe over to recipe - that way original model doesn't change-->
-  <button class="btn btn-sm btn-warning" ng-click="reloadRecipes()">Reload Recipes</button>
   <form novalidate name="editRecipeForm" ng-controller="EditRecipesCtrl">
-    <p>Recipes, Dishes, Ingredients, Seasonings are currently being pulled from the {{serverType}} server</p>
-    <button class="btn btn-primary" ng-click="reloadStuff('PRODUCTION')">Reload From Production</button>
-    <button class="btn btn-success" ng-click="reloadStuff('DEVELOPMENT')">Reload From Development</button><br/><br/>
-    Select Recipe: <select name="recipeSelect" ng-model="selectedRecipe" ng-change="changeSelectedRecipe()" ng-options="recipe.value as recipe.label for recipe in recipes"></select><br/><br/>
+    Use: <br/>
+    <label>
+      <input type="radio" ng-model="useProd" ng-click="reloadStuff('PRODUCTION')" ng-value="true">
+      Production
+    </label>
+    <label>
+      <input type="radio" ng-model="useProd" ng-click="reloadStuff('DEVELOPMENT')" ng-value="false">
+      Development
+    </label> <br/>
+    <input type="text" ng-model="fetchId" size="50" placeholder="Recipe Id">
+    <br/><span>OR</span><br/>
+    <input type="text" ng-model="fetchName" size="50" placeholder="Recipe Name">
+    <br/>
+    <button class="btn btn-primary" ng-click="fetchRecipe()">Fetch</button>
     Name: <input type="text" ng-model="recipe.name" size="50" required ng-focus="logRecipeName()" ng-blur="updateRecipeName()" name="nameInput"/> 
     <span ng-show="recipeForm.nameInput.$invalid">give the recipe a name</span><br /> <br />
     Description: <textarea ng-model="recipe.description" rows="4" cols="50" required name="descInput"></textarea>
@@ -160,3 +169,4 @@
     <button class="btn btn-large btn-danger" ng-click="deleteRecipe()" ng-disabled="noServerSelected()">Delete Recipe</button>
   </form>
 </div>
+
