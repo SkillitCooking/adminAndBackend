@@ -1,5 +1,8 @@
 var express = require('express');
 var router = express.Router();
+var middleware = require('../middleware');
+middleware(router);
+
 
 var logger = require('../../util/logger').serverLogger;
 var constants = require('../../util/constants');
@@ -14,7 +17,6 @@ var User = db.users;
 /* Add response 'success' signal when time comes */
 /* Add Credentials appropriately when time comes */
 /* Add Error checking as well */
-
 
 /* GET ingredients listing. */
 router.get('/', function(req, res, next) {

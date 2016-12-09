@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var middleware = require('../middleware');
+middleware(router);
 
 var constants = require('../../util/constants');
 

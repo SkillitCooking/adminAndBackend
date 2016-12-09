@@ -2,6 +2,9 @@
  * Top level for all routes
  */
 
+var constants = require('../util/constants');
+var logger = require('../util/logger').serverLogger;
+
 module.exports = function (app) {
 
   app.use('/api/dishes', require('./routes/dishes'));

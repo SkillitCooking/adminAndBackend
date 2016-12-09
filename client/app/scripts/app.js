@@ -21,7 +21,7 @@ angular
   ])
   //lodash support
   .constant('_', window._)
-  .config(function ($routeProvider, RestangularProvider) {
+  .config(function ($routeProvider, RestangularProvider, API_PASSWORDS) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/recipes.html',
@@ -171,5 +171,6 @@ angular
       .otherwise({
         redirectTo: '/'
       });
-    RestangularProvider.setBaseUrl("/api");   
+    RestangularProvider.setBaseUrl("/api");
+    RestangularProvider.setDefaultHeaders({password: API_PASSWORDS.DEV});   
   });
