@@ -11,7 +11,7 @@ angular.module('SkillitAdminApp')
   .factory('RestangularProductionService', function (Restangular, API_PASSWORDS) {
     
     return Restangular.withConfig(function(RestangularConfigurer) {
-      RestangularConfigurer.setBaseUrl('http://138.68.45.225:3000/api/');
+      RestangularConfigurer.setBaseUrl('https://skillicookingprodapi.info/api/');
       RestangularConfigurer.setDefaultHeaders({password: API_PASSWORDS.PROD});
     });
 

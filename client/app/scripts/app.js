@@ -171,6 +171,6 @@ angular
       .otherwise({
         redirectTo: '/'
       });
-    RestangularProvider.setBaseUrl("/api");
+    RestangularProvider.setBaseUrl("https://skillicookingdevapi.info/api");
     RestangularProvider.setDefaultHeaders({password: API_PASSWORDS.DEV});   
   });
