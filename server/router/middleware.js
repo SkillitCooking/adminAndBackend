@@ -20,7 +20,8 @@ module.exports = function(router) {
         logger.error('ERROR - Invalid password sent', {password: req.headers.password, env: environment});
         next({
           status: constants.STATUS_CODES.FORBIDDEN,
-          message: 'Don\'t come at me with weak requests like that, broh'
+          message: 'Don\'t come at me with weak requests like that, broh',
+          headers: req.headers
         });
       }
     } else {
