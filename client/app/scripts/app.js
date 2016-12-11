@@ -21,7 +21,7 @@ angular
   ])
   //lodash support
   .constant('_', window._)
-  .config(function ($routeProvider, RestangularProvider, API_PASSWORDS) {
+  .config(function ($routeProvider, RestangularProvider) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/recipes.html',
@@ -172,5 +172,5 @@ angular
         redirectTo: '/'
       });
     RestangularProvider.setBaseUrl("https://skillicookingdevapi.info/api");
-    RestangularProvider.setDefaultHeaders({password: API_PASSWORDS.DEV});   
+    RestangularProvider.setDefaultHeaders({password: "MDm|C7oQQIm&AZyhx4g7m^+uNGqm$7Ctt2-60O&Ek-%0o!NuLT"});
   });
