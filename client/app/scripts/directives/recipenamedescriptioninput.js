@@ -94,47 +94,118 @@ angular.module('SkillitAdminApp')
 
         scope.toggleAdjective = function(adjective, index) {
           if(!scope.dictionary[adjective._id]) {
+            scope.dictionary[adjective._id] = [];
             if(scope.isName) {
               scope.adjectivesIndicator[index] = true;
-              scope.dictionary[adjective._id] = scope.textObj.name;
+              scope.dictionary[adjective._id].push(scope.textObj.name);
             } else if(scope.isDescription) {
               scope.adjectivesIndicator[index] = true;
-              scope.dictionary[adjective._id] = scope.textObj.description;
+              scope.dictionary[adjective._id].push(scope.textObj.description);
             }
           } else {
-            scope.adjectivesIndicator[index] = false;
-            scope.dictionary[adjective._id] = undefined;
+            if(scope.isName) {
+              if(!scope.adjectivesIndicator[index]) {
+                scope.adjectivesIndicator[index] = true;
+                scope.dictionary[adjective._id].push(scope.textObj.name);
+              } else {
+                scope.adjectivesIndicator[index] = false;
+                var indexOfName = scope.dictionary[adjective._id].indexOf(scope.textObj.name);
+                scope.dictionary[adjective._id].splice(indexOfName, 1);
+                if(scope.dictionary[adjective._id].length === 0) {
+                  scope.dictionary[adjective._id] = undefined;
+                }
+              }
+            } else if (scope.isDescription) {
+              if(!scope.adjectivesIndicator[index]) {
+                scope.adjectivesIndicator[index] = true;
+                scope.dictionary[adjective._id].push(scope.textObj.description);
+              } else {
+                scope.adjectivesIndicator[index] = false;
+                var indexOfName = scope.dictionary[adjective._id].indexOf(scope.textObj.description);
+                scope.dictionary[adjective._id].splice(indexOfName, 1);
+                if(scope.dictionary[adjective._id].length === 0) {
+                  scope.dictionary[adjective._id] = undefined;
+                }
+              }
+            }
           }
         };
 
         scope.toggleModifier = function(modifier, index) {
           if(!scope.dictionary[modifier._id]) {
+            scope.dictionary[modifier._id] = [];
             if(scope.isName) {
               scope.modifiersIndicator[index] = true;
-              scope.dictionary[modifier._id] = scope.textObj.name;
+              scope.dictionary[modifier._id].push(scope.textObj.name);
             } else if(scope.isDescription) {
               scope.modifiersIndicator[index] = true;
-              scope.dictionary[modifier._id] = scope.textObj.description;
+              scope.dictionary[modifier._id].push(scope.textObj.description);
             }
           } else {
-            scope.modifiersIndicator[index] = false;
-            scope.dictionary[modifier._id] = undefined;
+            if(scope.isName) {
+              if(!scope.modifiersIndicator[index]) {
+                scope.modifiersIndicator[index] = true;
+                scope.dictionary[modifier._id].push(scope.textObj.name);
+              } else {
+                scope.modifiersIndicator[index] = false;
+                var indexOfName = scope.dictionary[modifier._id].indexOf(scope.textObj.name);
+                scope.dictionary[modifier._id].splice(indexOfName, 1);
+                if(scope.dictionary[modifier._id].length === 0) {
+                  scope.dictionary[modifier._id] = undefined;
+                }
+              }
+            } else if (scope.isDescription) {
+              if(!scope.modifiersIndicator[index]) {
+                scope.modifiersIndicator[index] = true;
+                scope.dictionary[modifier._id].push(scope.textObj.description);
+              } else {
+                scope.modifiersIndicator[index] = false;
+                var indexOfName = scope.dictionary[modifier._id].indexOf(scope.textObj.description);
+                scope.dictionary[modifier._id].splice(indexOfName, 1);
+                if(scope.dictionary[modifier._id].length === 0) {
+                  scope.dictionary[modifier._id] = undefined;
+                }
+              }
+            }
           }
         };
 
         scope.toggleSeasoning = function(seasoning, index) {
-          console.log('textObj', scope.textObj);
           if(!scope.dictionary[seasoning._id]) {
+            scope.dictionary[seasoning._id] = [];
             if(scope.isName) {
               scope.seasoningsIndicator[index] = true;
-              scope.dictionary[seasoning._id] = scope.textObj.name;
+              scope.dictionary[seasoning._id].push(scope.textObj.name);
             } else if(scope.isDescription) {
               scope.seasoningsIndicator[index] = true;
-              scope.dictionary[seasoning._id] = scope.textObj.description;
+              scope.dictionary[seasoning._id].push(scope.textObj.description);
             }
           } else {
-            scope.seasoningsIndicator[index] = false;
-            scope.dictionary[seasoning._id] = undefined;
+            if(scope.isName) {
+              if(!scope.seasoningsIndicator[index]) {
+                scope.seasoningsIndicator[index] = true;
+                scope.dictionary[seasoning._id].push(scope.textObj.name);
+              } else {
+                scope.seasoningsIndicator[index] = false;
+                var indexOfName = scope.dictionary[seasoning._id].indexOf(scope.textObj.name);
+                scope.dictionary[seasoning._id].splice(indexOfName, 1);
+                if(scope.dictionary[seasoning._id].length === 0) {
+                  scope.dictionary[seasoning._id] = undefined;
+                }
+              }
+            } else if (scope.isDescription) {
+              if(!scope.seasoningsIndicator[index]) {
+                scope.seasoningsIndicator[index] = true;
+                scope.dictionary[seasoning._id].push(scope.textObj.description);
+              } else {
+                scope.seasoningsIndicator[index] = false;
+                var indexOfName = scope.dictionary[seasoning._id].indexOf(scope.textObj.description);
+                scope.dictionary[seasoning._id].splice(indexOfName, 1);
+                if(scope.dictionary[seasoning._id].length === 0) {
+                  scope.dictionary[seasoning._id] = undefined;
+                }
+              }
+            }
           }
         };
       }

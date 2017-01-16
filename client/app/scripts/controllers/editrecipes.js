@@ -472,6 +472,15 @@ angular.module('SkillitAdminApp')
       $scope.changeSelectedRecipe();
     };
 
+    function computeAllowablePrefixIds() {
+      var descriptionIds = Object.keys($scope.descriptionDictionary);
+      var nameIds = Object.keys($scope.nameDictionary);
+      nameIds = nameIds.concat(descriptionIds);
+      var prefixIds = Array.from(new Set(nameIds));
+      console.log('prefixIds', prefixIds);
+      return prefixIds;
+    }
+
     $scope.saveChanges = function() {
       $scope.recipe.choiceSeasoningProfiles = [];
       for (var i = $scope.seasoningProfiles.length - 1; i >= 0; i--) {
@@ -487,11 +496,13 @@ angular.module('SkillitAdminApp')
           $scope.recipe.collectionIds.push($scope.recipeCollections[i]._id);
         }
       }
+      var allowablePrefixIds = computeAllowablePrefixIds();
       recipeService.updateRecipe({
         name: $scope.recipe.name,
         nameBodies: $scope.nameDictionary,
         description: $scope.recipe.description,
         conditionalDescriptions: $scope.descriptionDictionary,
+        allowablePrefixIds: allowablePrefixIds,
         defaultServingSize: $scope.recipe.defaultServingSize,
         recipeType: $scope.recipe.recipeType,
         collectionIds: $scope.recipe.collectionIds,

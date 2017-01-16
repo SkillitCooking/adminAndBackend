@@ -358,6 +358,14 @@ angular.module('SkillitAdminApp')
       }
     };
 
+    function computeAllowablePrefixIds() {
+      var descriptionIds = Object.keys($scope.descriptionDictionary);
+      var nameIds = Object.keys($scope.nameDictionary);
+      nameIds = nameIds.concat(descriptionIds);
+      var prefixIds = Array.from(new Set(nameIds));
+      return prefixIds;
+    }
+
     $scope.save = function() {
       $scope.recipe.ingredientList = $scope.ingredientList;
       $scope.recipe.stepList = $scope.stepList;
@@ -382,6 +390,8 @@ angular.module('SkillitAdminApp')
           $scope.recipe.collectionIds.push($scope.recipeCollections[i]._id);
         }
       }
+      //computeAllowablePrefixIds
+      var allowablePrefixIds = computeAllowablePrefixIds();
       $scope.getGlobalCookTimes();
       recipeService.addNewRecipe({ 
         recipe:{
@@ -389,6 +399,7 @@ angular.module('SkillitAdminApp')
           nameBodies: $scope.nameDictionary,
           description: $scope.recipe.description,
           conditionalDescriptions: $scope.descriptionDictionary,
+          allowablePrefixIds: allowablePrefixIds,
           defaultServingSize: $scope.recipe.defaultServingSize,
           recipeType: $scope.recipe.recipeType,
           collectionIds: $scope.recipe.collectionIds,
