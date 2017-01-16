@@ -1,0 +1,19 @@
+<div>
+  <h2>Edit Health Modifier</h2>
+  <a class="btn btn-link" ng-href="#/healthModifiers">Create</a>
+  <a class="btn btn-link active" ng-href="#/editHealthModifiers">Edit</a>
+  <form novalidate name="editHealthModifierForm">
+    <p>Modifiers are currently being drawn from the {{serverType}} server</p>
+    <button class="btn btn-primary" ng-click="reloadStuff('PRODUCTION')">Reload From Production</button>
+    <button class="btn btn-success" ng-click="reloadStuff('DEVELOPMENT')">Reload From Development</button><br/><br/>
+    Select Modifier: <select name="modifierSelect" ng-model="selectedModifier" ng-change="changeSelectedModifier()" ng-options="modifier as modifier.name for modifier in modifiers"></select><br/><br/>
+    Name: <input type="text" ng-model="healthModifier.name" required size="50" name="nameInput"/><br/><br/>
+    <div>
+      Use PRODUCTION Server: <input type="checkbox" ng-model="useProdServer" /><br/>
+      Use DEVELOPMENT Server: <input type="checkbox" ng-model="useDevServer" /><br/>
+    </div>
+    <button class="btn btn-large btn-default" ng-click="cancelChanges()">Cancel Changes</button>
+    <button class="btn btn-large btn-success" ng-click="saveChanges()" ng-disabled="editHealthModifierForm.$invalid || noServerSelected()">Save Changes</button>
+    <button class="btn btn-danger btn-large" ng-click="deleteModifier()" ng-disabled="noServerSelected()">Delete Modifier</button>
+  </form>
+</div>

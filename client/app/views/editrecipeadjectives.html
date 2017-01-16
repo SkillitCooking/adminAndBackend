@@ -1,0 +1,19 @@
+<div>
+  <h2>Edit Recipe Adjective</h2>
+  <a class="btn btn-link" ng-href="#/recipeAdjectives">Create</a>
+  <a class="btn btn-link active" ng-href="#/editRecipeAdjectives">Edit</a>
+  <form novalidate name="editRecipeAdjectiveForm">
+    <p>Modifiers are currently being drawn from the {{serverType}} server</p>
+    <button class="btn btn-primary" ng-click="reloadStuff('PRODUCTION')">Reload From Production</button>
+    <button class="btn btn-success" ng-click="reloadStuff('DEVELOPMENT')">Reload From Development</button><br/><br/>
+    Select Adjective: <select name="adjectiveSelect" ng-model="selectedAdjective" ng-change="changeSelectedAdjective()" ng-options="adjective as adjective.name for adjective in adjectives"></select><br/><br/>
+    Name: <input type="text" ng-model="recipeAdjective.name" required size="50" name="nameInput"/><br/><br/>
+    <div>
+      Use PRODUCTION Server: <input type="checkbox" ng-model="useProdServer" /><br/>
+      Use DEVELOPMENT Server: <input type="checkbox" ng-model="useDevServer" /><br/>
+    </div>
+    <button class="btn btn-large btn-default" ng-click="cancelChanges()">Cancel Changes</button>
+    <button class="btn btn-large btn-success" ng-click="saveChanges()" ng-disabled="editRecipeAdjectiveForm.$invalid || noServerSelected()">Save Changes</button>
+    <button class="btn btn-danger btn-large" ng-click="deleteAdjective()" ng-disabled="noServerSelected()">Delete Adjective</button>
+  </form>
+</div>

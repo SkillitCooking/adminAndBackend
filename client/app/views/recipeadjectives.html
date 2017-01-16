@@ -1,0 +1,14 @@
+<div>
+  <h2>Recipe Adjective Input</h2>
+  <a class="btn btn-link active" ng-href="#/recipesAdjectives">Create</a>
+  <a class="btn btn-link" ng-href="#/editRecipeAdjectives">Edit</a>
+  <form novalidate name="recipeAdjectiveForm">
+    Name: <input type="text" ng-model="recipeAdjective.name" required size="50" name="nameInput"/><br/><br/>
+    <div>
+      Use PRODUCTION Server: <input type="checkbox" ng-model="useProdServer" /><br/>
+      Use DEVELOPMENT Server: <input type="checkbox" ng-model="useDevServer" /><br/>
+    </div>
+    <button class="btn btn-large btn-default" ng-click="reset()">Reset Form</button>
+    <button class="btn btn-large btn-success" ng-click="save()" ng-disabled="healthModifierForm.$invalid">Save Adjective</button>
+  </form>
+</div>

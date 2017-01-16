@@ -1,0 +1,29 @@
+<div ng-form="recipeNameDescriptionForm">
+  <div class="col-md-6" ng-if="isDescription">
+    <textarea ng-model="textObj.description" rows="4" cols="50" name="descriptionInput" ng-focus="logText('description')" ng-blur="commuteTextChanges('description')"></textarea>
+  </div>
+  <div class="col-md-6" ng-if="isName">
+    <input type="text" ng-model="textObj.name" size="50" ng-focus="logText('name')" ng-blur="commuteTextChanges('name')" name="nameInput" />
+  </div>
+  <div class="col-md-2">
+    <p>Associated Seasonings</p>
+    <div ng-repeat="seasoning in seasonings">
+      <input type="checkbox" ng-model="seasoningsIndicator[$index]" ng-click="toggleSeasoning(seasoning, $index)" />
+      <span>{{seasoning.name}}/{{seasoning.recipeTitleAlias}}</span>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <p>Associated Modifiers</p>
+    <div ng-repeat="modifier in modifiers">
+      <input type="checkbox" ng-model="modifiersIndicator[$index]" ng-click="toggleModifier(modifier, $index)" />
+      <span>{{modifier.name}}</span>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <p>Associated Adjectives</p>
+    <div ng-repeat="adjective in adjectives">
+      <input type="checkbox" ng-model="adjectivesIndicator[$index]" ng-click="toggleAdjective(adjective, $index)"/>
+      <span>{{adjective.name}}</span>
+    </div>
+  </div>
+</div>
