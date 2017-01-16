@@ -48,7 +48,7 @@ angular.module('SkillitAdminApp')
 
     $scope.saveChanges = function() {
       seasoningService.updateSeasoning({
-        mainName: $scope.seasoningProfile.mainName,
+        name: $scope.seasoningProfile.name,
         recipeTitleAlias: $scope.seasoningProfile.recipeTitleAlias,
         spices: $scope.seasoningProfile.spices,
         _id: $scope.seasoningProfile._id

@@ -42,7 +42,7 @@ angular.module('SkillitAdminApp')
         spicesArr[i] = spicesArr[i].trim();
       }
       seasoningService.addNewSeasoning({ seasoningProfile: {
-        mainName: $scope.seasoningProfile.mainName,
+        name: $scope.seasoningProfile.name,
         recipeTitleAlias: $scope.seasoningProfile.recipeTitleAlias,
         spices: spicesArr
       } }, $scope.useProdServer, $scope.useDevServer).then(function(seasoning) {
