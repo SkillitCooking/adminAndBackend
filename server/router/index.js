@@ -26,5 +26,7 @@ module.exports = function (app) {
   app.use('/api/ingredientsUsed', require('./routes/ingredientsUsed'));
   app.use('/api/mealsCooked', require('./routes/mealsCooked'));
   app.use('/api/seasoningUsed', require('./routes/seasoningUsed'));
+  app.use('/api/healthModifiers', require('./routes/healthModifiers'));
+  app.use('/api/recipeTitleAdjectives', require('./routes/recipeTitleAdjectives'));
   app.use('/api/clientLogging', require('./routes/clientLogging'));
 };

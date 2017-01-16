@@ -7,7 +7,8 @@
     <button class="btn btn-primary" ng-click="reloadProfiles('PRODUCTION')">Reload From Production</button>
     <button class="btn btn-success" ng-click="reloadProfiles('DEVELOPMENT')">Reload From Development</button><br/><br/>
     Select Seasoning Profile: <select name="seasoningSelect" ng-model="selectedSeasoning" ng-change="changeSelectedSeasoning()" ng-options="seasoning as seasoning.name for seasoning in seasonings"></select><br/><br/>
-    Name: <input type="text" ng-model="seasoningProfile.name" size="50" required name="nameInput"/><br /><br />
+    Recipe Title Alias: <input type="text" ng-model="seasoningProfile.recipeTitleAlias" size="50" required name="prefixNameInput"/><br /><br />
+    Main Name: <input type="text" ng-model="seasoningProfile.mainName" size="50" required name="mainNameInput"/><br /><br />
     Spices: <ul>
       <li ng-repeat="spice in seasoningProfile.spices track by $index">
         <input type="text" ng-model="seasoningProfile.spices[$index]" size="40"/>

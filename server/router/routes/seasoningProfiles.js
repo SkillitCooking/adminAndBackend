@@ -71,7 +71,7 @@ router.get('/:id', function(req, res, next) {
     logger.info('START GET api/seasoningProfiles/' + req.params.id);
     SeasoningProfile.model.findById(req.params.id, function(err, profile) {
       if (err) {
-        logger.error('ERROR POST api/seasoningProfiles/', {error: err, body: req.body});
+        logger.error('ERROR GET api/seasoningProfiles/' + req.params.id, {error: err, body: req.body});
         return next(err);
       }
       logger.info('END GET api/seasoningProfiles/' + req.params.id);

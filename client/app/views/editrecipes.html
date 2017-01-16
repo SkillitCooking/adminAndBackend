@@ -10,16 +10,46 @@
     <button class="btn btn-primary" ng-click="reloadStuff('PRODUCTION')">Reload From Production</button>
     <button class="btn btn-success" ng-click="reloadStuff('DEVELOPMENT')">Reload From Development</button><br/><br/>
     Select Recipe: <select name="recipeSelect" ng-model="selectedRecipe" ng-change="changeSelectedRecipe()" ng-options="recipe.value as recipe.label for recipe in recipes"></select><br/><br/>
-    Name: <input type="text" ng-model="recipe.name" size="50" required ng-focus="logRecipeName()" ng-blur="updateRecipeName()" name="nameInput"/> 
+    Default Name Body: <input type="text" ng-model="recipe.name" size="50" required ng-focus="logRecipeName()" ng-blur="updateRecipeName()" name="nameInput"/> 
     <span ng-show="recipeForm.nameInput.$invalid">give the recipe a name</span><br /> <br />
-    Description: <textarea ng-model="recipe.description" rows="4" cols="50" required name="descInput"></textarea>
+    <!--How to get nameBodies loaded properly?-->
+    <button class="btn btn-sm btn-info" ng-click="addNameBody()">Add Name Body</button><br/>
+    <div ng-repeat="name in nameBodies">
+      <recipe-name-description-input
+      seasonings="seasoningProfiles"
+      adjectives="recipeAdjectives"
+      modifiers="healthModifiers"
+      dictionary="nameDictionary"
+      text-obj="name"
+      type="'name'"
+      preload-indicators="true"
+      ></recipe-name-description-input>
+      <button class="btn btn-xs btn-warning" ng-click="removeNameBody($index)">Remove</button>
+    </div><br/><br/>
+    Default Description: <textarea ng-model="recipe.description" rows="4" cols="50" required name="descInput"></textarea>
     <span ng-show="recipeForm.descInput.$invalid">give the recipe a description</span><br/>
+    <button class="btn btn-sm btn-info" ng-click="addDescription()">Add Description</button><br/>
+    <div ng-repeat="description in conditionalDescriptions">
+      <recipe-name-description-input
+      seasonings="seasoningProfiles"
+      adjectives="recipeAdjectives"
+      modifiers="healthModifiers"
+      dictionary="descriptionDictionary"
+      text-obj="description"
+      type="'description'"
+      preload-indicators="true"></recipe-name-description-input>
+      <button class="btn btn-warning btn-xs" ng-click="removeDescription($index)">Remove</button>
+    </div>
     Collections: <br/>
     <div ng-repeat="collection in recipeCollections">
       <input type="checkbox" ng-model="collection.useInRecipe" />
       <span>{{collection.name}}</span>
     </div><br/><br/>
-    Main Picture URL: <input type="url" ng-model="recipe.mainPictureURL" size="70" name="mainPicInput" required/><br/>
+    Main Picture URLs: <div ng-repeat="url in recipe.mainPictureURLs">
+      <input type="url" ng-model="recipe.mainPictureURLs[$index]" size="70" name="mainPicInput"/><br/>
+      <button class="btn btn-xs" ng-click="removePictureURL($index)" ng-disabled="recipe.mainPictureURLs.length <= 1">Remove</button>
+    </div>
+    <button class="btn btn-sm" ng-click="addPictureURL()">Add Picture URL</button><br/>
     Main Video: <input type="text" ng-model="recipe.mainVideo.videoId" size="50" name="mainVidIdInput" placeholder="Video Id" />
     <input type="text" ng-model="recipe.mainVideo.end" size="50" name="mainVidEndInput" placeholder="End Time" /><br/><br/>
     RecipeType: <select name="typeSelect" ng-model="recipe.recipeType" ng-options="recipeType for recipeType in recipeTypes" required></select>
@@ -41,7 +71,7 @@
     Available Seasonings: <br/>
     <div ng-repeat="profile in seasoningProfiles" ng-if="recipe.canAddSeasoningProfile">
       <input type="checkbox" ng-model="profile.useInChoiceSeasonings" />
-      <span>{{profile.name}}</span>
+      <span>{{profile.name}}/{{profile.recipeTitleAlias}}</span>
     </div>
     <h4>Ingredient List</h4>
     <b>Ingredient Types</b><br/><br/>

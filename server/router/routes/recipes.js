@@ -12,6 +12,82 @@ var db = require('../../database');
 var Recipe = db.recipes;
 var User = db.users;
 
+var fs = require('fs');
+var csv = require('csvtojson');
+
+function nameSort(a, b) {
+  if(a.name < b.name) {
+    return -1;
+  }
+  if(a.name > b.name) {
+    return 1;
+  }
+  if(a.name == b.name) {
+    return 0;
+  }
+}
+
+/*router.get('/csv', function(req, res, next) {
+  var filename = '/Users/dbratz/Desktop/recipes-ready.csv';
+  var nameArr = [];
+  var ids = [];
+  csv()
+  .fromFile(filename)
+  .on('json', function(jsonObj) {
+    var objId = jsonObj._id.replace(/ObjectId\(/, '');
+    objId = objId.replace(/\)$/, '');
+    ids.push(objId);
+    nameArr.push({
+      _id: objId,
+      name: jsonObj.name,
+      picURL: jsonObj.mainPictureURL
+    });
+  })
+  .on('done', function(err) {
+    console.log('done');
+    nameArr.sort(nameSort);
+    Recipe.model.find({_id: {$in: ids}}, function(err, recipes) {
+      if(err) {
+        console.log("Error: ", err);
+        res.json({error: err});
+      }
+      for (var i = recipes.length - 1; i >= 0; i--) {
+        var newRecipe = underscore.find(nameArr, function(recipe) {
+          return recipe._id == recipes[i]._id;
+        });
+        recipes[i].mainPictureURL = newRecipe.picURL;
+        recipes[i].save(function(err, recipe, numAffected) {
+          if(err) {
+            console.log('errororor: ', err);
+            res.json({errroror: err});
+          }
+        });
+      }
+      res.json({msg: 'donzo'});
+    });
+  });
+});*/
+
+router.get('/change', function(req, res, next) {
+  Recipe.model.find({}, 'mainPictureURL', function(err, recipes) {
+    if(err) {
+      console.log('error: ', err);
+      return next(err);
+    }
+    for (var i = recipes.length - 1; i >= 0; i--) {
+      recipes[i].mainPictureURLs = [];
+      recipes[i].mainPictureURLs.push(recipes[i].mainPictureURL);
+      recipes[i].save(function(err, recipe, numAffected) {
+        if(err) {
+          console.log('err: ', err);
+          return next(err);
+        }
+      });
+    }
+    res.json({msg: 'yeeas'});
+  });
+});
+
 /* Add response 'success' signal when time comes */
 /* Add Credentials appropriately when time comes */
 /* Add Error checking as well */

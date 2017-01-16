@@ -24,6 +24,8 @@ var dietaryPreferences = require('./models/DietaryPreference.js');
 var mealsCooked = require('./models/MealsCooked.js');
 var ingredientsUsed = require('./models/IngredientsUsed.js');
 var seasoningUsed = require('./models/SeasoningUsed.js');
+var recipeTitleAdjectives = require('./models/RecipeTitleAdjective.js');
+var healthModifiers = require('./models/HealthModifier.js');
 
 // connections
 // may need to change the devDB to a compose devDB...
@@ -87,3 +89,5 @@ exports.dietaryPreferences = dietaryPreferences;
 exports.mealsCooked = mealsCooked;
 exports.ingredientsUsed = ingredientsUsed;
 exports.seasoningUsed = seasoningUsed;
+exports.recipeTitleAdjectives = recipeTitleAdjectives;
+exports.healthModifiers = healthModifiers;

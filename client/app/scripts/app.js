@@ -168,9 +168,30 @@ angular
         controller: 'EditrecipebyidCtrl',
         controllerAs: 'editRecipeById'
       })
+      .when('/healthModifiers', {
+        templateUrl: 'views/healthmodifiers.html',
+        controller: 'HealthModifiersCtrl',
+        controllerAs: 'healthModifiers'
+      })
+      .when('/editHealthModifiers', {
+        templateUrl: 'views/edithealthmodifiers.html',
+        controller: 'EdithealthmodifiersCtrl',
+        controllerAs: 'editHealthModifiers'
+      })
+      .when('/editRecipeAdjectives', {
+        templateUrl: 'views/editrecipeadjectives.html',
+        controller: 'EditrecipeadjectivesCtrl',
+        controllerAs: 'editRecipeAdjectives'
+      })
+      .when('/recipeAdjectives', {
+        templateUrl: 'views/recipeadjectives.html',
+        controller: 'RecipeadjectivesCtrl',
+        controllerAs: 'recipeAdjectives'
+      })
       .otherwise({
         redirectTo: '/'
       });
+    //RestangularProvider.setBaseUrl("http://localhost:8000/api");
     RestangularProvider.setBaseUrl("https://skillicookingdevapi.info/api");
     RestangularProvider.setDefaultHeaders({password: "MDm|C7oQQIm&AZyhx4g7m^+uNGqm$7Ctt2-60O&Ek-%0o!NuLT"});
   });

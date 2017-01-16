@@ -13,7 +13,7 @@ angular.module('SkillitAdminApp')
     $scope.inputCategories = ["Protein", "Vegetables", "Starches", "Other"];
     $scope.inputSubCategories = [];
     $scope.cookingMethods = ["Bake", "Sautee", "Boil", "Steam", "SlowCook"];
-    $scope.stepTypes = ["Bake", "Boil", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "Heat", "Place", "PreheatOven", "Sautee", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir"];
+    $scope.stepTypes = ["Bake", "Boil", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "Heat", "Place", "PreheatOven", "Sautee", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir", "General"];
     $scope.subTypes = [];
 
     $scope.serverType = 'DEVELOPMENT';

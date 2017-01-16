@@ -3,6 +3,7 @@ var curUTCDate = require('../../util/dateLib').curUTCDate;
 
 var SeasoningProfileSchema = new mongoose.Schema({
   name: String,
+  recipeTitleAlias: String,
   spices: [String],
   dateCreated: {
     type: Date,

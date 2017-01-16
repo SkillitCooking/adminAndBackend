@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('EditrecipebyidCtrl', ['$window', '$scope', 'recipeService', 'itemCollectionService', 'seasoningService', 'ingredientService', 'dishService', function ($window, $scope, recipeService, itemCollectionService, seasoningService, ingredientService, dishService) {
+  .controller('EditrecipebyidCtrl', ['$window', '$scope', 'recipeService', 'itemCollectionService', 'seasoningService', 'ingredientService', 'dishService', 'recipeAdjectiveService', 'healthModifierService', function ($window, $scope, recipeService, itemCollectionService, seasoningService, ingredientService, dishService, recipeAdjectiveService, healthModifierService) {
 
     $scope.integerval = /^\d*$/;
     $scope.recipeTypes = ["AlaCarte", "BYO", "Full"];
@@ -45,6 +45,20 @@ angular.module('SkillitAdminApp')
         alert("Server Error: " + response.message);
       });
 
+      recipeAdjectiveService.getAllRecipeAdjectives(isProd).then(function(res) {
+        $scope.recipeAdjectives = res.data;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
+
+      healthModifierService.getAllHealthModifiers(isProd).then(function(res) {
+        $scope.healthModifiers = res.data;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
+
       ingredientService.getAllIngredients(isProd).then(function(ingredients) {
         $scope.ingredients = ingredients;
       }, function(response) {
@@ -72,6 +86,40 @@ angular.module('SkillitAdminApp')
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
       });
+    };
+
+    $scope.addNameBody = function() {
+      if(!$scope.nameBodies) {
+        $scope.nameBodies = [];
+      }
+      $scope.nameBodies.push({});
+    };
+
+    $scope.removeNameBody = function(index) {
+      var name = $scope.nameBodies[index];
+      for(var key in $scope.nameDictionary) {
+        if($scope.nameDictionary[key] === name) {
+          $scope.nameDictionary[key] = undefined;
+        }
+      }
+      $scope.nameBodies.splice(index, 1);
+    };
+
+    $scope.addDescription = function() {
+      if(!$scope.conditionalDescriptions) {
+        $scope.conditionalDescriptions = [];
+      }
+      $scope.conditionalDescriptions.push({});
+    };
+
+    $scope.removeDescription = function(index) {
+      var description = $scope.conditionalDescriptions[index];
+      for(var key in $scope.conditionalDescriptions) {
+        if($scope.descriptionDictionary[key] === description) {
+          $scope.descriptionDictionary[key] = undefined;
+        }
+      }
+      $scope.conditionalDescriptions.splice(index, 1);
     };
 
     $scope.originalName = "";
@@ -116,8 +164,42 @@ angular.module('SkillitAdminApp')
       }
     };
 
+    function updateNamesAndDescriptions() {
+      $scope.nameBodies = angular.copy([]);
+      $scope.conditionalDescriptions = angular.copy([]);
+      var nameMap = {};
+      var descriptionMap = {};
+      for(var key in $scope.recipe.nameBodies) {
+        if(!nameMap[$scope.recipe.nameBodies[key]]) {
+          nameMap[$scope.recipe.nameBodies[key]] = true;
+        }
+      }
+      for(var key in $scope.recipe.conditionalDescriptions) {
+        if(!descriptionMap[$scope.recipe.conditionalDescriptions[key]]) {
+          descriptionMap[$scope.recipe.conditionalDescriptions[key]] = true;
+        }
+      }
+      for(var name in nameMap) {
+        console.log(name);
+        $scope.nameBodies.push({name: name});
+      }
+      for(var description in descriptionMap) {
+        console.log(description);
+        $scope.conditionalDescriptions.push({description: description});
+      }
+      $scope.nameDictionary = angular.copy($scope.recipe.nameBodies);
+      if(!$scope.nameDictionary) {
+        $scope.nameDictionary = {};
+      }
+      $scope.descriptionDictionary = angular.copy($scope.recipe.conditionalDescriptions);
+      if(!$scope.descriptionDictionary) {
+        $scope.descriptionDictionary = {};
+      }
+    }
+
     $scope.changeSelectedRecipe = function() {
-      $scope.recipe = angular.copy($scope.selectedRecipe);
+        $scope.recipe = angular.copy($scope.selectedRecipe);
+        updateNamesAndDescriptions();
         $scope.ingredientList = $scope.recipe.ingredientList;
         $scope.stepList = $scope.recipe.stepList;
         $scope.typeMinimizedIndicatorArray = new Array($scope.recipe.ingredientList.ingredientTypes.length);
@@ -159,6 +241,14 @@ angular.module('SkillitAdminApp')
 
     $scope.addCollection = function() {
       $scope.recipe.collectionIds.push($scope.curCollectionId);
+    };
+
+    $scope.removePictureURL = function(index) {
+      $scope.recipe.mainPictureURLs.splice(index, 1);
+    };
+
+    $scope.addPictureURL = function() {
+      $scope.recipe.mainPictureURLs.push("");
     };
 
     $scope.removeCookingMethod = function(index) {
@@ -387,7 +477,9 @@ angular.module('SkillitAdminApp')
       }
       recipeService.updateRecipe({
         name: $scope.recipe.name,
+        nameBodies: $scope.nameDictionary,
         description: $scope.recipe.description,
+        conditionalDescriptions: $scope.descriptionDictionary,
         defaultServingSize: $scope.recipe.defaultServingSize,
         recipeType: $scope.recipe.recipeType,
         collectionIds: $scope.recipe.collectionIds,
@@ -469,7 +561,9 @@ angular.module('SkillitAdminApp')
       recipeService.addNewRecipe({
         recipe: {
           name: $scope.recipe.name,
+          nameBodies: $scope.nameDictionary,
           description: $scope.recipe.description,
+          conditionalDescriptions: $scope.descriptionDictionary,
           defaultServingSize: $scope.recipe.defaultServingSize,
           recipeType: $scope.recipe.recipeType,
           collectionIds: $scope.recipe.collectionIds,

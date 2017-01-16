@@ -3,6 +3,8 @@ var SeasoningProfile = require('./SeasoningProfile');
 var Dish = require('./Dish');
 var StepTip = require('./StepTip');
 var Ingredient = require('./Ingredient');
+var HealthModifier = require('./HealthModifier');
+var RecipeTitleAdjective = require('./RecipeTitleAdjective');
 var curUTCDate = require('../../util/dateLib').curUTCDate;
 
 var ObjectId = mongoose.Schema.Types.ObjectId;
@@ -37,7 +39,9 @@ var IngredientListSchema = new mongoose.Schema({
 
 var RecipeSchema = new mongoose.Schema({
   name: String,
+  nameBodies: mongoose.Schema.Types.Mixed,
   description: String,
+  conditionalDescriptions: mongoose.Schema.Types.Mixed,
   recipeType: String,
   recipeCategory: String,
   ingredientList: IngredientListSchema,
@@ -50,6 +54,7 @@ var RecipeSchema = new mongoose.Schema({
   defaultServingSize: String,
   primaryIngredientType: String,
   mainPictureURL: String,
+  mainPictureURLs: [String],
   mainVideoURL: String,
   mainVideo: {
     end: String,
@@ -70,7 +75,10 @@ var RecipeSchema = new mongoose.Schema({
   dateModified: {
     type: Date,
     default: curUTCDate
-  }
+  },
+  healthModifiers: [HealthModifier.schema],
+  titleAdjectives: [RecipeTitleAdjective.schema],
+  isNewRecipeModel: Boolean
 });
 
 module.exports.model = mongoose.model('Recipe', RecipeSchema);

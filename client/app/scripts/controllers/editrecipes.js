@@ -1,5 +1,6 @@
 'use strict';
 
+
 /**
  * @ngdoc function
  * @name SkillitAdminApp.controller:EditrecipesCtrl
@@ -8,11 +9,11 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('EditRecipesCtrl', ['$window', '$scope', 'recipeService', 'itemCollectionService', 'seasoningService', 'ingredientService', 'dishService', function ($window, $scope, recipeService, itemCollectionService, seasoningService, ingredientService, dishService) {
+  .controller('EditRecipesCtrl', ['$window', '$scope', 'recipeService', 'itemCollectionService', 'seasoningService', 'ingredientService', 'dishService', 'healthModifierService', 'recipeAdjectiveService', function ($window, $scope, recipeService, itemCollectionService, seasoningService, ingredientService, dishService, healthModifierService, recipeAdjectiveService) {
 
     $scope.integerval = /^\d*$/;
     $scope.recipeTypes = ["AlaCarte", "BYO", "Full"];
-    $scope.recipeCategories = ["Sautee", "Scramble", "Easy Dinners", "Roast", "Pasta", "Hash", "Rice", "Quinoa"];
+    $scope.recipeCategories = ["Sautee", "Scramble", "Easy Dinners", "Seafood Plates", "Roast", "Pasta", "Hash", "Rice", "Quinoa"];
     $scope.servingSizes = ["1-2", "2-3", "3-4", "4-5", "5-6", "6-7", "7-8", "8-9", "9-10"];
     $scope.cookingMethods = ["Bake", "Sautee", "Boil", "Steam", "SlowCook"];
     $scope.stepTypes = ["Bake", "Boil", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "Heat", "Place", "PreheatOven", "Sautee", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir"];
@@ -48,6 +49,20 @@ angular.module('SkillitAdminApp')
       }, function(response) {
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
+      });
+
+      recipeAdjectiveService.getAllRecipeAdjectives(isProd).then(function(res) {
+        $scope.recipeAdjectives = res.data;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: ", response);
+      });
+
+      healthModifierService.getAllHealthModifiers(isProd).then(function(res) {
+        $scope.healthModifiers = res.data;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: ", response);
       });
 
       seasoningService.getAllSeasonings(isProd).then(function(res) {
@@ -126,10 +141,78 @@ angular.module('SkillitAdminApp')
       }
     };
 
+    $scope.addNameBody = function() {
+      if(!$scope.nameBodies) {
+        $scope.nameBodies = [];
+      }
+      $scope.nameBodies.push({});
+    };
+
+    $scope.removeNameBody = function(index) {
+      var name = $scope.nameBodies[index];
+      for(var key in $scope.nameDictionary) {
+        if($scope.nameDictionary[key] === name) {
+          $scope.nameDictionary[key] = undefined;
+        }
+      }
+      $scope.nameBodies.splice(index, 1);
+    };
+
+    $scope.addDescription = function() {
+      if(!$scope.conditionalDescriptions) {
+        $scope.conditionalDescriptions = [];
+      }
+      $scope.conditionalDescriptions.push({});
+    };
+
+    $scope.removeDescription = function(index) {
+      var description = $scope.conditionalDescriptions[index];
+      for(var key in $scope.conditionalDescriptions) {
+        if($scope.descriptionDictionary[key] === description) {
+          $scope.descriptionDictionary[key] = undefined;
+        }
+      }
+      $scope.conditionalDescriptions.splice(index, 1);
+    };
+
+    function updateNamesAndDescriptions() {
+      $scope.nameBodies = angular.copy([]);
+      $scope.conditionalDescriptions = angular.copy([]);
+      var nameMap = {};
+      var descriptionMap = {};
+      for(var key in $scope.recipe.nameBodies) {
+        if(!nameMap[$scope.recipe.nameBodies[key]]) {
+          nameMap[$scope.recipe.nameBodies[key]] = true;
+        }
+      }
+      for(var key in $scope.recipe.conditionalDescriptions) {
+        if(!descriptionMap[$scope.recipe.conditionalDescriptions[key]]) {
+          descriptionMap[$scope.recipe.conditionalDescriptions[key]] = true;
+        }
+      }
+      for(var name in nameMap) {
+        console.log(name);
+        $scope.nameBodies.push({name: name});
+      }
+      for(var description in descriptionMap) {
+        console.log(description);
+        $scope.conditionalDescriptions.push({description: description});
+      }
+      $scope.nameDictionary = angular.copy($scope.recipe.nameBodies);
+      if(!$scope.nameDictionary) {
+        $scope.nameDictionary = {};
+      }
+      $scope.descriptionDictionary = angular.copy($scope.recipe.conditionalDescriptions);
+      if(!$scope.descriptionDictionary) {
+        $scope.descriptionDictionary = {};
+      }
+    }
+
     $scope.changeSelectedRecipe = function() {
       if($scope.selectedRecipe && $scope.selectedRecipe.name) {
         $scope.selectedRecipeIndex = $scope.recipes.indexOf($scope.selectedRecipe);
         $scope.recipe = angular.copy($scope.selectedRecipe);
+        updateNamesAndDescriptions();
         $scope.ingredientList = $scope.recipe.ingredientList;
         $scope.stepList = $scope.recipe.stepList;
         $scope.typeMinimizedIndicatorArray = new Array($scope.recipe.ingredientList.ingredientTypes.length);
@@ -170,6 +253,14 @@ angular.module('SkillitAdminApp')
 
     $scope.addCollection = function() {
       $scope.recipe.collectionIds.push($scope.curCollectionId);
+    };
+
+    $scope.removePictureURL = function(index) {
+      $scope.recipe.mainPictureURLs.splice(index, 1);
+    };
+
+    $scope.addPictureURL = function() {
+      $scope.recipe.mainPictureURLs.push("");
     };
 
     $scope.removeCookingMethod = function(index) {
@@ -398,7 +489,9 @@ angular.module('SkillitAdminApp')
       }
       recipeService.updateRecipe({
         name: $scope.recipe.name,
+        nameBodies: $scope.nameDictionary,
         description: $scope.recipe.description,
+        conditionalDescriptions: $scope.descriptionDictionary,
         defaultServingSize: $scope.recipe.defaultServingSize,
         recipeType: $scope.recipe.recipeType,
         collectionIds: $scope.recipe.collectionIds,
@@ -480,7 +573,9 @@ angular.module('SkillitAdminApp')
       recipeService.addNewRecipe({
         recipe: {
           name: $scope.recipe.name,
+          nameBodies: $scope.nameDictionary,
           description: $scope.recipe.description,
+          conditionalDescriptions: $scope.descriptionDictionary,
           defaultServingSize: $scope.recipe.defaultServingSize,
           recipeType: $scope.recipe.recipeType,
           collectionIds: $scope.recipe.collectionIds,
