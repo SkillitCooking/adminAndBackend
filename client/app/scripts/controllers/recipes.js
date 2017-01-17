@@ -202,7 +202,7 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.addPictureURL = function() {
-      $scope.recipe.mainPictureURLs.push("");
+      $scope.recipe.mainPictureURLs.push({});
       console.log('pics', $scope.recipe.mainPictureURLs);
     };
 
@@ -394,6 +394,10 @@ angular.module('SkillitAdminApp')
       //computeAllowablePrefixIds
       var allowablePrefixIds = computeAllowablePrefixIds();
       $scope.getGlobalCookTimes();
+      var pictureURLs = [];
+      for (var i = 0; i < $scope.recipe.mainPictureURLs.length; i++) {
+        pictureURLs.push($scope.recipe.mainPictureURLs[i].url);
+      }
       recipeService.addNewRecipe({ 
         recipe:{
           name: $scope.recipe.name,
@@ -413,8 +417,8 @@ angular.module('SkillitAdminApp')
           defaultSeasoningProfile: $scope.recipe.defaultSeasoningProfile,
           choiceSeasoningProfiles: $scope.recipe.choiceSeasoningProfiles,
           primaryIngredientType: $scope.recipe.primaryIngredientType,
-          mainPictureURL: $scope.recipe.mainPictureURLs[0],
-          mainPictureURLs: $scope.recipe.mainPictureURLs,
+          mainPictureURL: pictureURLs[0],
+          mainPictureURLs: pictureURLs,
           mainVideo: $scope.recipe.mainVideo,
           prepTime: $scope.recipe.prepTime,
           totalTime: $scope.recipe.totalTime,

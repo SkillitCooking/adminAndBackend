@@ -200,6 +200,10 @@ angular.module('SkillitAdminApp')
     $scope.changeSelectedRecipe = function() {
         $scope.recipe = angular.copy($scope.selectedRecipe);
         updateNamesAndDescriptions();
+        $scope.mainPictureURLs = [];
+        for (var i = 0; i < $scope.recipe.mainPictureURLs.length; i++) {
+          $scope.mainPictureURLs.push({url: $scope.recipe.mainPictureURLs[i]});
+        }
         $scope.ingredientList = $scope.recipe.ingredientList;
         $scope.stepList = $scope.recipe.stepList;
         $scope.typeMinimizedIndicatorArray = new Array($scope.recipe.ingredientList.ingredientTypes.length);
@@ -244,11 +248,11 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.removePictureURL = function(index) {
-      $scope.recipe.mainPictureURLs.splice(index, 1);
+      $scope.mainPictureURLs.splice(index, 1);
     };
 
     $scope.addPictureURL = function() {
-      $scope.recipe.mainPictureURLs.push("");
+      $scope.mainPictureURLs.push({});
     };
 
     $scope.removeCookingMethod = function(index) {
@@ -484,6 +488,9 @@ angular.module('SkillitAdminApp')
         }
       }
       var allowablePrefixIds = computeAllowablePrefixIds();
+      for (var i = $scope.mainPictureURLs.length - 1; i >= 0; i--) {
+        $scope.mainPictureURLs[i] = $scope.mainPictureURLs[i].url;
+      }
       recipeService.updateRecipe({
         name: $scope.recipe.name,
         nameBodies: $scope.nameDictionary,
@@ -502,8 +509,8 @@ angular.module('SkillitAdminApp')
         defaultSeasoningProfile: $scope.recipe.defaultSeasoningProfile,
         choiceSeasoningProfiles: $scope.recipe.choiceSeasoningProfiles,
         primaryIngredientType: $scope.recipe.primaryIngredientType,
-        mainPictureURL: $scope.recipe.mainPictureURLs[0],
-        mainPictureURLs: $scope.recipe.mainPictureURLs,
+        mainPictureURL: $scope.mainPictureURLs[0],
+        mainPictureURLs: $scope.mainPictureURLs,
         mainVideo: $scope.recipe.mainVideo,
         prepTime: $scope.recipe.prepTime,
         totalTime: $scope.recipe.totalTime,
@@ -569,6 +576,12 @@ angular.module('SkillitAdminApp')
           $scope.recipe.collectionIds.push($scope.recipeCollections[i]._id);
         }
       }
+      var mainPictureURL;
+      if($scope.recipe.mainPictureURLs) {
+        mainPictureURL = $scope.recipe.mainPictureURLs[0];
+      } else {
+        mainPictureURL = $scope.recipe.mainPictureURL;
+      }
       recipeService.addNewRecipe({
         recipe: {
           name: $scope.recipe.name,
@@ -587,7 +600,8 @@ angular.module('SkillitAdminApp')
           defaultSeasoningProfile: $scope.recipe.defaultSeasoningProfile,
           choiceSeasoningProfiles: $scope.recipe.choiceSeasoningProfiles,
           primaryIngredientType: $scope.recipe.primaryIngredientType,
-          mainPictureURL: $scope.recipe.mainPictureURL,
+          mainPictureURL: mainPictureURL,
+          mainPictureURLs: $scope.recipe.mainPictureURLs,
           mainVideo: $scope.recipe.mainVideo,
           prepTime: $scope.recipe.prepTime,
           totalTime: $scope.recipe.totalTime,

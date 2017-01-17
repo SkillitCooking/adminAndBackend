@@ -44,7 +44,7 @@
       <span>{{collection.name}}</span>
     </div><br/><br/>    
     Main Picture URLs: <div ng-repeat="url in recipe.mainPictureURLs">
-      <input type="url" ng-model="url" size="70" name="mainPicInput"/><br/>
+      <input type="url" ng-model="url.url" size="70" name="mainPicInput"/><br/>
       <button class="btn btn-xs" ng-click="removePictureURL($index)">Remove</button>
     </div>
     <button class="btn btn-sm" ng-click="addPictureURL()">Add Picture URL</button><br/>

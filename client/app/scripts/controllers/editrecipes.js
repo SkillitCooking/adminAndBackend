@@ -214,9 +214,11 @@ angular.module('SkillitAdminApp')
         $scope.recipe = angular.copy($scope.selectedRecipe);
         updateNamesAndDescriptions();
         $scope.ingredientList = $scope.recipe.ingredientList;
-        console.log('ingredientList', $scope.ingredientList);
+        $scope.mainPictureURLs = [];
+        for (var i = 0; i < $scope.recipes.mainPictureURLs.length; i++) {
+          $scope.mainPictureURLs.push({url: $scope.recipes.mainPictureURLs[i]});
+        }
         $scope.stepList = $scope.recipe.stepList;
-        console.log('stepList', $scope.recipe.stepList);
         $scope.typeMinimizedIndicatorArray = new Array($scope.recipe.ingredientList.ingredientTypes.length);
         $scope.typeMinimizedIndicatorArray.fill(true);
         $scope.stepMinimizedIndicatorArray = new Array($scope.stepList.length);
@@ -258,11 +260,11 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.removePictureURL = function(index) {
-      $scope.recipe.mainPictureURLs.splice(index, 1);
+      $scope.mainPictureURLs.splice(index, 1);
     };
 
     $scope.addPictureURL = function() {
-      $scope.recipe.mainPictureURLs.push("");
+      $scope.mainPictureURLs.push({});
     };
 
     $scope.removeCookingMethod = function(index) {
@@ -584,6 +586,9 @@ angular.module('SkillitAdminApp')
           $scope.recipe.collectionIds.push($scope.recipeCollections[i]._id);
         }
       }
+      for (var i = $scope.mainPictureURLs.length - 1; i >= 0; i--) {
+        $scope.mainPictureURLs[i] = $scope.mainPictureURLs[i].url;
+      }
       recipeService.addNewRecipe({
         recipe: {
           name: $scope.recipe.name,
@@ -602,8 +607,8 @@ angular.module('SkillitAdminApp')
           defaultSeasoningProfile: $scope.recipe.defaultSeasoningProfile,
           choiceSeasoningProfiles: $scope.recipe.choiceSeasoningProfiles,
           primaryIngredientType: $scope.recipe.primaryIngredientType,
-          mainPictureURL: $scope.recipe.mainPictureURLs[0],
-          mainPictureURLs: $scope.recipe.mainPictureURLs,
+          mainPictureURL: $scope.mainPictureURLs[0],
+          mainPictureURLs: $scope.mainPictureURLs,
           mainVideo: $scope.recipe.mainVideo,
           prepTime: $scope.recipe.prepTime,
           totalTime: $scope.recipe.totalTime,
