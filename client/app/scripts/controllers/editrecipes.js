@@ -16,7 +16,7 @@ angular.module('SkillitAdminApp')
     $scope.recipeCategories = ["Sautee", "Scramble", "Easy Dinners", "Seafood Plates", "Roast", "Pasta", "Hash", "Rice", "Quinoa"];
     $scope.servingSizes = ["1-2", "2-3", "3-4", "4-5", "5-6", "6-7", "7-8", "8-9", "9-10"];
     $scope.cookingMethods = ["Bake", "Sautee", "Boil", "Steam", "SlowCook"];
-    $scope.stepTypes = ["Bake", "Boil", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "Heat", "Place", "PreheatOven", "Sautee", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir"];
+    $scope.stepTypes = ["Bake", "Boil", "BreakEgg", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "Heat", "Place", "PreheatOven", "Sautee", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir"];
     //initialize constructingStep and its stepInputs
     $scope.constructingStep = {};
     $scope.constructingStep.stepInputs = {};
@@ -214,7 +214,9 @@ angular.module('SkillitAdminApp')
         $scope.recipe = angular.copy($scope.selectedRecipe);
         updateNamesAndDescriptions();
         $scope.ingredientList = $scope.recipe.ingredientList;
+        console.log('ingredientList', $scope.ingredientList);
         $scope.stepList = $scope.recipe.stepList;
+        console.log('stepList', $scope.recipe.stepList);
         $scope.typeMinimizedIndicatorArray = new Array($scope.recipe.ingredientList.ingredientTypes.length);
         $scope.typeMinimizedIndicatorArray.fill(true);
         $scope.stepMinimizedIndicatorArray = new Array($scope.stepList.length);
@@ -600,7 +602,8 @@ angular.module('SkillitAdminApp')
           defaultSeasoningProfile: $scope.recipe.defaultSeasoningProfile,
           choiceSeasoningProfiles: $scope.recipe.choiceSeasoningProfiles,
           primaryIngredientType: $scope.recipe.primaryIngredientType,
-          mainPictureURL: $scope.recipe.mainPictureURL,
+          mainPictureURL: $scope.recipe.mainPictureURLs[0],
+          mainPictureURLs: $scope.recipe.mainPictureURLs,
           mainVideo: $scope.recipe.mainVideo,
           prepTime: $scope.recipe.prepTime,
           totalTime: $scope.recipe.totalTime,

@@ -106,6 +106,7 @@
       <div ng-form="stepForm">
         <b>Add New Step: </b><br/><br/>
         StepType <select name="stepTypeSelect" ng-model="constructingStep.stepType" ng-options="stepType for stepType in stepTypes" ng-required="!recipeSanityCheck()"></select>
+        <break-egg-step-input ng-if="constructingStep.stepType === 'BreakEgg'"></break-egg-step-input>
         <cut-step-input ng-if="constructingStep.stepType === 'Cut'"></cut-step-input>
         <cook-step-input ng-if="constructingStep.stepType === 'Cook'"></cook-step-input>
         <bake-step-input ng-if="constructingStep.stepType === 'Bake'"></bake-step-input>
