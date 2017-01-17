@@ -34,7 +34,7 @@
       preload-indicators="true"></recipe-name-description-input>
       <button class="btn btn-xs btn-warning" ng-click="removeNameBody($index)">Remove</button>
     </div><br/>
-    Default Description: <textarea ng-model="recipe.description" rows="4" cols="50" required name="descInput"></textarea>
+    Default Description: <textarea ng-model="recipe.description" rows="4" cols="50" name="descInput"></textarea>
     <div ng-repeat="description in conditionalDescriptions">
       <recipe-name-description-input
       seasonings="seasoningProfiles"

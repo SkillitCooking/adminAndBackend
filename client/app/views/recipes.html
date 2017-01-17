@@ -24,7 +24,7 @@
       <button class="btn btn-warning btn-xs" ng-click="removeNameBody($index)">Remove</button>
     </div><br/><br/>
 
-    Default Description: <textarea ng-model="recipe.description" rows="4" cols="50" required name="descInput"></textarea>
+    Default Description: <textarea ng-model="recipe.description" rows="4" cols="50" name="descInput"></textarea>
     <span ng-show="recipeForm.descInput.$invalid">give the recipe a description</span><br/>
     <button class="btn btn-sm btn-info" ng-click="addDescription()">Add Description</button><br/>
     <div ng-repeat="description in conditionalDescriptions">
