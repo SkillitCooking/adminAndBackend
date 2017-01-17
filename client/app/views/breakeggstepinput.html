@@ -9,13 +9,13 @@ We end up with 'whisked' eggs-->
     input-name="ingredientInputs"
     is-multiple="true"
     ingredient-list="ingredientList"
-    step-list="stepList"></step-input-form>
+    step-list="stepList"></step-input-form><br/>
   Dish Inputs: <step-input-form
     constructing-step="constructingStep"
     input-name="dishInputs"
     is-multiple="true"
     ingredient-list="ingredientList"
-    step-list="stepList"></step-input-form>
+    step-list="stepList"></step-input-form><br/>
   Product Name: <input type="text" name="productNameInput" required ng-model="constructingStep.productName" size="50"/><br/><br/>
   <button ng-show="!tipAdded" class="btn btn-sm btn-primary" ng-click="addTip()">Add Tip</button><br/>
   <button ng-show="tipAdded" class="btn btn-sm btn-primary" ng-click="toggleTipVisibility()">{{getTipToggleText()}}</button>

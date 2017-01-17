@@ -203,6 +203,7 @@ angular.module('SkillitAdminApp')
 
     $scope.addPictureURL = function() {
       $scope.recipe.mainPictureURLs.push("");
+      console.log('pics', $scope.recipe.mainPictureURLs);
     };
 
     $scope.isAFormSelected = function() {
