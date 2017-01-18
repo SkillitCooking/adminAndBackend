@@ -68,26 +68,6 @@ function nameSort(a, b) {
   });
 });*/
 
-router.get('/change', function(req, res, next) {
-  Recipe.model.find({}, 'mainPictureURL', function(err, recipes) {
-    if(err) {
-      console.log('error: ', err);
-      return next(err);
-    }
-    for (var i = recipes.length - 1; i >= 0; i--) {
-      recipes[i].mainPictureURLs = [];
-      recipes[i].mainPictureURLs.push(recipes[i].mainPictureURL);
-      recipes[i].save(function(err, recipe, numAffected) {
-        if(err) {
-          console.log('err: ', err);
-          return next(err);
-        }
-      });
-    }
-    res.json({msg: 'yeeas'});
-  });
-});
-
 /* Add response 'success' signal when time comes */
 /* Add Credentials appropriately when time comes */
 /* Add Error checking as well */

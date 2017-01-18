@@ -94,6 +94,7 @@ angular.module('SkillitAdminApp')
 
         scope.toggleAdjective = function(adjective, index) {
           if(!scope.dictionary[adjective._id]) {
+            console.log('here');
             scope.dictionary[adjective._id] = [];
             if(scope.isName) {
               scope.adjectivesIndicator[index] = true;
@@ -105,9 +106,11 @@ angular.module('SkillitAdminApp')
           } else {
             if(scope.isName) {
               if(!scope.adjectivesIndicator[index]) {
+                console.log('there');
                 scope.adjectivesIndicator[index] = true;
                 scope.dictionary[adjective._id].push(scope.textObj.name);
               } else {
+                console.log('where');
                 scope.adjectivesIndicator[index] = false;
                 var indexOfName = scope.dictionary[adjective._id].indexOf(scope.textObj.name);
                 scope.dictionary[adjective._id].splice(indexOfName, 1);
