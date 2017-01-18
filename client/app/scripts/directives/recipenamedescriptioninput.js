@@ -94,24 +94,17 @@ angular.module('SkillitAdminApp')
 
         scope.toggleAdjective = function(adjective, index) {
           if(!scope.dictionary[adjective._id]) {
-            console.log('here');
             scope.dictionary[adjective._id] = [];
             if(scope.isName) {
-              scope.adjectivesIndicator[index] = true;
               scope.dictionary[adjective._id].push(scope.textObj.name);
             } else if(scope.isDescription) {
-              scope.adjectivesIndicator[index] = true;
               scope.dictionary[adjective._id].push(scope.textObj.description);
             }
           } else {
             if(scope.isName) {
               if(!scope.adjectivesIndicator[index]) {
-                console.log('there');
-                scope.adjectivesIndicator[index] = true;
                 scope.dictionary[adjective._id].push(scope.textObj.name);
               } else {
-                console.log('where');
-                scope.adjectivesIndicator[index] = false;
                 var indexOfName = scope.dictionary[adjective._id].indexOf(scope.textObj.name);
                 scope.dictionary[adjective._id].splice(indexOfName, 1);
                 if(scope.dictionary[adjective._id].length === 0) {
@@ -120,10 +113,8 @@ angular.module('SkillitAdminApp')
               }
             } else if (scope.isDescription) {
               if(!scope.adjectivesIndicator[index]) {
-                scope.adjectivesIndicator[index] = true;
                 scope.dictionary[adjective._id].push(scope.textObj.description);
               } else {
-                scope.adjectivesIndicator[index] = false;
                 var indexOfName = scope.dictionary[adjective._id].indexOf(scope.textObj.description);
                 scope.dictionary[adjective._id].splice(indexOfName, 1);
                 if(scope.dictionary[adjective._id].length === 0) {
@@ -138,19 +129,15 @@ angular.module('SkillitAdminApp')
           if(!scope.dictionary[modifier._id]) {
             scope.dictionary[modifier._id] = [];
             if(scope.isName) {
-              scope.modifiersIndicator[index] = true;
               scope.dictionary[modifier._id].push(scope.textObj.name);
             } else if(scope.isDescription) {
-              scope.modifiersIndicator[index] = true;
               scope.dictionary[modifier._id].push(scope.textObj.description);
             }
           } else {
             if(scope.isName) {
               if(!scope.modifiersIndicator[index]) {
-                scope.modifiersIndicator[index] = true;
                 scope.dictionary[modifier._id].push(scope.textObj.name);
               } else {
-                scope.modifiersIndicator[index] = false;
                 var indexOfName = scope.dictionary[modifier._id].indexOf(scope.textObj.name);
                 scope.dictionary[modifier._id].splice(indexOfName, 1);
                 if(scope.dictionary[modifier._id].length === 0) {
@@ -159,10 +146,8 @@ angular.module('SkillitAdminApp')
               }
             } else if (scope.isDescription) {
               if(!scope.modifiersIndicator[index]) {
-                scope.modifiersIndicator[index] = true;
                 scope.dictionary[modifier._id].push(scope.textObj.description);
               } else {
-                scope.modifiersIndicator[index] = false;
                 var indexOfName = scope.dictionary[modifier._id].indexOf(scope.textObj.description);
                 scope.dictionary[modifier._id].splice(indexOfName, 1);
                 if(scope.dictionary[modifier._id].length === 0) {
@@ -177,19 +162,15 @@ angular.module('SkillitAdminApp')
           if(!scope.dictionary[seasoning._id]) {
             scope.dictionary[seasoning._id] = [];
             if(scope.isName) {
-              scope.seasoningsIndicator[index] = true;
               scope.dictionary[seasoning._id].push(scope.textObj.name);
             } else if(scope.isDescription) {
-              scope.seasoningsIndicator[index] = true;
               scope.dictionary[seasoning._id].push(scope.textObj.description);
             }
           } else {
             if(scope.isName) {
               if(!scope.seasoningsIndicator[index]) {
-                scope.seasoningsIndicator[index] = true;
                 scope.dictionary[seasoning._id].push(scope.textObj.name);
               } else {
-                scope.seasoningsIndicator[index] = false;
                 var indexOfName = scope.dictionary[seasoning._id].indexOf(scope.textObj.name);
                 scope.dictionary[seasoning._id].splice(indexOfName, 1);
                 if(scope.dictionary[seasoning._id].length === 0) {
@@ -198,10 +179,8 @@ angular.module('SkillitAdminApp')
               }
             } else if (scope.isDescription) {
               if(!scope.seasoningsIndicator[index]) {
-                scope.seasoningsIndicator[index] = true;
                 scope.dictionary[seasoning._id].push(scope.textObj.description);
               } else {
-                scope.seasoningsIndicator[index] = false;
                 var indexOfName = scope.dictionary[seasoning._id].indexOf(scope.textObj.description);
                 scope.dictionary[seasoning._id].splice(indexOfName, 1);
                 if(scope.dictionary[seasoning._id].length === 0) {
