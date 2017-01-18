@@ -52,8 +52,8 @@
       <input type="checkbox" ng-model="collection.useInRecipe" />
       <span>{{collection.name}}</span>
     </div><br/><br/>
-    Main Picture URLs: <div ng-repeat="url in recipe.mainPictureURLs">
-      <input type="url" ng-model="recipe.mainPictureURLs[$index]" size="70" name="mainPicInput"/><br/>
+    Main Picture URLs: <div ng-repeat="url in mainPictureURLs">
+      <input type="url" ng-model="url.url" size="70" name="mainPicInput"/><br/>
       <button class="btn btn-xs" ng-click="removePictureURL($index)" ng-disabled="recipe.mainPictureURLs.length <= 1">Remove</button>
     </div>
     <button class="btn btn-sm" ng-click="addPictureURL()">Add Picture URL</button><br/>

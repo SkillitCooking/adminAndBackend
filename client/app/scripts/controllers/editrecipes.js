@@ -508,6 +508,7 @@ angular.module('SkillitAdminApp')
       for (var i = $scope.mainPictureURLs.length - 1; i >= 0; i--) {
         $scope.mainPictureURLs[i] = $scope.mainPictureURLs[i].url;
       }
+      console.log('presave pics', $scope.mainPictureURLs);
       recipeService.updateRecipe({
         name: $scope.recipe.name,
         nameBodies: $scope.nameDictionary,
