@@ -184,17 +184,33 @@ var service = {};
     return hasVeggie && hasStarch && hasProtein;
   }
 
+  function isGlutenFree(recipe) {
+    for (var i = recipe.ingredientList.ingredientTypes.length - 1; i >= 0; i--) {
+      var type = recipe.ingredientList.ingredientTypes[i];
+      for (var j = type.ingredients.length - 1; j >= 0; j--) {
+        var ingredient = type.ingredients[j];
+        if(ingredient.name.standardForm === 'Pasta') {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   service.getBadgesForRecipe = function(recipe) {
     var badges = [];
-    if(isEasyCleanup(recipe)) {
+    /*if(isEasyCleanup(recipe)) {
       badges.push(constants.RECIPE_BADGES.EASY_CLEANUP);
+    }*/
+    if(isGlutenFree(recipe)) {
+      badges.push(constants.RECIPE_BADGES.GLUTEN_FREE);
     }
     if(isLeanProtein(recipe)) {
       badges.push(constants.RECIPE_BADGES.LEAN_PROTEIN);
     }
-    if(isMinimalPrep(recipe)) {
+    /*if(isMinimalPrep(recipe)) {
       badges.push(constants.RECIPE_BADGES.MINIMAL_PREP);
-    }
+    }*/
     if (isPaleo(recipe)) {
       badges.push(constants.RECIPE_BADGES.PALEO);
     }
@@ -204,18 +220,18 @@ var service = {};
     if(isQuickEats(recipe)) {
       badges.push(constants.RECIPE_BADGES.QUICK_EATS);
     }
-    if(isReducetarian(recipe)) {
+    /*if(isReducetarian(recipe)) {
       badges.push(constants.RECIPE_BADGES.REDUCETARIAN);
-    }
+    }*/
     if(isVegan(recipe)) {
       badges.push(constants.RECIPE_BADGES.VEGAN);
     }
     if(isVegetarian(recipe)) {
       badges.push(constants.RECIPE_BADGES.VEGETARIAN);
     }
-    if(isWellRounded(recipe)) {
+    /*if(isWellRounded(recipe)) {
       badges.push(constants.RECIPE_BADGES.WELL_ROUNDED);
-    }
+    }*/
     return badges;
   };
 

@@ -7,6 +7,7 @@ module.exports = Object.freeze({
   },
   RECIPE_BADGES: {
     EASY_CLEANUP: 'easy_cleanup',
+    GLUTEN_FREE: 'gluten_free',
     LEAN_PROTEIN: 'lean_protein',
     MINIMAL_PREP: 'minimal_prep',
     PALEO: 'paleo',
