@@ -5,6 +5,18 @@ module.exports = Object.freeze({
     FULL: 'Full',
     ALACARTE: 'AlaCarte'
   },
+  RECIPE_BADGES: {
+    EASY_CLEANUP: 'easy_cleanup',
+    LEAN_PROTEIN: 'lean_protein',
+    MINIMAL_PREP: 'minimal_prep',
+    PALEO: 'paleo',
+    PESCATARIAN: 'pescatarian',
+    QUICK_EATS: 'quick_eats',
+    REDUCETARIAN: 'reducetarian',
+    VEGAN: 'vegan',
+    VEGETARIAN: 'vegetarian',
+    WELL_ROUNDED: 'well_rounded'
+  },
   ITEM_TYPES: {
     TIP: 'tip',
     GLOSSARY: 'glossary',

@@ -16,6 +16,7 @@
     "express": "~4.13.1",
     "express-limiter": "^1.6.0",
     "helmet": "^2.1.1",
+    "lodash": "^4.17.4",
     "moment": "^2.13.0",
     "mongoose": "^4.4.13",
     "morgan": "~1.6.1",

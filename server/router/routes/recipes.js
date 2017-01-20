@@ -6,6 +6,8 @@ middleware(router);
 var logger = require('../../util/logger').serverLogger;
 var constants = require('../../util/constants');
 
+var recipeBadgeService = require('../lib/recipebadges');
+
 var mongoose = require('mongoose');
 var underscore = require('underscore');
 var db = require('../../database');
@@ -438,11 +440,12 @@ function processRecipes(req, recipes, recipesToReturn, outlawIngredients) {
             }
           }
           if(flag){
+            recipes[k].badges = recipeBadgeService.getBadgesForRecipe(recipes[k]);
             if(recipes[k].recipeType === constants.RECIPE_TYPES.ALACARTE) {
-              var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'ingredientList', 'manActiveTime', 'manTotalTime');
+              var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'ingredientList', 'manActiveTime', 'manTotalTime', 'badges');
               retRecipes[0][pickedRecipe.recipeType].push(pickedRecipe);
             } else {
-              var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'setModifiedDisclaimer');
+              var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'setModifiedDisclaimer', 'badges');
               retRecipes[0][pickedRecipe.recipeType].push(pickedRecipe);
             }
           } else {
@@ -468,7 +471,9 @@ function processRecipes(req, recipes, recipesToReturn, outlawIngredients) {
         while(recipesToReturn[constants.RECIPE_TYPES.FULL].length < constants.MINIMUM_FULL_RECIPES_RETURN) {
           if(retRecipes[missingIngredientLevel] && retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL].length > 0) {
             for (var i = retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL].length - 1; i >= 0; i--) {
-              var recipeToAdd = underscore.pick(retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL][i], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'missingIngredients');
+              var recipeToAdd = retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL][i];
+              recipeToAdd.badges = recipeBadgeService.getBadgesForRecipe(recipeToAdd);
+              recipeToAdd = underscore.pick(recipeToAdd, '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'missingIngredients', 'badges');
               recipeToAdd.usesMissingIngredients = true;
               recipesToReturn[constants.RECIPE_TYPES.FULL].push(recipeToAdd);
               recipesAdded += 1;
