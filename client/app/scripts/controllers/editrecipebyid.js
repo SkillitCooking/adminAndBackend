@@ -549,6 +549,7 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.duplicateRecipe = function() {
+      console.log('ya know');
       delete $scope.recipe.ingredientList._id;
       for (var i = $scope.recipe.ingredientList.ingredientTypes.length - 1; i >= 0; i--) {
         delete $scope.recipe.ingredientList.ingredientTypes[i]._id;
@@ -578,6 +579,9 @@ angular.module('SkillitAdminApp')
       }
       var mainPictureURL;
       if($scope.recipe.mainPictureURLs) {
+        for (var i = $scope.mainPictureURLs.length - 1; i >= 0; i--) {
+          $scope.mainPictureURLs[i] = $scope.mainPictureURLs[i].url;
+        }
         mainPictureURL = $scope.recipe.mainPictureURLs[0];
       } else {
         mainPictureURL = $scope.recipe.mainPictureURL;
@@ -612,7 +616,7 @@ angular.module('SkillitAdminApp')
           isRecipeOfTheDay: false
         }
       }, $scope.useProdServer, $scope.useDevServer).then(function(recipe) {
-        alert('Success! Recipe ' + recipe.name + 'was saved! Refresh form.');
+        alert('Success! Recipe ' + recipe[0].name + 'was saved! Refresh form.');
         $window.location.reload(true);
       }, function(response) {
         console.log("Server Error: ", response);

@@ -1,10 +1,10 @@
 <div>
-  <h2>Edit Recipe</h2>
+  <h2>Edit Recipe By ID</h2>
   <a class="btn btn-link" ng-href="#/recipes">Create</a>
   <a class="btn btn-link active" ng-href="#/editRecipeById">Edit by Id</a>
   <a class="btn btn-link" ng-href="#/editRecipes">Edit + Duplicate</a><br/>
   <!--copy selectedRecipe over to recipe - that way original model doesn't change-->
-  <form novalidate name="editRecipeForm" ng-controller="EditRecipesCtrl">
+  <form novalidate name="editRecipeForm" ng-controller="EditrecipebyidCtrl">
     <p>Objects are currently being loaded from the {{serverType}} server</p>
     Use: <br/>
     <label>
