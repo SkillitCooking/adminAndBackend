@@ -73,7 +73,7 @@ function nameSort(a, b) {
 /* Add response 'success' signal when time comes */
 /* Add Credentials appropriately when time comes */
 /* Add Error checking as well */
-router.get('/changes', function(req, res, next) {
+/*router.get('/changes', function(req, res, next) {
   Recipe.model.update({}, {
     nameBodies: {},
     conditionalDescriptions: {},
@@ -87,7 +87,7 @@ router.get('/changes', function(req, res, next) {
     }
     res.json({'raw': raw});
   });
-});
+});*/
 
 /* GET all recipes */
 router.get('/', function(req, res, next) {
