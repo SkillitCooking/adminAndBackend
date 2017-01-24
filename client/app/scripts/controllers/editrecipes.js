@@ -197,21 +197,25 @@ angular.module('SkillitAdminApp')
       var nameMap = {};
       var descriptionMap = {};
       for(var key in $scope.recipe.nameBodies) {
-        if(!nameMap[$scope.recipe.nameBodies[key]]) {
-          nameMap[$scope.recipe.nameBodies[key]] = true;
+        for (var i = $scope.recipe.nameBodies[key].length - 1; i >= 0; i--) {
+          if(!nameMap[$scope.recipe.nameBodies[key][i]]) {
+            nameMap[$scope.recipe.nameBodies[key][i]] = true;
+          }
         }
+        
       }
       for(var key in $scope.recipe.conditionalDescriptions) {
-        if(!descriptionMap[$scope.recipe.conditionalDescriptions[key]]) {
-          descriptionMap[$scope.recipe.conditionalDescriptions[key]] = true;
+        for (var j = $scope.recipe.conditionalDescriptions[key].length - 1; j >= 0; j--) {
+          if(!descriptionMap[$scope.recipe.conditionalDescriptions[key][j]]) {
+            descriptionMap[$scope.recipe.conditionalDescriptions[key][j]] = true;
+          }
         }
+        
       }
       for(var name in nameMap) {
-        console.log(name);
         $scope.nameBodies.push({name: name});
       }
       for(var description in descriptionMap) {
-        console.log(description);
         $scope.conditionalDescriptions.push({description: description});
       }
       $scope.nameDictionary = angular.copy($scope.recipe.nameBodies);

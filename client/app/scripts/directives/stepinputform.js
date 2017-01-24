@@ -17,7 +17,7 @@ angular.module('SkillitAdminApp')
         isMultiple: "@isMultiple",
         ingredientList: "<ingredientList",
         stepList: "=stepList",
-        stepType: "="
+        stepType: "@"
       },
       transclude: false,
       link: function(scope, elem, attrs) {
@@ -30,7 +30,7 @@ angular.module('SkillitAdminApp')
             }
           }
         };
-
+        console.log('stepType', scope.stepType);
         console.log('stepInputs', scope.stepInputName);
         console.log('step', scope.step);
 
@@ -90,9 +90,11 @@ angular.module('SkillitAdminApp')
         };
 
         scope.registerSourceId = function(sourceIdStep) {
+          console.log('sourceIdStep', sourceIdStep);
           if(sourceIdStep) {
             scope.step.stepInputs[scope.stepInputName].sourceId = sourceIdStep.stepId;
           }
+          console.log('steppy', scope.step);
         };
 
         scope.registerSourceIdMultiple = function(input, index, sourceIdStep) {
