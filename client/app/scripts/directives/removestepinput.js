@@ -19,6 +19,10 @@ angular.module('SkillitAdminApp')
         scope.tipIsMinimized = true;
         scope.showExampleText = false;
 
+        scope.removeTypes = ["Remove"];
+
+        scope.composingTypes = []; //here
+
         if(scope.constructingStep.stepId) {
           scope.constructingStep.productName = scope.constructingStep.productKeys[0];
           if(scope.constructingStep.stepTip) {

@@ -16,7 +16,8 @@ angular.module('SkillitAdminApp')
         stepInputName: "@inputName",
         isMultiple: "@isMultiple",
         ingredientList: "<ingredientList",
-        stepList: "=stepList"
+        stepList: "=stepList",
+        stepType: "="
       },
       transclude: false,
       link: function(scope, elem, attrs) {
@@ -29,6 +30,9 @@ angular.module('SkillitAdminApp')
             }
           }
         };
+
+        console.log('stepInputs', scope.stepInputName);
+        console.log('step', scope.step);
 
         //initialize if step already has been filled in
         if(scope.step.stepId) {

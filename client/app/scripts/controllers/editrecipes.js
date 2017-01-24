@@ -149,13 +149,24 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.removeNameBody = function(index) {
-      var name = $scope.nameBodies[index];
+      console.log('preremove nameDict', angular.copy($scope.nameDictionary));
+      console.log('preremove nameBodies', angular.copy($scope.nameBodies));
+      var name = $scope.nameBodies[index].name;
       for(var key in $scope.nameDictionary) {
-        if($scope.nameDictionary[key] === name) {
-          $scope.nameDictionary[key] = undefined;
+        console.log('key', key);
+        for (var i = $scope.nameDictionary[key].length - 1; i >= 0; i--) {
+          console.log('i', $scope.nameDictionary[key][i]);
+          if($scope.nameDictionary[key][i] === name) {
+            $scope.nameDictionary[key].splice(i, 1);
+            if($scope.nameDictionary[key].length === 0) {
+              delete $scope.nameDictionary[key];
+            }
+          }
         }
       }
       $scope.nameBodies.splice(index, 1);
+      console.log('postremove nameDict', angular.copy($scope.nameDictionary));
+      console.log('postremove nameBodies', angular.copy($scope.nameBodies));
     };
 
     $scope.addDescription = function() {
@@ -166,10 +177,15 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.removeDescription = function(index) {
-      var description = $scope.conditionalDescriptions[index];
-      for(var key in $scope.conditionalDescriptions) {
-        if($scope.descriptionDictionary[key] === description) {
-          $scope.descriptionDictionary[key] = undefined;
+      var description = $scope.conditionalDescriptions[index].description;
+      for(var key in $scope.descriptionDictionary) {
+        for (var i = $scope.descriptionDictionary[key].length - 1; i >= 0; i--) {
+          if($scope.descriptionDictionary[key][i] === description) {
+            $scope.descriptionDictionary[key].splice(i, 1);
+            if($scope.descriptionDictionary[key].length === 0) {
+              delete $scope.descriptionDictionary[key];
+            }
+          }
         }
       }
       $scope.conditionalDescriptions.splice(index, 1);
@@ -508,7 +524,7 @@ angular.module('SkillitAdminApp')
       for (var i = $scope.mainPictureURLs.length - 1; i >= 0; i--) {
         $scope.mainPictureURLs[i] = $scope.mainPictureURLs[i].url;
       }
-      console.log('presave pics', $scope.mainPictureURLs);
+      console.log('presave nameDict', angular.copy($scope.nameDictionary));
       recipeService.updateRecipe({
         name: $scope.recipe.name,
         nameBodies: $scope.nameDictionary,

@@ -96,10 +96,15 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.removeNameBody = function(index) {
-      var name = $scope.nameBodies[index];
+      var name = $scope.nameBodies[index].name;
       for(var key in $scope.nameDictionary) {
-        if($scope.nameDictionary[key] === name) {
-          $scope.nameDictionary[key] = undefined;
+        for (var i = $scope.nameDictionary[key].length - 1; i >= 0; i--) {
+          if($scope.nameDictionary[key][i] === name) {
+            $scope.nameDictionary[key].splice(i, 1);
+            if($scope.nameDictionary[key].length === 0) {
+              delete $scope.nameDictionary[key];
+            }
+          }
         }
       }
       $scope.nameBodies.splice(index, 1);
@@ -113,10 +118,15 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.removeDescription = function(index) {
-      var description = $scope.conditionalDescriptions[index];
+      var description = $scope.conditionalDescriptions[index].description;
       for(var key in $scope.conditionalDescriptions) {
-        if($scope.descriptionDictionary[key] === description) {
-          $scope.descriptionDictionary[key] = undefined;
+        for (var i = $scope.descriptionDictionary[key].length - 1; i >= 0; i--) {
+          if($scope.descriptionDictionary[key][i] === description) {
+            $scope.descriptionDictionary.splice(i, 1);
+            if($scope.descriptionDictionary[key].length === 0) {
+              delete $scope.descriptionDictionary[key];
+            }
+          }
         }
       }
       $scope.conditionalDescriptions.splice(index, 1);
