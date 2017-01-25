@@ -336,6 +336,7 @@ angular.module('SkillitAdminApp')
           $scope.recipe.ingredientList.ingredientTypes[typeIndex].ingredients = [];
         }
         $scope.recipe.ingredientList.ingredientTypes[typeIndex].ingredients.push(ingredient);
+        $scope.recipe.ingredientList.ingredientTypes[typeIndex].ingredientMinimizedIndicator.push(false);
       }
     };
 
@@ -389,9 +390,10 @@ angular.module('SkillitAdminApp')
         typeName: "",
         displayName: "",
         ingredients: [],
-        minNeeded: ""
+        minNeeded: "",
+        ingredientMinimizedIndicator: []
       });
-      $scope.typeMinimizedIndicatorArray.push(false);
+      $scope.typeMinimizedIndicatorArray.push(true);
     };
 
     $scope.addDish = function() {

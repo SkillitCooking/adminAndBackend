@@ -5,8 +5,8 @@
     SourceId: <select name="sourceIdSelect" ng-model="sourceIdStep" ng-options="step as getSourceIdSelectName(step, index) for (index, step) in stepList track by step.stepId" ng-change="registerSourceId(sourceIdStep)" ng-required="showStepId()"></select>
   </div>
   Key: <select ng-if="step.stepInputs[stepInputName].sourceType === 'StepProduct'" name="stepKeySelect" ng-model="step.stepInputs[stepInputName].key" ng-options="product for product in getProductKeys(sourceIdStep)" ng-required="step.stepInputs[stepInputName].sourceType === 'StepProduct'"></select>
-  <select ng-if="step.stepInputs[stepInputName].sourceType === 'IngredientList'" name="ingredKeySelect" ng-model="step.stepInputs[stepInputName].key" ng-options="type.typeName as type.typeName for type in ingredientList.ingredientTypes" ng-required="step.stepInputs[stepInputName].sourceType === 'IngredientList'"></select>
-  <select ng-if="step.stepInputs[stepInputName].sourceType === 'EquipmentList'" name="equipKeySelect" ng-model="step.stepInputs[stepInputName].key" ng-options="dish.name as dish.name for dish in ingredientList.equipmentNeeded" ng-required="step.stepInputs[stepInputName].sourceType === 'EquipmentList'"></select>
+  <select ng-if="step.stepInputs[stepInputName].sourceType === 'IngredientList'" name="ingredKeySelect" ng-model="step.stepInputs[stepInputName].key" ng-options="type.typeName as type.typeName for type in ingredientList.ingredientTypes" ng-change="stepInputPropertyChange()" ng-required="step.stepInputs[stepInputName].sourceType === 'IngredientList'"></select>
+  <select ng-if="step.stepInputs[stepInputName].sourceType === 'EquipmentList'" name="equipKeySelect" ng-model="step.stepInputs[stepInputName].key" ng-options="dish.name as dish.name for dish in ingredientList.equipmentNeeded" ng-change="stepInputPropertyChange()" ng-required="step.stepInputs[stepInputName].sourceType === 'EquipmentList'"></select>
 </div>
 
 <div ng-if="isMultiple === 'true'" ng-form="stepInputMultipleForm" class="bg-info" ng-repeat="input in step.stepInputs[stepInputName]">

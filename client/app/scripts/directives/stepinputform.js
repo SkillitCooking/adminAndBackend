@@ -30,9 +30,6 @@ angular.module('SkillitAdminApp')
             }
           }
         };
-        console.log('stepType', scope.stepType);
-        console.log('stepInputs', scope.stepInputName);
-        console.log('step', scope.step);
 
         //initialize if step already has been filled in
         if(scope.step.stepId) {
@@ -89,12 +86,31 @@ angular.module('SkillitAdminApp')
           return "Step " + index + " => a " + step.stepType + " step ";
         };
 
+        function stepTypeNeedsChangeLogged() {
+          switch(scope.stepType) {
+            case 'remove':
+              return true;
+            default:
+              return false;
+          }
+        }
+
+        scope.stepInputPropertyChange = function() {
+          if(stepTypeNeedsChangeLogged()) {
+            if(scope.step && scope.step.stepInputs && scope.step.stepInputs[scope.stepInputName]) {
+              var input = scope.step.stepInputs[scope.stepInputName];
+              if(input.key && input.sourceId && input.sourceType) {
+                scope.$emit('stepInputPropertyChange');
+              }
+            }
+          }
+        };
+
         scope.registerSourceId = function(sourceIdStep) {
-          console.log('sourceIdStep', sourceIdStep);
           if(sourceIdStep) {
             scope.step.stepInputs[scope.stepInputName].sourceId = sourceIdStep.stepId;
           }
-          console.log('steppy', scope.step);
+          scope.stepInputPropertyChange();
         };
 
         scope.registerSourceIdMultiple = function(input, index, sourceIdStep) {
