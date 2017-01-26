@@ -296,6 +296,7 @@ router.post('/getRecipesForCollection', function(req, res, next) {
         for (var i = user.dietaryPreferences.length - 1; i >= 0; i--) {
           outlawIngredients = outlawIngredients.concat(user.dietaryPreferences[i].outlawIngredients);
         }
+        logger.info('outlawIngredients', {outlaw: outlawIngredients});
         var query;
         if(outlawIngredients.length === 0) {
           query = {
