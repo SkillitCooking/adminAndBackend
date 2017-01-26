@@ -308,12 +308,13 @@ router.post('/getRecipesForCollection', function(req, res, next) {
             "ingredientList.ingredientTypes": {
               "$not": {
                 "$elemMatch": {
-                  "$or": [
+                  "$and": [
                     {"ingredients": {
                       "$elemMatch": {
                         "name.standardForm": {"$in": outlawIngredients}
                       }
-                    }}
+                    }},
+                    {"minNeeded": {"$gt": 0}}
                   ]
                 }
               }
