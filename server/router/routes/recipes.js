@@ -313,8 +313,7 @@ router.post('/getRecipesForCollection', function(req, res, next) {
                       "$elemMatch": {
                         "name.standardForm": {"$in": outlawIngredients}
                       }
-                    }},
-                    {"minNeeded": {"$gt": 0}}
+                    }}
                   ]
                 }
               }
