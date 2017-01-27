@@ -58,9 +58,9 @@ router.post('/socialLogin', function(req, res, next) {
           logger.error('ERROR POST api/users/socialLogin in user.save', {error: err});
           return next(err);
         }
+        logger.info('END POST api/users/socialLogin');
+        res.json({data: user});
       });
-      logger.info('END POST api/users/socialLogin');
-      res.json({data: user});
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/users/socialLogin', {error: error});
