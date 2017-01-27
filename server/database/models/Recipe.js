@@ -79,7 +79,10 @@ var RecipeSchema = new mongoose.Schema({
   },
   healthModifiers: [HealthModifier.schema],
   titleAdjectives: [RecipeTitleAdjective.schema],
-  isNewRecipeModel: Boolean
+  compatibilityVersion: {
+    type: Number,
+    default: 1
+  }
 });
 
 module.exports.model = mongoose.model('Recipe', RecipeSchema);

@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('RecipeCtrl', ['$window', '$scope', 'recipeService', 'seasoningService', 'ingredientService', 'dishService', 'itemCollectionService', 'recipeAdjectiveService', 'healthModifierService', '_', function ($window, $scope, recipeService, seasoningService, ingredientService, dishService, itemCollectionService, recipeAdjectiveService, healthModifierService, _) {
+  .controller('RecipeCtrl', ['$window', '$scope', 'compatibilityService', 'recipeService', 'seasoningService', 'ingredientService', 'dishService', 'itemCollectionService', 'recipeAdjectiveService', 'healthModifierService', '_', function ($window, $scope, compatibilityService, recipeService, seasoningService, ingredientService, dishService, itemCollectionService, recipeAdjectiveService, healthModifierService, _) {
     $scope.integerval = /^\d*$/;
 
     $scope.serverType = 'DEVELOPMENT';
@@ -74,7 +74,7 @@ angular.module('SkillitAdminApp')
       mainPictureURLs: []
     };
 
-    $scope.stepTypes = ["Bake", "Boil", "BreakEgg", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "Heat", "Place", "PreheatOven", "Sautee", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir"];
+    $scope.stepTypes = ["Bake", "Boil", "BreakEgg", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "Heat", "Move", "Place", "PreheatOven", "Sautee", "Season", "SlowCook", "Serve", "Steam", "EquipmentPrep", "Stir"];
     $scope.recipeTypes = ["AlaCarte", "BYO", "Full"];
     $scope.recipeCategories = ["Sautee", "Easy Dinners", "Seafood Plates", "Scramble", "Roast", "Pasta", "Hash", "Rice", "Quinoa"];
     $scope.cookingMethods = ["Bake", "Sautee", "Boil", "Steam", "SlowCook"];
@@ -398,6 +398,7 @@ angular.module('SkillitAdminApp')
       for (var i = 0; i < $scope.recipe.mainPictureURLs.length; i++) {
         pictureURLs.push($scope.recipe.mainPictureURLs[i].url);
       }
+      var compatibilityVersion = compatibilityService.getVersion($scope.recipe);
       recipeService.addNewRecipe({ 
         recipe:{
           name: $scope.recipe.name,
@@ -427,7 +428,7 @@ angular.module('SkillitAdminApp')
           hasBeenRecipeOfTheDay: false,
           datesUsedAsRecipeOfTheDay: [],
           isRecipeOfTheDay: false,
-          isNewRecipeModel: true
+          compatibilityVersion: compatibilityVersion
         }
       }, $scope.useProdServer, $scope.useDevServer).then(function(recipe){
         //could be more thorough than below

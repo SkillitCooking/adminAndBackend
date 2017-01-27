@@ -74,12 +74,8 @@ function nameSort(a, b) {
 /* Add Credentials appropriately when time comes */
 /* Add Error checking as well */
 /*router.get('/changes', function(req, res, next) {
-  Recipe.model.update({}, {
-    nameBodies: {},
-    conditionalDescriptions: {},
-    allowablePrefixIds: [],
-    healthModifiers: [],
-    titleAdjectives: []
+  Recipe.model.update({compatibilityVersion: {"$exists": false} }, {
+    compatibilityVersion: 1
   }, {multi: true}, function(err, raw) {
     if(err) {
       console.log('err', err);
@@ -88,6 +84,7 @@ function nameSort(a, b) {
     res.json({'raw': raw});
   });
 });*/
+
 
 /* GET all recipes */
 router.get('/', function(req, res, next) {
@@ -173,7 +170,8 @@ router.post('/getRecipesWithIds', function(req, res, next) {
   logger.info('START POST api/recipes/getRecipesWithIds');
   try {
     Recipe.model.find({
-      '_id': { $in: req.body.recipeIds }
+      '_id': { $in: req.body.recipeIds },
+      compatibilityVersion: {$lte: req.body.compatibilityVersion}
     }, '-datesUsedAsRecipeOfTheDay', function(err, recipes) {
       if(err) {
         logger.error('ERROR POST api/recipes/getRecipesWithIds', {error: err, body: req.body});
@@ -222,6 +220,7 @@ router.post('/getRecipesOfType', function(req, res, next) {
           outlawIngredients = outlawIngredients.concat(user.dietaryPreferences[i].outlawIngredients);
         }
         Recipe.model.find({
+          compatibilityVersion: {$lte: req.body.compatibilityVersion},
           recipeType: req.body.recipeType,
           "ingredientList.ingredientTypes": {
               "$not": {
@@ -247,7 +246,10 @@ router.post('/getRecipesOfType', function(req, res, next) {
         });
       });
     } else {
-      Recipe.model.find({recipeType: req.body.recipeType}, '-datesUsedAsRecipeOfTheDay', function(err, recipes) {
+      Recipe.model.find({
+        recipeType: req.body.recipeType,
+        compatibilityVersion: {$lte: req.body.compatibilityVersion}
+      }, '-datesUsedAsRecipeOfTheDay', function(err, recipes) {
         if(err) {
           logger.error('ERROR POST api/recipes/getRecipesOfType', {error: err, body: req.body});
           return next(err);
@@ -301,7 +303,8 @@ router.post('/getRecipesForCollection', function(req, res, next) {
         if(outlawIngredients.length === 0) {
           query = {
             collectionIds: {$in: [req.body.collectionId]},
-            recipeType: 'Full'
+            recipeType: 'Full',
+            compatibilityVersion: {$lte: req.body.compatibilityVersion}
           };
         } else {
           query = {
@@ -320,7 +323,8 @@ router.post('/getRecipesForCollection', function(req, res, next) {
               }
             },
             collectionIds: {$in: [req.body.collectionId]},
-            recipeType: 'Full'
+            recipeType: 'Full',
+            compatibilityVersion: {$lte: req.body.compatibilityVersion}
           };
         }
         Recipe.model.find(query, '-datesUsedAsRecipeOfTheDay', {skip: skipNumber, limit: constants.RECIPES_PER_PAGE}, function(err, recipes) {
@@ -342,7 +346,11 @@ router.post('/getRecipesForCollection', function(req, res, next) {
       });
     } else {
       //then no credentials provided...
-      Recipe.model.find({collectionIds: {$in: [req.body.collectionId]}, recipeType: 'Full'}, '-datesUsedAsRecipeOfTheDay', {skip: skipNumber, limit: constants.RECIPES_PER_PAGE}, function(err, recipes) {
+      Recipe.model.find({
+        collectionIds: {$in: [req.body.collectionId]},
+        recipeType: 'Full',
+        compatibilityVersion: {$lte: req.body.compatibilityVersion}
+      }, '-datesUsedAsRecipeOfTheDay', {skip: skipNumber, limit: constants.RECIPES_PER_PAGE}, function(err, recipes) {
         if(err) {
           logger.error('ERROR POST api/recipes/getRecipesForCollection', {error: err, body: req.body});
           return next(err);
@@ -528,6 +536,7 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
     }
   }
   Recipe.model.find({
+    compatibilityVersion: {$lte: req.body.compatibilityVersion},
     "ingredientList.ingredientTypes": {
       "$elemMatch": {
         "ingredients": {
@@ -613,6 +622,7 @@ router.post('/getMoreRecipesForCategory', function(req, res, next) {
   try {
     Recipe.model.find({
       "_id": {"$in": req.body.recipeIds},
+      compatibilityVersion: {$lte: req.body.compatibilityVersion}
     }, '-datesUsedAsRecipeOfTheDay -stepList -choiceSeasoningProfiles', (err, recipes) => {
       if(err) {
         logger.error('ERROR - POST api/recipes/getMoreRecipesForCategory', {error: err});

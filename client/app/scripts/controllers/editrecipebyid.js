@@ -8,14 +8,14 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('EditrecipebyidCtrl', ['$window', '$scope', 'recipeService', 'itemCollectionService', 'seasoningService', 'ingredientService', 'dishService', 'recipeAdjectiveService', 'healthModifierService', function ($window, $scope, recipeService, itemCollectionService, seasoningService, ingredientService, dishService, recipeAdjectiveService, healthModifierService) {
+  .controller('EditrecipebyidCtrl', ['$window', '$scope', 'compatibilityService', 'recipeService', 'itemCollectionService', 'seasoningService', 'ingredientService', 'dishService', 'recipeAdjectiveService', 'healthModifierService', function ($window, $scope, compatibilityService, recipeService, itemCollectionService, seasoningService, ingredientService, dishService, recipeAdjectiveService, healthModifierService) {
 
     $scope.integerval = /^\d*$/;
     $scope.recipeTypes = ["AlaCarte", "BYO", "Full"];
     $scope.recipeCategories = ["Sautee", "Scramble", "Easy Dinners", "Roast", "Pasta", "Hash", "Rice", "Quinoa"];
     $scope.servingSizes = ["1-2", "2-3", "3-4", "4-5", "5-6", "6-7", "7-8", "8-9", "9-10"];
     $scope.cookingMethods = ["Bake", "Sautee", "Boil", "Steam", "SlowCook"];
-    $scope.stepTypes = ["Bake", "Boil", "BreakEgg", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "Heat", "Place", "PreheatOven", "Sautee", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir"];
+    $scope.stepTypes = ["Bake", "Boil", "BreakEgg", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "Heat", "Move", "Place", "PreheatOven", "Sautee", "Serve", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir"];
     //initialize constructingStep and its stepInputs
     $scope.constructingStep = {};
     $scope.constructingStep.stepInputs = {};
@@ -512,7 +512,7 @@ angular.module('SkillitAdminApp')
       for (var i = $scope.mainPictureURLs.length - 1; i >= 0; i--) {
         $scope.mainPictureURLs[i] = $scope.mainPictureURLs[i].url;
       }
-      console.log('save nameDictionary', angular.copy($scope.nameDictionary));
+      var compatibilityVersion = compatibilityService.getVersion($scope.recipe);
       recipeService.updateRecipe({
         name: $scope.recipe.name,
         nameBodies: $scope.nameDictionary,
@@ -541,7 +541,8 @@ angular.module('SkillitAdminApp')
         hasBeenRecipeOfTheDay: $scope.recipe.hasBeenRecipeOfTheDay,
         datesUsedAsRecipeOfTheDay: $scope.recipe.datesUsedAsRecipeOfTheDay,
         isRecipeOfTheDay: $scope.recipe.isRecipeOfTheDay,
-        _id: $scope.recipe._id
+        _id: $scope.recipe._id,
+        compatibilityVersion: compatibilityVersion
       }, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         alert("Recipe successfully updated!");
         $window.location.reload(true);
@@ -608,6 +609,7 @@ angular.module('SkillitAdminApp')
       } else {
         mainPictureURL = $scope.recipe.mainPictureURL;
       }
+      var compatibilityVersion = compatibilityService.getVersion($scope.recipe);
       recipeService.addNewRecipe({
         recipe: {
           name: $scope.recipe.name,
@@ -635,7 +637,8 @@ angular.module('SkillitAdminApp')
           manTotalTime: $scope.recipe.manTotalTime,
           hasBeenRecipeOfTheDay: false,
           datesUsedAsRecipeOfTheDay: [],
-          isRecipeOfTheDay: false
+          isRecipeOfTheDay: false,
+          compatibilityVersion: compatibilityVersion
         }
       }, $scope.useProdServer, $scope.useDevServer).then(function(recipe) {
         alert('Success! Recipe ' + recipe[0].name + 'was saved! Refresh form.');

@@ -34,7 +34,14 @@ router.post('/socialLogin', function(req, res, next) {
         logger.error('ERROR POST api/users/socialLogin/', {error: err});
         return next(err);
       }
-      //expect user - if not present, rely on reference exception being thrown
+      if(!user) {
+        var error = {
+          status: constants.STATUS_CODES.UNPROCESSABLE,
+          message: 'No user for given id'
+        };
+        logger.error('ERROR POST api/users/socialLogin - no user found', {error: error});
+        return next(error);
+      }
       user.curToken = req.body.token;
       user.lastLoginDate = Date.parse(new Date().toUTCString());
       if(req.body.email && req.body.email !== "") {
@@ -109,6 +116,14 @@ router.post('/emailLogin', function(req, res, next) {
         logger.error('ERROR POST api/users/emailLogin', {error: err});
         return next(err);
       }
+      if(!user) {
+        var error = {
+          status: constants.STATUS_CODES.UNPROCESSABLE,
+          message: 'No user for given id'
+        };
+        logger.error('ERROR POST api/users/emailLogin - no user found', {error: error});
+        return next(error);
+      }
       user.curToken = req.body.token;
       user.lastLoginDate = Date.parse(new Date().toUTCString());
       user.save(function(err, user, numAffected) {
@@ -176,6 +191,13 @@ router.post('/logout', function(req, res, next) {
           logger.info('END POST api/users/logout');
           res.json({data: user});
         });
+      } else {
+        var error = {
+          status: constants.STATUS_CODES.UNPROCESSABLE,
+          message: 'No user for given id'
+        };
+        logger.error('ERROR POST api/users/logout - no user found', {error: error});
+        return next(error);
       }
     });
   } catch (error) {

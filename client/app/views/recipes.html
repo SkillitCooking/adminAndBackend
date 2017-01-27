@@ -121,6 +121,7 @@
         <season-step-input ng-if="constructingStep.stepType === 'Season'"></season-step-input>
         <slow-cook-step-input ng-if="constructingStep.stepType === 'SlowCook'"></slow-cook-step-input>
         <steam-step-input ng-if="constructingStep.stepType === 'Steam'"></steam-step-input>
+        <serve-step-input ng-if="constructingStep.stepType === 'Serve'"></serve-step-input>
         <stir-step-input ng-if="constructingStep.stepType === 'Stir'"
           is-aux-step="false"
           constructing-step="constructingStep"
@@ -128,6 +129,7 @@
           stepList="stepList"
           aux-step-arr-index=""></stir-step-input>
         <equipment-prep-step-input ng-if="constructingStep.stepType === 'EquipmentPrep'"></equipment-prep-step-input>
+        <move-step-input ng-if="constructingStep.stepType === 'Move'"></move-step-input>
         <br /><br />
       </div>
       <button ng-disabled="stepForm.$invalid" ng-click="addStep()" class="btn btn-default">Append Step</button>

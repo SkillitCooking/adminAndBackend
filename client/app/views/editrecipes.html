@@ -123,6 +123,7 @@
     <div ng-form="stepForm">
       <div ng-repeat="constructingStep in recipe.stepList">
         <div ng-if="!isMinimizedStep($index)">
+          <break-egg-step-input ng-if="constructingStep.stepType === 'BreakEgg'"></break-egg-step-input>
           <cut-step-input ng-if="constructingStep.stepType === 'Cut'"></cut-step-input>
           <cook-step-input ng-if="constructingStep.stepType === 'Cook'"></cook-step-input>
           <bake-step-input ng-if="constructingStep.stepType === 'Bake'"></bake-step-input>
@@ -138,6 +139,7 @@
           <season-step-input ng-if="constructingStep.stepType === 'Season'"></season-step-input>
           <slow-cook-step-input ng-if="constructingStep.stepType === 'SlowCook'"></slow-cook-step-input>
           <steam-step-input ng-if="constructingStep.stepType === 'Steam'"></steam-step-input>
+          <serve-step-input ng-if="constructingStep.stepType === 'Serve'"></serve-step-input>
           <stir-step-input ng-if="constructingStep.stepType === 'Stir'"
             is-aux-step="false"
             constructing-step="constructingStep"
@@ -145,6 +147,7 @@
             stepList="recipe.stepList"
             aux-step-arr-index=""></stir-step-input>
           <equipment-prep-step-input ng-if="constructingStep.stepType === 'EquipmentPrep'"></equipment-prep-step-input>
+          <move-step-input ng-if="constructingStep.stepType === 'Move'"></move-step-input>
         </div>
         <div ng-if="isMinimizedStep($index)">
           <p>{{constructingStep.stepType}}</p>
@@ -156,6 +159,7 @@
       <b>Add New Step: </b><br/><br/>
       <div ng-form="newStepForm">
         StepType <select name="stepTypeSelect" ng-model="constructingStep.stepType" ng-options="stepType for stepType in stepTypes" ng-required="!recipeSanityCheck()"></select>
+        <break-egg-step-input ng-if="constructingStep.stepType === 'BreakEgg'"></break-egg-step-input>
         <cut-step-input ng-if="constructingStep.stepType === 'Cut'"></cut-step-input>
         <cook-step-input ng-if="constructingStep.stepType === 'Cook'"></cook-step-input>
         <break-egg-step-input ng-if="constructingStep.stepType === 'BreakEgg'"></break-egg-step-input>
@@ -170,6 +174,7 @@
         <sautee-step-input ng-if="constructingStep.stepType === 'Sautee'"></sautee-step-input>
         <season-step-input ng-if="constructingStep.stepType === 'Season'"></season-step-input>
         <slow-cook-step-input ng-if="constructingStep.stepType === 'SlowCook'"></slow-cook-step-input>
+        <serve-step-input ng-if="constructingStep.stepType === 'Serve'"></serve-step-input>
         <steam-step-input ng-if="constructingStep.stepType === 'Steam'"></steam-step-input>
         <stir-step-input ng-if="constructingStep.stepType === 'Stir'"
           is-aux-step="false"
@@ -178,6 +183,7 @@
           stepList="stepList"
           aux-step-arr-index=""></stir-step-input>
         <equipment-prep-step-input ng-if="constructingStep.stepType === 'EquipmentPrep'"></equipment-prep-step-input>
+        <move-step-input ng-if="constructingStep.stepType === 'Move'"></move-step-input>
         <br /><br />
       </div>
       <button ng-disabled="newStepForm.$invalid" ng-click="addStep()" class="btn btn-default">Append Step</button>

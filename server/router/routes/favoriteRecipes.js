@@ -45,7 +45,7 @@ router.post('/getFavoriteRecipesForUser', function(req, res, next) {
       } else {
         //error - no user found from id
         var error = {
-          status: constants.STATUS_CODES.UNAUTHORIZED,
+          status: constants.STATUS_CODES.UNPROCESSABLE,
           message: 'No user found from supplied id'
         };
         logger.error('ERROR POST api/favoriteRecipes/getFavoriteRecipesForUser', {error: error, userId: req.body.userId});
@@ -90,7 +90,7 @@ router.post('/saveFavoriteRecipeForUser', function(req, res, next) {
       } else {
         //error - no user found from id
         var error = {
-          status: constants.STATUS_CODES.UNAUTHORIZED,
+          status: constants.STATUS_CODES.UNPROCESSABLE,
           message: 'No user found from supplied id'
         };
         logger.error('ERROR POST api/favoriteRecipes/saveFavoriteRecipeForUser', {error: error, userId: req.body.userId});
@@ -145,7 +145,7 @@ router.post('/favoriteRecipeUsedForUser', function(req, res, next) {
       } else {
         //error - no user found from id
         var error = {
-          status: constants.STATUS_CODES.UNAUTHORIZED,
+          status: constants.STATUS_CODES.UNPROCESSABLE,
           message: 'No user found from supplied id'
         };
         logger.error('ERROR POST api/favoriteRecipes/favoriteRecipeUsedForUser', {error: error, userId: req.body.userId});
@@ -202,7 +202,7 @@ router.post('/unfavoriteRecipe', function(req, res, next) {
       } else {
         //error - no user found from id
         var error = {
-          status: constants.STATUS_CODES.UNAUTHORIZED,
+          status: constants.STATUS_CODES.UNPROCESSABLE,
           message: 'No user found from supplied id'
         };
         logger.error('ERROR POST api/favoriteRecipes/unfavoriteRecipe', {error: error, userId: req.body.userId});
