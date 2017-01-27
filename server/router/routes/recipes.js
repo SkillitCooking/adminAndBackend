@@ -29,6 +29,13 @@ function nameSort(a, b) {
   }
 }
 
+//middleware for setting default compatibility version
+router.use(function(req, res, next) {
+  if(!req.body.compatibilityVersion || typeof req.body.compatibilityVersion !== 'number') {
+    req.body.compatibilityVersion = 1;
+  }
+});
+
 /*router.get('/csv', function(req, res, next) {
   var filename = '/Users/dbratz/Desktop/recipes-ready.csv';
   var nameArr = [];
