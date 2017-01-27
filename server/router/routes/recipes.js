@@ -33,6 +33,7 @@ function nameSort(a, b) {
 router.use(function(req, res, next) {
   if(!req.body.compatibilityVersion || typeof req.body.compatibilityVersion !== 'number') {
     req.body.compatibilityVersion = 1;
+    next();
   }
 });
 
