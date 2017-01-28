@@ -500,7 +500,7 @@ function processRecipes(req, recipes, recipesToReturn, outlawIngredients) {
         recipesToReturn[constants.RECIPE_TYPES.FULL] = recipesToReturn[constants.RECIPE_TYPES.FULL].concat(retRecipes[0][constants.RECIPE_TYPES.FULL]);
         var missingIngredientLevel = 1;
         var recipesAdded = 0;
-        while(recipesToReturn[constants.RECIPE_TYPES.FULL].length < constants.MINIMUM_FULL_RECIPES_RETURN) {
+        while(retRecipes[missingIngredientLevel] && retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL] && recipesToReturn[constants.RECIPE_TYPES.FULL].length < constants.MINIMUM_FULL_RECIPES_RETURN) {
           if(retRecipes[missingIngredientLevel] && retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL].length > 0) {
             for (var i = retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL].length - 1; i >= 0; i--) {
               var recipeToAdd = retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL][i];
