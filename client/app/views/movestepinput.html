@@ -1,0 +1,35 @@
+<div ng-form="moveStepForm" class="bg-warning">
+  <b>Move Step</b><br/>
+  Step Duration: <input type="text" ng-model="constructingStep.stepDuration" required name="stepDurationInput" size="30" ng-pattern="ingeterval" /><br/>
+  Move Type: <select name="moveTypeSelect" ng-model="constructingStep.stepSpecifics[0].val" ng-options="moveType for moveType in moveTypes" required></select><br/>
+  Step Product Input: <step-input-form
+    constructing-step="constructingStep"
+    input-name="stepInput"
+    is-multiple="false"
+    ingredient-list="ingredientList"
+    step-list="stepList"
+    step-type="move"></step-input-form><br/>
+  Product Name: <input type="text" ng-model="constructingStep.productName" size="50" required name="productNameInput"/><br/>
+  <button ng-show="!tipAdded" class="btn btn-sm btn-primary" ng-click="addTip()">Add Tip</button><br/>
+  <button ng-show="tipAdded" class="btn btn-sm btn-primary" ng-click="toggleTipVisibility()">{{getTipToggleText()}}</button>
+  <div ng-if="tipAdded">
+    <b>Step Tip</b><br/>
+    <div ng-if="tipIsMinimized">
+      Title: {{constructingStep.stepTip.title}}
+    </div>
+    <div ng-if="!tipIsMinimized">
+      Title: <input type="text" name="tipTitleInput" ng-model="constructingStep.stepTip.title" size="50" /><br/>
+      Text: <textarea name="tipTextInput" ng-model="constructingStep.stepTip.text" rows="4" cols="50" ></textarea><br/>
+      PictureURL: <input type="url" ng-model="constructingStep.stepTip.pictureURL" size="70" name="tipPictureInput" /><br/>
+      VideoTitle: <input type="text" ng-model="constructingStep.stepTip.videoTitle" size="50" name="tipVideoTitleInput" /><br/>
+      VideoInfo: <input type="text" ng-model="constructingStep.stepTip.videoInfo.videoId" size="50" name="tipVideoIdInput" placeholder="ID" />
+      <input type="text" ng-model="constructingStep.stepTip.videoInfo.end" size="50" name="tipVideoEndInput" placeholder="End Time" /><br/>
+    </div>
+    <button class="btn btn-danger btn-xs" ng-click="removeTip()">Remove Tip</button>
+  </div>
+  Show Example Step Text: <input type="checkbox" ng-model="showExampleText" /><br/>
+  <div ng-show="showExampleText">
+    Example Text:<br/>
+    <pre>Place [members of ingredientInput1], ..., and [members of ingredientInputN] on [dish from DishInput] with [ingredients from DishInput]</pre>
+  </div>
+</div>
