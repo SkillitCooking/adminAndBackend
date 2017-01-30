@@ -194,6 +194,7 @@ angular.module('SkillitAdminApp')
     function updateNamesAndDescriptions() {
       $scope.nameBodies = angular.copy([]);
       $scope.conditionalDescriptions = angular.copy([]);
+      console.log('recipe.nameBodies', $scope.recipe.nameBodies);
       var nameMap = {};
       var descriptionMap = {};
       for(var key in $scope.recipe.nameBodies) {
@@ -530,6 +531,7 @@ angular.module('SkillitAdminApp')
       for (var i = $scope.mainPictureURLs.length - 1; i >= 0; i--) {
         $scope.mainPictureURLs[i] = $scope.mainPictureURLs[i].url;
       }
+      console.log('nameDictionary', $scope.nameDictionary);
       var compatibilityVersion = compatibilityService.getVersion($scope.recipe);
       recipeService.updateRecipe({
         name: $scope.recipe.name,

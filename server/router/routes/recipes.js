@@ -9,6 +9,8 @@ var constants = require('../../util/constants');
 var recipeBadgeService = require('../lib/recipebadges');
 
 var mongoose = require('mongoose');
+var Promise = require('bluebird');
+Promise.promisifyAll(mongoose);
 var underscore = require('underscore');
 var db = require('../../database');
 var Recipe = db.recipes;
@@ -82,14 +84,39 @@ router.use(function(req, res, next) {
 /* Add Credentials appropriately when time comes */
 /* Add Error checking as well */
 /*router.get('/changes', function(req, res, next) {
-  Recipe.model.update({compatibilityVersion: {"$exists": false} }, {
-    compatibilityVersion: 1
-  }, {multi: true}, function(err, raw) {
+  Recipe.model.find({}, 'nameBodies', function(err, recipes) {
     if(err) {
-      console.log('err', err);
+      console.log('find error: ', err);
       return next(err);
     }
-    res.json({'raw': raw});
+    var recipeSavePromises = [];
+    for (var i = recipes.length - 1; i >= 0; i--) {
+      var wasModified = false;
+      var nameBodies = recipes[i].nameBodies;
+      for(var key in nameBodies) {
+        var nameArr = nameBodies[key];
+        for (var j = nameArr.length - 1; j >= 0; j--) {
+          if(!nameArr[j]) {
+            nameArr.splice(j, 1);
+            wasModified = true;
+          }
+        }
+        if(nameArr.length === 0) {
+          delete nameBodies[key];
+          wasModified = true;
+        }
+      }
+      if(wasModified) {
+        recipes[i].markModified('nameBodies');
+        recipeSavePromises.push(recipes[i].save());
+      }
+    }
+    Promise.all(recipeSavePromises).then(function(results) {
+      res.json({results: results});
+    }).catch(function(err) {
+      console.log('promise error: ', err);
+      return next(err);
+    });
   });
 });*/
 
