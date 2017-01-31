@@ -593,12 +593,12 @@ angular.module('SkillitAdminApp')
       }
       var mainPictureURL;
       if($scope.recipe.mainPictureURLs) {
-        for (var i = $scope.mainPictureURLs.length - 1; i >= 0; i--) {
-          $scope.mainPictureURLs[i] = $scope.mainPictureURLs[i].url;
-        }
         mainPictureURL = $scope.recipe.mainPictureURLs[0];
       } else {
         mainPictureURL = $scope.recipe.mainPictureURL;
+      }
+      for (var i = $scope.mainPictureURLs.length - 1; i >= 0; i--) {
+        $scope.mainPictureURLs[i] = $scope.mainPictureURLs[i].url;
       }
       var compatibilityVersion = compatibilityService.getVersion($scope.recipe);
       recipeService.addNewRecipe({
