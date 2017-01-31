@@ -18,6 +18,16 @@ var User = db.users;
 /* Add Credentials appropriately when time comes */
 /* Add Error checking as well */
 
+/*router.get('/change', function(req, res, next) {
+  Ingredient.model.update({}, {showInSelection: true}, {multi: true}, function(err, raw) {
+    if(err) {
+      console.log('update error', err);
+      return next(err);
+    }
+    res.json({msg: raw});
+  });
+});*/
+
 /* GET ingredients listing. */
 router.get('/', function(req, res, next) {
   logger.info('START GET api/ingredients/');
@@ -68,7 +78,7 @@ router.get('/getIngredientsForSelection', function(req, res, next) {
 /* Organizes ingredients by inputCategory*/
 router.post('/getIngredientsForSelection', function(req, res, next) {
   logger.info('START POST api/ingredients/getIngredientsForSelection');
-  Ingredient.model.find(function (err, ingredients) {
+  Ingredient.model.find({showInSelection: true}, function (err, ingredients) {
     if(err) {
       logger.error('ERROR POST api/ingredients/getIngredientsForSelection', {error: err});
       return next(err);
@@ -119,6 +129,7 @@ router.post('/getIngredientsForSelection', function(req, res, next) {
 router.post('/', function(req, res, next) {
   logger.info('START POST api/ingredients/');
   try {
+    console.log('inger', req.body.ingredient);
     var query = {'name': req.body.ingredient.name};
     req.body.ingredient.dateModified = Date.parse(new Date().toUTCString());
     Ingredient.model.findOneAndUpdate(query, req.body.ingredient,

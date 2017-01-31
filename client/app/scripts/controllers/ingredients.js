@@ -136,6 +136,9 @@ angular.module('SkillitAdminApp')
     $scope.save = function() {
       $scope.ingredient.ingredientForms = $scope.inForms;
       $scope.ingredient.ingredientTips = $scope.ingredientTips;
+      if(!$scope.ingredient.showInSelection) {
+        $scope.ingredient.showInSelection = false;
+      }
       ingredientService.addNewIngredient({
         ingredient: {
           name: $scope.ingredient.name,
@@ -144,6 +147,7 @@ angular.module('SkillitAdminApp')
           inputCategory: $scope.ingredient.inputCategory,
           inputSubCategory: $scope.ingredient.inputSubCategory,
           units: $scope.ingredient.units,
+          showInSelection: $scope.ingredient.showInSelection,
           unitIsASingleItem: $scope.ingredient.unitIsASingleItem,
           servingsPerUnit: $scope.ingredient.servingsPerUnit,
           useFormNameForDisplay: $scope.ingredient.useFormNameForDisplay,

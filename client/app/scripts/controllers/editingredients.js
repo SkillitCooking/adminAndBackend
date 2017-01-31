@@ -166,6 +166,10 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.saveChanges = function() {
+      if(!$scope.ingredient.showInSelection) {
+        $scope.ingredient.showInSelection = false;
+      }
+      console.log('ingredinet', $scope.ingredient);
       ingredientService.updateIngredient({
         name: $scope.ingredient.name,
         ingredientForms: $scope.ingredient.ingredientForms,
@@ -176,6 +180,7 @@ angular.module('SkillitAdminApp')
         unitIsASingleItem: $scope.ingredient.unitIsASingleItem,
         servingsPerUnit: $scope.ingredient.servingsPerUnit,
         nameFormFlag: 'standardForm',
+        showInSelection: $scope.ingredient.showInSelection,
         useFormNameForDisplay: $scope.ingredient.useFormNameForDisplay,
         _id: $scope.ingredient._id
       }, $scope.useProdServer, $scope.useDevServer).then(function(res) {

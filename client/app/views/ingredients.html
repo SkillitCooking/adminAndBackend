@@ -7,6 +7,7 @@
     <button class="btn btn-primary" ng-click="reloadIngredients('PRODUCTION')">Reload From Production</button>
     <button class="btn btn-success" ng-click="reloadIngredients('DEVELOPMENT')">Reload From Development</button><br/><br/>
     Name: <input type="text" ng-model="ingredient.name.standardForm" size="50" required name="nameInput"/><br /><br />
+    Show In Selection: <input type="checkbox" name="showSelectionCheckbox" ng-model="ingredient.showInSelection"><br/><br/>
     Input Category: <select name="inputCategorySelect" ng-model="ingredient.inputCategory" ng-options=
     "category for category in inputCategories" ng-change="changeInputCategory()" ng-init="changeInputCategory()" required></select><br/><br/>
     Input SubCategory: <select name="inputSubCategorySelect" ng-model="ingredient.inputSubCategory" ng-options="subCategory for subCategory in inputSubCategories"></select><br/><br/>

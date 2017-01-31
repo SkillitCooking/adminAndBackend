@@ -25,6 +25,7 @@ var IngredientSchema = new mongoose.Schema({
   inputCategory: String,
   inputSubCategory: String,
   units: String,
+  showInSelection: Boolean,
   unitIsASingleItem: Boolean,
   useFormNameForDisplay: Boolean,
   nameFormFlag: String,

@@ -35,7 +35,7 @@ var productionDB = 'mongodb://dane:ALDSJFljk345j2@aws-us-west-2-portal.0.dblayer
 var usedDB;
 
 //if in development
-if(process.env.NODE_ENV === 'staging') {
+if(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'staging') {
   //ssl information
   var devCa = [fs.readFileSync(path.resolve(path.join(__dirname, 'ssl', 'devca.pem')))];
   var devO = {
@@ -49,7 +49,7 @@ if(process.env.NODE_ENV === 'staging') {
 }
 
 //if in production
-if(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production') {
+if(process.env.NODE_ENV === 'production') {
   //ssl information
   var ca = [fs.readFileSync(path.resolve(path.join(__dirname, 'ssl', 'prodca.pem')))];
   var o = {
