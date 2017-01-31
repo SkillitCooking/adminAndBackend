@@ -295,12 +295,12 @@ router.post('/getCollectionsForItemType', function(req, res, next) {
           return next(error);
         }
         if(req.body.userToken !== user.curToken) {
-          var error = {
+          /*var error = {
             status: constants.STATUS_CODES.UNAUTHORIZED,
             message: 'Credentials for method are missing'
           };
           logger.error('ERROR POST api/itemCollections/getCollectionsForItemType - token', {error: error});
-          return next(error);
+          return next(error);*/
         }
         var dietaryPreferenceIds = [];
         for (var i = user.dietaryPreferences.length - 1; i >= 0; i--) {

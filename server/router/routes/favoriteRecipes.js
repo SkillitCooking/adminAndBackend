@@ -22,12 +22,12 @@ router.post('/getFavoriteRecipesForUser', function(req, res, next) {
       if(user) {
         //token check
         if(req.body.token !== user.curToken) {
-          var error = {
+          /*var error = {
             status: constants.STATUS_CODES.UNAUTHORIZED,
             message: 'Credentials for method are missing'
           };
           logger.error('ERROR POST api/favoriteRecipes/getFavoriteRecipesForUser - token', {error: error});
-          return next(error);
+          return next(error);*/
         }
         FavoriteRecipe.model.aggregate([{$match: 
           {$and: 
@@ -68,12 +68,12 @@ router.post('/saveFavoriteRecipeForUser', function(req, res, next) {
       }
       if(user) {
         if(req.body.token !== user.curToken) {
-          var error = {
+          /*var error = {
             status: constants.STATUS_CODES.UNAUTHORIZED,
             message: 'Credentials for method are missing'
           };
           logger.error('ERROR POST api/favoriteRecipes/saveFavoriteRecipeForUser - token', {error: error});
-          return next(error);
+          return next(error);*/
         }
         var newFavRecipe = req.body.favoriteRecipe;
         var curDate = Date.parse(new Date().toUTCString());
@@ -113,12 +113,12 @@ router.post('/favoriteRecipeUsedForUser', function(req, res, next) {
       }
       if(user) {
         if(req.body.token !== user.curToken) {
-          var error = {
+          /*var error = {
             status: constants.STATUS_CODES.UNAUTHORIZED,
             message: 'Credentials for method are missing'
           };
           logger.error('ERROR POST api/favoriteRecipes/favoriteRecipeUsedForUser - token', {error: error});
-          return next(error);
+          return next(error);*/
         }
         FavoriteRecipe.model.findById(req.body.favoriteRecipeId, 'datesUsed dateLastUsed', function(err, favoriteRecipe) {
           if(favoriteRecipe) {
@@ -168,12 +168,12 @@ router.post('/unfavoriteRecipe', function(req, res, next) {
       }
       if(user) {
         if(req.body.token !== user.curToken) {
-          var error = {
+          /*var error = {
             status: constants.STATUS_CODES.UNAUTHORIZED,
             message: 'Credentials for method are missing'
           };
           logger.error('ERROR POST api/favoriteRecipes/unfavoriteRecipe - token', {error: error});
-          return next(error);
+          return next(error);*/
         }
         FavoriteRecipe.model.findById(req.body.favoriteRecipeId, function(err, favRec) {
           if(err) {

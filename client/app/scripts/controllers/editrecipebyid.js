@@ -96,20 +96,18 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.removeNameBody = function(index) {
-      console.log('preRemove nameDictionary', angular.copy($scope.nameDictionary));
       var name = $scope.nameBodies[index].name;
       for(var key in $scope.nameDictionary) {
-        for (var i = $scope.nameDictionary[key].length - 1; i >= 0; i--) {
-          if($scope.nameDictionary[key][i] === name) {
-            $scope.nameDictionary[key].splice(i, 1);
-            if($scope.nameDictionary[key].length === 0) {
+        for (var i = $scope.nameDictionary[key].textArr.length - 1; i >= 0; i--) {
+          if($scope.nameDictionary[key].textArr[i] === name) {
+            $scope.nameDictionary[key].textArr.splice(i, 1);
+            if($scope.nameDictionary[key].textArr.length === 0) {
               delete $scope.nameDictionary[key];
             }
           }
         }
       }
       $scope.nameBodies.splice(index, 1);
-      console.log('postRemove nameDictionary', angular.copy($scope.nameDictionary));
     };
 
     $scope.addDescription = function() {
@@ -122,10 +120,10 @@ angular.module('SkillitAdminApp')
     $scope.removeDescription = function(index) {
       var description = $scope.conditionalDescriptions[index].description;
       for(var key in $scope.conditionalDescriptions) {
-        for (var i = $scope.descriptionDictionary[key].length - 1; i >= 0; i--) {
-          if($scope.descriptionDictionary[key][i] === description) {
-            $scope.descriptionDictionary.splice(i, 1);
-            if($scope.descriptionDictionary[key].length === 0) {
+        for (var i = $scope.descriptionDictionary[key].textArr.length - 1; i >= 0; i--) {
+          if($scope.descriptionDictionary[key].textArr[i] === description) {
+            $scope.descriptionDictionary[key].textArr.splice(i, 1);
+            if($scope.descriptionDictionary[key].textArr.length === 0) {
               delete $scope.descriptionDictionary[key];
             }
           }
@@ -181,20 +179,17 @@ angular.module('SkillitAdminApp')
       $scope.conditionalDescriptions = angular.copy([]);
       var nameMap = {};
       var descriptionMap = {};
-      console.log('recipe.nameBodies', $scope.recipe.nameBodies);
       for(var key in $scope.recipe.nameBodies) {
-        for (var i = $scope.recipe.nameBodies[key].length - 1; i >= 0; i--) {
-          if(!nameMap[$scope.recipe.nameBodies[key][i]]) {
-            nameMap[$scope.recipe.nameBodies[key][i]] = true;
+        for (var i = $scope.recipe.nameBodies[key].textArr.length - 1; i >= 0; i--) {
+          if(!nameMap[$scope.recipe.nameBodies[key].textArr[i]]) {
+            nameMap[$scope.recipe.nameBodies[key].textArr[i]] = true;
           }
         }
-        //need an extra iteration - editrecipes.js too
-        
       }
       for(var key in $scope.recipe.conditionalDescriptions) {
         for (var j = $scope.recipe.conditionalDescriptions[key].length - 1; j >= 0; j--) {
-          if(!descriptionMap[$scope.recipe.conditionalDescriptions[key][j]]) {
-            descriptionMap[$scope.recipe.conditionalDescriptions[key][j]] = true;
+          if(!descriptionMap[$scope.recipe.conditionalDescriptions[key].textArr[j]]) {
+            descriptionMap[$scope.recipe.conditionalDescriptions[key].textArr[j]] = true;
           }
         }
       }
@@ -209,7 +204,6 @@ angular.module('SkillitAdminApp')
       if(!$scope.nameDictionary) {
         $scope.nameDictionary = {};
       }
-      console.log('nameDictionary change', angular.copy($scope.nameDictionary));
       $scope.descriptionDictionary = angular.copy($scope.recipe.conditionalDescriptions);
       if(!$scope.descriptionDictionary) {
         $scope.descriptionDictionary = {};
@@ -235,7 +229,6 @@ angular.module('SkillitAdminApp')
           types[i].ingredientMinimizedIndicator.fill(true);
         }
         if($scope.recipeCollections) {
-          console.log('her', $scope.recipeCollections);
           for (var i = $scope.recipe.collectionIds.length - 1; i >= 0; i--) {
             var index = _.findIndex($scope.recipeCollections, function(collection) {
               return collection._id === $scope.recipe.collectionIds[i];
@@ -246,7 +239,6 @@ angular.module('SkillitAdminApp')
           }
         }
         if($scope.seasoningProfiles) {
-          console.log('ler', $scope.seasoningProfiles);
           for (var i = $scope.recipe.choiceSeasoningProfiles.length - 1; i >= 0; i--) {
             var index = _.findIndex($scope.seasoningProfiles, function(profile) {
               return profile._id === $scope.recipe.choiceSeasoningProfiles[i]._id;
@@ -572,7 +564,6 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.duplicateRecipe = function() {
-      console.log('ya know');
       delete $scope.recipe.ingredientList._id;
       for (var i = $scope.recipe.ingredientList.ingredientTypes.length - 1; i >= 0; i--) {
         delete $scope.recipe.ingredientList.ingredientTypes[i]._id;

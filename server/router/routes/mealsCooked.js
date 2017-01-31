@@ -23,12 +23,12 @@ router.post('/', function(req, res, next) {
         if(user) {
           //token check
           if(!req.body.token && req.body.token !== user.curToken) {
-            var error = {
+            /*var error = {
               status: constants.STATUS_CODES.UNAUTHORIZED,
               message: 'Credentials for method are missing'
             };
             logger.error('ERROR POST api/mealsCooked - token', {error: error});
-            return next(error);
+            return next(error);*/
           }
         } else {
           //error - no user found from id

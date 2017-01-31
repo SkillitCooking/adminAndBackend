@@ -113,10 +113,10 @@ angular.module('SkillitAdminApp')
     $scope.removeDescription = function(index) {
       var description = $scope.conditionalDescriptions[index].description;
       for(var key in $scope.descriptionDictionary) {
-        for (var i = $scope.descriptionDictionary[key].length - 1; i >= 0; i--) {
-          if($scope.descriptionDictionary[key][i] === description) {
-            $scope.descriptionDictionary[key].splice(i, 1);
-            if($scope.descriptionDictionary[key].length === 0) {
+        for (var i = $scope.descriptionDictionary[key].textArr.length - 1; i >= 0; i--) {
+          if($scope.descriptionDictionary[key].textArr[i] === description) {
+            $scope.descriptionDictionary[key].textArr.splice(i, 1);
+            if($scope.descriptionDictionary[key].textArr.length === 0) {
               delete $scope.descriptionDictionary[key];
             }
           }
@@ -135,10 +135,10 @@ angular.module('SkillitAdminApp')
     $scope.removeNameBody = function(index) {
       var name = $scope.nameBodies[index].name;
       for(var key in $scope.nameDictionary) {
-        for (var i = $scope.nameDictionary[key].length - 1; i >= 0; i--) {
-          if($scope.nameDictionary[key][i] === name) {
+        for (var i = $scope.nameDictionary[key].textArr.length - 1; i >= 0; i--) {
+          if($scope.nameDictionary[key].textArr[i] === name) {
             $scope.nameDictionary[key].splice(i, 1);
-            if($scope.nameDictionary[key].length === 0) {
+            if($scope.nameDictionary[key].textArr.length === 0) {
               delete $scope.nameDictionary[key];
             }
           }

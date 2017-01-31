@@ -15,6 +15,9 @@ var underscore = require('underscore');
 var db = require('../../database');
 var Recipe = db.recipes;
 var User = db.users;
+var HealthModifier = db.healthModifiers;
+var RecipeTitleAdjective = db.recipeTitleAdjectives;
+var SeasoningProfile = db.seasoningProfiles;
 
 var fs = require('fs');
 //var csv = require('csvtojson');
@@ -84,39 +87,58 @@ router.use(function(req, res, next) {
 /* Add Credentials appropriately when time comes */
 /* Add Error checking as well */
 /*router.get('/changes', function(req, res, next) {
-  Recipe.model.find({}, 'nameBodies', function(err, recipes) {
-    if(err) {
-      console.log('find error: ', err);
-      return next(err);
-    }
-    var recipeSavePromises = [];
-    for (var i = recipes.length - 1; i >= 0; i--) {
-      var wasModified = false;
-      var nameBodies = recipes[i].nameBodies;
-      for(var key in nameBodies) {
-        var nameArr = nameBodies[key];
-        for (var j = nameArr.length - 1; j >= 0; j--) {
-          if(!nameArr[j]) {
-            nameArr.splice(j, 1);
-            wasModified = true;
-          }
-        }
-        if(nameArr.length === 0) {
-          delete nameBodies[key];
-          wasModified = true;
-        }
+  var recipeSavePromises = [];
+  var prefixCheckPromises = [];
+  prefixCheckPromises.push(HealthModifier.model.find());
+  prefixCheckPromises.push(RecipeTitleAdjective.model.find());
+  prefixCheckPromises.push(SeasoningProfile.model.find());
+  Promise.all(prefixCheckPromises).then(function(results) {
+    var modifiers = results[0];
+    var adjectives = results[1];
+    var seasonings = results[2];
+    Recipe.model.find({}, 'nameBodies', function(err, recipes) {
+      if(err) {
+        console.log('find error', err);
+        return next(err);
       }
-      if(wasModified) {
+      for (var i = recipes.length - 1; i >= 0; i--) {
+        var nameBodies = recipes[i].nameBodies;
+        for(var id in nameBodies) {
+          var prefixObj = {};
+          if(nameBodies[id].textArr) {
+            prefixObj.textArr = nameBodies[id].textArr;
+          } else {
+            prefixObj.textArr = nameBodies[id];
+          }
+          //find id
+          if(underscore.some(modifiers, function(modifier) {
+            return modifier._id == id;
+          })) {
+            prefixObj.type = 'modifier';
+          } else if(underscore.some(adjectives), function(adjective) {
+            return adjective._id == id;
+          }) {
+            prefixObj.type = 'adjective';
+          } else if(underscore.some(seasonings), function(seasoning) {
+            return seasoning._id == id;
+          }) {
+            prefixObj.type = 'seasoning';
+          }
+          nameBodies[id] = prefixObj;
+        }
         recipes[i].markModified('nameBodies');
         recipeSavePromises.push(recipes[i].save());
       }
-    }
-    Promise.all(recipeSavePromises).then(function(results) {
-      res.json({results: results});
-    }).catch(function(err) {
-      console.log('promise error: ', err);
-      return next(err);
+      Promise.all(recipeSavePromises).then(function(results) {
+        res.json({results: results});
+      }).catch(function(err) {
+        console.log('promise error: ', err);
+        return next(err);
+      });
     });
+  }).catch(function(err) {
+    console.log('promise error: ', err);
+    return next(err);
   });
 });*/
 
@@ -243,12 +265,12 @@ router.post('/getRecipesOfType', function(req, res, next) {
           return next(error);
         }
         if(req.body.userToken !== user.curToken) {
-          var error = {
+          /*var error = {
             status: constants.STATUS_CODES.UNAUTHORIZED,
             message: 'Credentials for method are missing'
           };
           logger.error('ERROR POST api/recipes/getRecipesOfType/', {error: err});
-          return next(err);
+          return next(err);*/
         }
         var outlawIngredients = [];
         for (var i = user.dietaryPreferences.length - 1; i >= 0; i--) {
@@ -322,12 +344,12 @@ router.post('/getRecipesForCollection', function(req, res, next) {
           return next(error);
         }
         if(req.body.userToken !== user.curToken) {
-          var error = {
+          /*var error = {
             status: constants.STATUS_CODES.UNAUTHORIZED,
             message: 'Credentials for method are missing'
           };
           logger.error('ERROR POST api/recipes/getRecipesForCollection - token', {error: error});
-          return next(error);
+          return next(error);*/
         }
         var outlawIngredients = [];
         for (var i = user.dietaryPreferences.length - 1; i >= 0; i--) {
@@ -608,12 +630,12 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
             return next(error);
           }
           if(req.body.userToken !== user.curToken) {
-            var error = {
+            /*var error = {
               status: constants.STATUS_CODES.UNAUTHORIZED,
               message: 'Credentials for method are missing'
             };
             logger.error('ERROR POST api/recipes/getRecipesWithIngredients - token', {error: error});
-            return next(error);
+            return next(error);*/
           }
           var outlawIngredients = [];
           for (var i = user.dietaryPreferences.length - 1; i >= 0; i--) {

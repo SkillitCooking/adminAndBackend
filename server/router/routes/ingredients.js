@@ -98,12 +98,12 @@ router.post('/getIngredientsForSelection', function(req, res, next) {
           return next(error);
         }
         if(req.body.userToken !== user.curToken) {
-          var error = {
+          /*var error = {
             status: constants.STATUS_CODES.UNAUTHORIZED,
             message: 'Credentials for method are missing'
           };
           logger.error('ERROR POST api/ingredients/getIngredientsForSelection - token', {error: error, sentToken: req.body.userToken, currentToken: user.curToken});
-          return next(error);
+          return next(error);*/
         }
         var outlawIngredients = [];
         for (var i = user.dietaryPreferences.length - 1; i >= 0; i--) {

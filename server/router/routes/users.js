@@ -175,12 +175,12 @@ router.post('/logout', function(req, res, next) {
       if(user) {
       //token check
         if(req.body.token !== user.curToken) {
-          var error = {
+          /*var error = {
             status: constants.STATUS_CODES.UNAUTHORIZED,
             message: 'Credentials for method are missing'
           };
           logger.error('ERROR POST api/users/logout - token', {error: error});
-          return next(error);
+          return next(error);*/
         }
         user.curToken = null;
         user.save(function(err, user, numAffected) {
@@ -224,12 +224,12 @@ router.post('/updatePersonalInfo', function(req, res, next) {
         return next(error);
       }
       if(req.body.token !== user.curToken) {
-        var error = {
+        /*var error = {
           status: constants.STATUS_CODES.UNAUTHORIZED,
           message: 'Credentials for method are missing'
         };
         logger.error('ERROR POST api/users/updatePersonalInfo - token', {error: error});
-        return next(error);
+        return next(error);*/
       }
       if(req.body.firstName) {
         user.firstName = req.body.firstName;
@@ -276,12 +276,12 @@ router.post('/getPersonalInfo', function(req, res, next) {
         return next(error);
       }
       if(req.body.token !== user.curToken) {
-        var error = {
+        /*var error = {
           status: constants.STATUS_CODES.UNAUTHORIZED,
           message: 'Credentials for method are missing'
         };
         logger.error('ERROR POST api/users/getPersonalInfo - token', {error: error});
-        return next(error);
+        return next(error);*/
       }
       logger.info('END POST api/users/getPersonalInfo');
       res.json({data: user});
