@@ -86,7 +86,7 @@ router.use(function(req, res, next) {
 /* Add response 'success' signal when time comes */
 /* Add Credentials appropriately when time comes */
 /* Add Error checking as well */
-router.get('/changes', function(req, res, next) {
+/*router.get('/changes', function(req, res, next) {
   var recipeSavePromises = [];
   var prefixCheckPromises = [];
   prefixCheckPromises.push(HealthModifier.model.find());
@@ -144,7 +144,7 @@ router.get('/changes', function(req, res, next) {
     console.log('promise error: ', err);
     return next(err);
   });
-});
+});*/
 
 
 /* GET all recipes */
@@ -553,8 +553,9 @@ function processRecipes(req, recipes, recipesToReturn, outlawIngredients) {
         recipesToReturn[constants.RECIPE_TYPES.FULL] = recipesToReturn[constants.RECIPE_TYPES.FULL].concat(retRecipes[0][constants.RECIPE_TYPES.FULL]);
         var missingIngredientLevel = 1;
         var recipesAdded = 0;
-        while(retRecipes[missingIngredientLevel] && retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL] && recipesToReturn[constants.RECIPE_TYPES.FULL].length < constants.MINIMUM_FULL_RECIPES_RETURN) {
-          if(retRecipes[missingIngredientLevel] && retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL].length > 0) {
+        //possibility for infinite loop IF there is no guarantee for enough Full recipes at any missingIngredient level
+        while(recipesToReturn[constants.RECIPE_TYPES.FULL].length < constants.MINIMUM_FULL_RECIPES_RETURN) {
+          if(retRecipes[missingIngredientLevel] && retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL] && retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL].length > 0) {
             for (var i = retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL].length - 1; i >= 0; i--) {
               var recipeToAdd = retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL][i];
               //recipeToAdd.badges = recipeBadgeService.getBadgesForRecipe(recipeToAdd);
