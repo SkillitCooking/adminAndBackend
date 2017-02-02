@@ -86,7 +86,7 @@ router.use(function(req, res, next) {
 /* Add response 'success' signal when time comes */
 /* Add Credentials appropriately when time comes */
 /* Add Error checking as well */
-/*router.get('/changes', function(req, res, next) {
+router.get('/changes', function(req, res, next) {
   var recipeSavePromises = [];
   var prefixCheckPromises = [];
   prefixCheckPromises.push(HealthModifier.model.find());
@@ -96,11 +96,12 @@ router.use(function(req, res, next) {
     var modifiers = results[0];
     var adjectives = results[1];
     var seasonings = results[2];
-    Recipe.model.find({}, 'nameBodies', function(err, recipes) {
+    Recipe.model.find({}, 'name nameBodies', function(err, recipes) {
       if(err) {
         console.log('find error', err);
         return next(err);
       }
+      var savePromises = [];
       for (var i = recipes.length - 1; i >= 0; i--) {
         var nameBodies = recipes[i].nameBodies;
         for(var id in nameBodies) {
@@ -110,37 +111,40 @@ router.use(function(req, res, next) {
           } else {
             prefixObj.textArr = nameBodies[id];
           }
-          //find id
-          if(underscore.some(modifiers, function(modifier) {
-            return modifier._id == id;
-          })) {
-            prefixObj.type = 'modifier';
-          } else if(underscore.some(adjectives), function(adjective) {
-            return adjective._id == id;
-          }) {
-            prefixObj.type = 'adjective';
-          } else if(underscore.some(seasonings), function(seasoning) {
+          var seasoningPresent = underscore.some(seasonings, function(seasoning) {
             return seasoning._id == id;
-          }) {
+          });
+          var modPresent = underscore.some(modifiers, function(modifier) {
+            return modifier._id == id;
+          });
+          var adjPresent = underscore.some(adjectives, function(adjective) {
+            return adjective._id == id;
+          });
+          if(adjPresent){
+            prefixObj.type = 'adjective';
+          } else if(modPresent) {
+            prefixObj.type = 'modifier';
+          } else if(seasoningPresent) {
             prefixObj.type = 'seasoning';
           }
           nameBodies[id] = prefixObj;
         }
         recipes[i].markModified('nameBodies');
-        recipeSavePromises.push(recipes[i].save());
+        savePromises.push(recipes[i].save());
       }
-      Promise.all(recipeSavePromises).then(function(results) {
+      Promise.all(savePromises).then(function(results) {
         res.json({results: results});
       }).catch(function(err) {
         console.log('promise error: ', err);
         return next(err);
       });
     });
+    //res.json({mod: modifiers, sea: seasonings, ajd: adjectives});
   }).catch(function(err) {
     console.log('promise error: ', err);
     return next(err);
   });
-});*/
+});
 
 
 /* GET all recipes */

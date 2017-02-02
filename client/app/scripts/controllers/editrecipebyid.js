@@ -96,6 +96,7 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.removeNameBody = function(index) {
+      console.log('removeNameBody start', angular.copy($scope.nameDictionary));
       var name = $scope.nameBodies[index].name;
       for(var key in $scope.nameDictionary) {
         for (var i = $scope.nameDictionary[key].textArr.length - 1; i >= 0; i--) {
@@ -107,6 +108,7 @@ angular.module('SkillitAdminApp')
           }
         }
       }
+      console.log('removeNameBody end', angular.copy($scope.nameDictionary));
       $scope.nameBodies.splice(index, 1);
     };
 

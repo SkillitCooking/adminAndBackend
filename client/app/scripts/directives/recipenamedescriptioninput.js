@@ -35,12 +35,30 @@ angular.module('SkillitAdminApp')
           scope.isName = false;
         }
 
+        function idMatch(element) {
+          return key === element._id;
+        }
+
+        function getReferenceIndex(key, type) {
+          if(type === 'adjective') {
+            //find index of key/id
+            return scope.adjectives.findIndex(idMatch);
+          } else if(type === 'modifier') {
+            return scope.modifiers.findIndex(idMatch);
+          } else if(type === 'seasoning') {
+            return scope.seasonings.findIndex(idMatch);
+          }
+        }
+
         function fillInIsh(prefixObj, isName, indicator, textObj) {
           for (var i = prefixObj.textArr.length - 1; i >= 0; i--) {
             if(isName && textObj.name && prefixObj.textArr[i] === textObj.name) {
-              indicator[i] = true;
+              //need these to be indexed to the seasonings/modifiers/adjectives
+              var index = getReferenceIndex(key, prefixObj.type);
+              indicator[index] = true;
             } else if(!isName && textObj.description && textObj.description === prefixObj.textArr[i]){
-              indicator[i] = true;
+              var index = getReferenceIndex(key, prefixObj.type);
+              indicator[index] = true;
             }
           }
         }
@@ -51,13 +69,13 @@ angular.module('SkillitAdminApp')
           for(var key in scope.dictionary) {
             switch(scope.dictionary[key].type) {
               case 'adjective':
-                fillInIsh(scope.dictionary[key], scope.isName, scope.adjectivesIndicator);
+                fillInIsh(scope.dictionary[key], scope.isName, scope.adjectivesIndicator, scope.textObj, key);
                 break;
               case 'modifier':
-                fillInIsh(scope.dictionary[key], scope.isName, scope.modifiersIndicator);
+                fillInIsh(scope.dictionary[key], scope.isName, scope.modifiersIndicator, scope.textObj, key);
                 break;
               case 'seasoning':
-                fillInIsh(scope.dictionary[key], scope.isName, scope.seasoningsIndicator);
+                fillInIsh(scope.dictionary[key], scope.isName, scope.seasoningsIndicator, scope.textObj, key);
                 break;
               default:
                 break;
@@ -85,18 +103,19 @@ angular.module('SkillitAdminApp')
             }
           } else if(type === 'name') {
             for(var key in scope.dictionary) {
-              for (var j = scope.dictionary[key].length - 1; j >= 0; j--) {
+              for (var j = scope.dictionary[key].textArr.length - 1; j >= 0; j--) {
                 if(scope.dictionary[key].textArr[j] === scope.currentName) {
                   scope.dictionary[key].textArr[j] = scope.textObj.name;
                 }
               }
             }
           }
+          console.log('commuteTextChanges', angular.copy(scope.dictionary));
         };
 
-        //are the manual setting of the indicators necessary?
 
         scope.toggleAdjective = function(adjective, index) {
+          console.log('toggleAdjective start', angular.copy(scope.dictionary));
           if(!scope.dictionary[adjective._id]) {
             //first time clicked case
             scope.dictionary[adjective._id] = {
@@ -108,11 +127,11 @@ angular.module('SkillitAdminApp')
             } else if(scope.isDescription) {
               scope.dictionary[adjective._id].textArr.push(scope.textObj.description);
             }
+            console.log('toggleAdjective new end', angular.copy(scope.dictionary));
           } else {
             //then has been clicked previously
             if(scope.isName) {
               if(scope.adjectivesIndicator[index]) {
-                //is this right?
                 scope.dictionary[adjective._id].textArr.push(scope.textObj.name);
               } else {
                 var indexOfName = scope.dictionary[adjective._id].textArr.indexOf(scope.textObj.name);
@@ -132,10 +151,12 @@ angular.module('SkillitAdminApp')
                 }
               }
             }
+            console.log('toggleAdjective old end', angular.copy(scope.dictionary));
           }
         };
 
         scope.toggleModifier = function(modifier, index) {
+          console.log('toggleModifier start', angular.copy(scope.dictionary));
           if(!scope.dictionary[modifier._id]) {
             scope.dictionary[modifier._id] = {
               textArr: [],
@@ -146,6 +167,7 @@ angular.module('SkillitAdminApp')
             } else if(scope.isDescription) {
               scope.dictionary[modifier._id].textArr.push(scope.textObj.description);
             }
+            console.log('toggleModifier new end', angular.copy(scope.dictionary));
           } else {
             if(scope.isName) {
               if(scope.modifiersIndicator[index]) {
@@ -168,10 +190,12 @@ angular.module('SkillitAdminApp')
                 }
               }
             }
+            console.log('toggleModifier old end', angular.copy(scope.dictionary));
           }
         };
 
         scope.toggleSeasoning = function(seasoning, index) {
+          console.log('toggleSeasoning start', angular.copy(scope.dictionary));
           if(!scope.dictionary[seasoning._id]) {
             scope.dictionary[seasoning._id] = {
               textArr: [],
@@ -182,6 +206,7 @@ angular.module('SkillitAdminApp')
             } else if(scope.isDescription) {
               scope.dictionary[seasoning._id].textArr.push(scope.textObj.description);
             }
+            console.log('toggleSeasoning new end', angular.copy(scope.dictionary));
           } else {
             if(scope.isName) {
               if(scope.seasoningsIndicator[index]) {
@@ -204,6 +229,7 @@ angular.module('SkillitAdminApp')
                 }
               }
             }
+            console.log('toggleSeasoning old end', angular.copy(scope.dictionary));
           }
         };
       }

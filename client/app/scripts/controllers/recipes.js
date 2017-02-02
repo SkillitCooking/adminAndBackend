@@ -137,7 +137,7 @@ angular.module('SkillitAdminApp')
       for(var key in $scope.nameDictionary) {
         for (var i = $scope.nameDictionary[key].textArr.length - 1; i >= 0; i--) {
           if($scope.nameDictionary[key].textArr[i] === name) {
-            $scope.nameDictionary[key].splice(i, 1);
+            $scope.nameDictionary[key].textArr.splice(i, 1);
             if($scope.nameDictionary[key].textArr.length === 0) {
               delete $scope.nameDictionary[key];
             }

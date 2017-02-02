@@ -7,6 +7,7 @@ var UserSchema = new mongoose.Schema({
   socialName: String,
   socialUsername: String,
   curToken: String,
+  deviceTokenDict: mongoose.Schema.Types.Mixed,
   socialEmail: String,
   email: String,
   firstName: String,

@@ -175,7 +175,7 @@ angular.module('SkillitAdminApp')
       for(var key in $scope.descriptionDictionary) {
         for (var i = $scope.descriptionDictionary[key].textArr.length - 1; i >= 0; i--) {
           if($scope.descriptionDictionary[key].textArr[i] === description) {
-            $scope.descriptionDictionary[key].splice(i, 1);
+            $scope.descriptionDictionary[key].textArr.splice(i, 1);
             if($scope.descriptionDictionary[key].textArr.length === 0) {
               delete $scope.descriptionDictionary[key];
             }
