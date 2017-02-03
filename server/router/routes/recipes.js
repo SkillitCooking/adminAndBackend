@@ -553,7 +553,7 @@ function processRecipes(req, recipes, recipesToReturn, outlawIngredients) {
         var missingIngredientLevel = 1;
         var recipesAdded = 0;
         //possibility for infinite loop IF there is no guarantee for enough Full recipes at any missingIngredient level
-        while(recipesToReturn[constants.RECIPE_TYPES.FULL].length < constants.MINIMUM_FULL_RECIPES_RETURN) {
+        while(recipesToReturn[constants.RECIPE_TYPES.FULL].length < constants.MINIMUM_FULL_RECIPES_RETURN || missingIngredientLevel < 25) {
           if(retRecipes[missingIngredientLevel] && retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL] && retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL].length > 0) {
             for (var i = retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL].length - 1; i >= 0; i--) {
               var recipeToAdd = retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL][i];
