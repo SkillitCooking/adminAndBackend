@@ -146,7 +146,6 @@ router.use(function(req, res, next) {
   });
 });*/
 
-
 /* GET all recipes */
 router.get('/', function(req, res, next) {
   logger.info('START GET api/recipes/');
@@ -559,7 +558,7 @@ function processRecipes(req, recipes, recipesToReturn, outlawIngredients) {
             for (var i = retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL].length - 1; i >= 0; i--) {
               var recipeToAdd = retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL][i];
               //recipeToAdd.badges = recipeBadgeService.getBadgesForRecipe(recipeToAdd);
-              recipeToAdd = underscore.pick(recipeToAdd, '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'missingIngredients');
+              recipeToAdd = underscore.pick(recipeToAdd, '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'mainPictureURLs', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'missingIngredients', 'nameBodies');
               recipeToAdd.usesMissingIngredients = true;
               recipesToReturn[constants.RECIPE_TYPES.FULL].push(recipeToAdd);
               recipesAdded += 1;
