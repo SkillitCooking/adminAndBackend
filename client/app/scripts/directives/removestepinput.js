@@ -7,7 +7,7 @@
  * # removeStepInput
  */
 angular.module('SkillitAdminApp')
-  .directive('removeStepInput', function () {
+  .directive('removeStepInput', function (utility) {
     return {
       templateUrl: 'views/removestepinput.html',
       restrict: 'E',
@@ -22,39 +22,99 @@ angular.module('SkillitAdminApp')
         scope.removeTypes = ["Remove"];
 
         scope.composingTypes = [];
+        if(!scope.constructingStep.productNames) {
+          scope.constructingStep.productNames = [];
+        }
+        if(!scope.constructingStep.stepComposition) {
+          scope.constructingStep.stepComposition = {};
+        }
+
+        if(scope.constructingStep.stepInputs && scope.constructingStep.stepInputs['stepInput']) {
+          fillComposingTypesWrapper();
+        }
+
+        function fillIngredientTypes(key) {
+          for (var i = scope.recipe.ingredientList.ingredientTypes.length - 1; i >= 0; i--) {
+            var type = scope.recipe.ingredientList.ingredientTypes[i];
+            if(type.typeName === key) {
+              scope.composingTypes.push(scope.recipe.ingredientList.ingredientTypes[i]);
+            }
+          }
+        }
+
+        function fillDish(key) {
+          for (var j = scope.recipe.ingredientList.equipmentNeeded.length - 1; j >= 0; j--) {
+            var dish = scope.recipe.ingredientList.equipmentNeeded[j];
+            if(dish.name === key) {
+              scope.inputDish = dish;
+            }
+          }
+        }
 
         function fillComposingTypes(input) {
+          //need to handle case where input is an array!
           if(input.sourceType === 'IngredientList') {
-            for (var i = scope.ingredientList.ingredientTypes.length - 1; i >= 0; i--) {
-              var type = scope.ingredientList.ingredientTypes[i];
-              if(type === input.key) {
-                scope.composingTypes.push(scope.ingredientList.ingredientTypes[i]);
-              }
-            }
+            fillIngredientTypes(input.key);
           } else if(input.sourceType === 'EquipmentList') {
-            for (var j = scope.ingredientList.equipmentNeeded.length - 1; j >= 0; j--) {
-              var dish = scope.ingredientList.equipmentNeeded[j];
-              if(dish.name === input.key) {
-                scope.inputDish = dish;
-              }
-            }
+            fillDish(input.key);
           } else {
             //find previous step
-            for (var k = scope.stepList.length - 1; k >= 0; k--) {
-              if(scope.stepList[k].stepId === input.sourceId) {
-                //do I need to specifically get product keys? I don't think so... just aggregate
-                //Actually, will need to worry about in the remove case... imagine that you have a Remove step that partially feeds a Cook step that then the Remove step then uses...
-                //So what could be done: we get the Cook step; we loop through all of the stepInputs; one of which is the Remove step; we only want a subset of the things partitioned on the remove step; seems like we need RemoveStep specific information
-                //AS IF: a RemoveStep was a basecase - would want to know if RemoveStep and then what key was being accessed
-                //Will need to design the products of removeSteps more specifically before the immediate implementation of this
+            for (var k = scope.recipe.stepList.length - 1; k >= 0; k--) {
+              if(scope.recipe.stepList[k].stepId === input.sourceId) {
+                //what is structure of inputs in step?
+                //check for remove step
+                if(scope.recipe.stepList[k].stepType === "Remove") {
+                  //then special base case handling
+                  //what removed type or dishAndRemaining being used?
+                  //then dish + ingredients
+                  if(input.type === 'dish') {
+                    fillDish(input.dishKey);
+                  }
+                  for (var m = input.ingredientTypeKeys.length - 1; m >= 0; m--) {
+                    fillIngredientTypes(input.ingredientTypeKeys[m]);
+                  }
+                } else {
+                  var inputKeys = utility.getInputKeys(scope.recipe.stepList[k].stepType);
+                  for (var l = inputKeys.length - 1; l >= 0; l--) {
+                    var stepInput = scope.recipe.stepList[k].stepInputs[inputKeys[l]];
+                    //check for typeof array here, and then iterate over
+                    if(Array.isArray(stepInput)) {
+                      for (var i = stepInput.length - 1; i >= 0; i--) {
+                        fillComposingTypes(stepInput[i]);
+                      }
+                    } else {
+                      fillComposingTypes(stepInput);    
+                    }
+                  }
+                }
               }
             }
+          }
+        }
+
+        function ingredientTypeCmpFn(typeA, typeB) {
+          if(typeA.typeName === typeB.typeName) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+
+        function trimComposingTypes() {
+          scope.composingTypes = utility.removeDuplicates(scope.composingTypes, ingredientTypeCmpFn);
+        }
+
+        function assignRankingsToComposingTypes() {
+          for (var i = scope.composingTypes.length - 1; i >= 0; i--) {
+            scope.composingTypes[i].insertionRanking = i;
           }
         }
 
         function fillComposingTypesWrapper() {
           var stepInput = scope.constructingStep.stepInputs['stepInput'];
           fillComposingTypes(stepInput);
+          trimComposingTypes();
+          assignRankingsToComposingTypes();
         }
 
         //event based filling of scope.composingTypes

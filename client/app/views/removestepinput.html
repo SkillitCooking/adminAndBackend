@@ -1,7 +1,7 @@
 <!--Remove [ingredients] from the [dish] //with the// [ingredientsLeftInPan] and set aside-->
 <!--How will the step have knowledge of the previous step? stepList and ingredientList accessible-->
 <div ng-form="removeStepForm" class="bg-warning">
-  <b>Remove Step</b>
+  <b>Remove Step</b><br/>
   Step Duration: <input type="text" name="stepDurationInput" size="30" required ng-pattern="integerval" ng-model="constructingStep.stepDuration"><br/>
   Remove Type: <select name="removeTypeSelect" ng-model="constructingStep.stepSpecifics[0].val" ng-options="removeType for removeType in removeTypes" required></select><br/>
   Product Input (Expects a Step): <step-input-form
@@ -12,21 +12,11 @@
     ingredient-list="ingredientList"
     step-list="stepList">
     </step-input-form><br/>
-  Types to Remove: <div ng-repeat="type in composingTypes">
-    <span>{{type.name}}</span>
-    <input type="checkbox" ng-model="type.shouldRemove"/>
-  </div>
-  Product Names: <div ng-repeat="name in constructingStep.productNames">
-    <input type="text" name="productNamesInput" required ng-model="name.key" placeholder="Product Name" /><br/>
-    <span>Is Dish Product?</span>
-    <input type="checkbox" ng-model="name.isDishProduct" /><br/>
-    <!--What I want below: I want the checkbox action to store/remove the type from the composing product. Ideally, whether it is used would determine it's appearence elsewhere-->
-    <div ng-if="!name.isDishProduct" ng-repeat="removedType in composingTypes">
-      <input ng-if="removedType.shouldRemove" type="checkbox" ng-model="removedType.useInProduct" ng-click="toggleProduct(name, removedType)"/>
-    </div>
-    <button class="btn btn-xs btn-danger" ng-click="removeProduct()">Remove</button>
-  </div>
-  <button class="btn btn-sm btn-info">Add Product</button><br/><br/>
+  <remove-step-products ng-if="composingTypes"
+  constructing-step="constructingStep"
+  composing-types="composingTypes"
+  input-dish="inputDish"></remove-step-products>
+  <br/><br/>
   <button ng-show="!tipAdded" class="btn btn-sm btn-primary" ng-click="addTip()">Add Tip</button><br/>
   <button ng-show="tipAdded" class="btn btn-sm btn-primary" ng-click="toggleTipVisibility()">{{getTipToggleText()}}</button>
   <div ng-if="tipAdded">

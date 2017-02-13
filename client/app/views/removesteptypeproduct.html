@@ -1,0 +1,7 @@
+<div ng-form="removeStepTypeProductForm">
+  Product Name: <input type="text" name="nameInput" ng-model="productName" ng-blur="commuteNameChanges()" size="50" ng-focus="logName()"/><br/>
+  Removed Types to Include: <br/>
+  <div ng-repeat="type in indicators">
+    <input type="checkbox" ng-model="type.isSelected" ng-click="commuteIndicatorChanges($index)" /> <span>{{type.name}}</span>
+  </div>
+</div>

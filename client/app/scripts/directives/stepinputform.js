@@ -96,12 +96,43 @@ angular.module('SkillitAdminApp')
         }
 
         scope.stepInputPropertyChange = function() {
-          if(stepTypeNeedsChangeLogged()) {
-            if(scope.step && scope.step.stepInputs && scope.step.stepInputs[scope.stepInputName]) {
-              var input = scope.step.stepInputs[scope.stepInputName];
-              if(input.key && input.sourceId && input.sourceType) {
+          if(scope.step && scope.step.stepInputs && scope.step.stepInputs[scope.stepInputName]) {
+            var input = scope.step.stepInputs[scope.stepInputName];
+            if(scope.sourceIdStep && input.sourceType === 
+              'StepProduct') {
+              if(scope.sourceIdStep.stepType === 'Remove') {
+                input.ingredientTypeKeys = scope.sourceIdStep.stepComposition[input.key].ingredientTypeKeys;
+                if(scope.sourceIdStep.stepComposition[input.key].dish) {
+                  input.dishKey = scope.sourceIdStep.stepComposition[input.key].dish.name;
+                }
+              } else if(input.ingredientTypeKeys) {
+                //then need to delete property
+                delete input.ingredientTypeKeys;
+              }
+            } else if(input.ingredientTypeKeys) {
+              delete input.ingredientTypeKeys;
+            }
+            if(stepTypeNeedsChangeLogged()) {
+              if(input.sourceId && input.sourceType) {
                 scope.$emit('stepInputPropertyChange');
               }
+            }
+          }
+        };
+
+        scope.multipleStepInputPropertyChange = function(input, index) {
+          if(scope.step && scope.step.stepInputs && scope.step.stepInputs[scope.stepInputName]) {
+            if(scope.sourceIdStep && scope.sourceIdStep[index] && input.sourceType === 'StepProduct') {
+              if(scope.sourceIdStep[index].stepType === 'Remove') {
+                input.ingredientTypeKeys = scope.sourceIdStep[index].stepComposition[input.key].ingredientTypeKeys;
+                if(scope.sourceIdStep[index].stepComposition[input.key].dish) {
+                  input.dishKey = scope.sourceIdStep[index].stepComposition[input.key].dish.name;
+                }
+              } else if(input.ingredientTypeKeys) {
+                delete input.ingredientTypeKeys;
+              }
+            } else if(input.ingredientTypeKeys) {
+              delete input.ingredientTypeKeys;
             }
           }
         };

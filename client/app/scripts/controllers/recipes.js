@@ -8,7 +8,7 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('RecipeCtrl', ['$window', '$scope', 'compatibilityService', 'recipeService', 'seasoningService', 'ingredientService', 'dishService', 'itemCollectionService', 'recipeAdjectiveService', 'healthModifierService', '_', function ($window, $scope, compatibilityService, recipeService, seasoningService, ingredientService, dishService, itemCollectionService, recipeAdjectiveService, healthModifierService, _) {
+  .controller('RecipeCtrl', ['$window', '$scope', 'compatibilityService', 'recipeService', 'seasoningService', 'ingredientService', 'dishService', 'itemCollectionService', 'recipeAdjectiveService', 'healthModifierService', 'utility', '_', function ($window, $scope, compatibilityService, recipeService, seasoningService, ingredientService, dishService, itemCollectionService, recipeAdjectiveService, healthModifierService, utility, _) {
     $scope.integerval = /^\d*$/;
 
     $scope.serverType = 'DEVELOPMENT';
@@ -74,7 +74,7 @@ angular.module('SkillitAdminApp')
       mainPictureURLs: []
     };
 
-    $scope.stepTypes = ["Bake", "Boil", "BreakEgg", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "Heat", "Move", "Place", "PreheatOven", "Sautee", "Season", "SlowCook", "Serve", "Steam", "EquipmentPrep", "Stir"];
+    $scope.stepTypes = ["Bake", "Boil", "BreakEgg", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "EquipmentPrep", "Heat", "Move", "Place", "PreheatOven", "Remove", "Sautee", "Season", "SlowCook", "Serve", "Steam", "Stir"];
     $scope.recipeTypes = ["AlaCarte", "BYO", "Full"];
     $scope.recipeCategories = ["Sautee", "Easy Dinners", "Seafood Plates", "Scramble", "Roast", "Pasta", "Hash", "Rice", "Quinoa"];
     $scope.cookingMethods = ["Bake", "Sautee", "Boil", "Steam", "SlowCook"];
@@ -316,8 +316,13 @@ angular.module('SkillitAdminApp')
         $scope.squishedRecipeName = nameTokens.join("");
       }
       $scope.constructingStep.stepId = $scope.squishedRecipeName + _.uniqueId($scope.constructingStep.stepType);
-      $scope.constructingStep.productKeys = [$scope.constructingStep.productName];
-      $scope.constructingStep.productName = undefined;
+      if($scope.constructingStep.productNames) {
+        $scope.constructingStep.productKeys = utility.pickArray($scope.constructingStep.productNames, 'name');
+        $scope.constructingStep.productNames = undefined;
+      } else {
+        $scope.constructingStep.productKeys = [$scope.constructingStep.productName];
+        $scope.constructingStep.productName = undefined;
+      }
       $scope.stepList.push($scope.constructingStep);
       $scope.constructingStep = {};
       $scope.constructingStep.stepInputs = {};

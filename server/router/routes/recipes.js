@@ -7,6 +7,7 @@ var logger = require('../../util/logger').serverLogger;
 var constants = require('../../util/constants');
 
 var recipeBadgeService = require('../lib/recipebadges');
+var shopifyService = require('../lib/shopifyService');
 
 var mongoose = require('mongoose');
 var Promise = require('bluebird');
@@ -553,6 +554,7 @@ function processRecipes(req, recipes, recipesToReturn, outlawIngredients) {
         var missingIngredientLevel = 1;
         var recipesAdded = 0;
         //possibility for infinite loop IF there is no guarantee for enough Full recipes at any missingIngredient level
+        //So have cutoff at 25
         while(recipesToReturn[constants.RECIPE_TYPES.FULL].length < constants.MINIMUM_FULL_RECIPES_RETURN || missingIngredientLevel < 25) {
           if(retRecipes[missingIngredientLevel] && retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL] && retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL].length > 0) {
             for (var i = retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL].length - 1; i >= 0; i--) {
@@ -747,6 +749,40 @@ router.post('/', function(req, res, next) {
     });
   } catch(error) {
     logger.error('ERROR - exception in POST api/recipes/', {error: error});
+    return next(error);
+  }
+});
+
+/*POST /recipes/getShopifyDescription*/
+router.post('/getShopifyDescription', function(req, res, next) {
+  try {
+    logger.info('START POST api/recipes/getShopifyDescription/');
+    var query = {};
+    if(req.body.recipeId) {
+      query._id = req.body.recipeId;
+    } else if(req.body.recipeName) {
+      query.name = req.body.name;
+    } else {
+      var error = {
+        status: constants.STATUS_CODES.UNPROCESSABLE,
+        message: 'need a recipeName or recipeId'
+      };
+      logger.error('ERROR POST api/recipes/getShopifyDescription - token', {error: error});
+      return next(error);
+    }
+    Recipe.model.find(query, function(err, recipes) {
+      if(err) {
+        logger.error('ERROR POST api/recipes/getShopifyDescription', {error: err});
+        return next(err);
+      }
+      var recipe = recipes[0];
+      var retVal = {};
+      retVal.descriptionHTML = shopifyService.getDescriptionHTML(recipe);
+      retVal.pictureURLs = recipe.mainPictureURLs;
+      res.json(retVal);
+    });
+  } catch (error) {
+    logger.error('ERROR - exception POST in api/recipes/getShopifyDescription', {error: error});
     return next(error);
   }
 });

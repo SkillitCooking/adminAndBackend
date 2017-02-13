@@ -20,6 +20,7 @@ StepSchema.add({
     propName: String,
     val: mongoose.Schema.Types.Mixed
   }],
+  stepComposition: mongoose.Schema.Types.Mixed,
   stepDuration: String,
   ingredientTypeName: String,
   auxiliarySteps: [StepSchema]

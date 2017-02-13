@@ -1,0 +1,15 @@
+<div ng-form="removeStepProductsForm">
+  Remaining Dish Product Name: <input type="text" name="dishNameInput" ng-model="dishProductName" ng-blur="commuteDishProductNameChanges()" ng-focus="logDishProductName()" size="50" /><br/>
+  Types to Remove: <br/>
+  <div ng-repeat="type in composingTypes">
+    <input type="checkbox" ng-model="type.isSelected" ng-click="commuteTypeSelection($index)" ng-disabled="noDishProductName()"/><span>{{type.typeName}}</span>
+  </div>
+  <div ng-repeat="name in constructingStep.productNames" ng-if="name.type !== 'dish'">
+    <remove-step-type-product 
+    indicator-object="indicators"
+    constructing-step="constructingStep"
+    product-name="name.name"></remove-step-type-product>
+    <button class="btn btn-default" ng-click="removeStepProduct(name, $index)">Remove</button><br/>
+  </div>
+  <button class="btn btn-default" ng-click="addStepProduct()" ng-disabled="noDishProductName()">Add Product</button>
+</div>

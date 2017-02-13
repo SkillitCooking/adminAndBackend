@@ -8,14 +8,14 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('EditrecipebyidCtrl', ['$window', '$scope', 'compatibilityService', 'recipeService', 'itemCollectionService', 'seasoningService', 'ingredientService', 'dishService', 'recipeAdjectiveService', 'healthModifierService', function ($window, $scope, compatibilityService, recipeService, itemCollectionService, seasoningService, ingredientService, dishService, recipeAdjectiveService, healthModifierService) {
+  .controller('EditrecipebyidCtrl', ['$window', '$scope', 'compatibilityService', 'recipeService', 'itemCollectionService', 'seasoningService', 'ingredientService', 'dishService', 'recipeAdjectiveService', 'healthModifierService', 'utility', function ($window, $scope, compatibilityService, recipeService, itemCollectionService, seasoningService, ingredientService, dishService, recipeAdjectiveService, healthModifierService, utility) {
 
     $scope.integerval = /^\d*$/;
     $scope.recipeTypes = ["AlaCarte", "BYO", "Full"];
     $scope.recipeCategories = ["Sautee", "Scramble", "Easy Dinners", "Roast", "Pasta", "Hash", "Rice", "Quinoa"];
     $scope.servingSizes = ["1-2", "2-3", "3-4", "4-5", "5-6", "6-7", "7-8", "8-9", "9-10"];
     $scope.cookingMethods = ["Bake", "Sautee", "Boil", "Steam", "SlowCook"];
-    $scope.stepTypes = ["Bake", "Boil", "BreakEgg", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "Heat", "Move", "Place", "PreheatOven", "Sautee", "Serve", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir"];
+    $scope.stepTypes = ["Bake", "Boil", "BreakEgg", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "EquipmentPrep", "Heat", "Move", "Place", "PreheatOven", "Remove", "Sautee", "Serve", "Season", "SlowCook", "Steam", "Stir"];
     //initialize constructingStep and its stepInputs
     $scope.constructingStep = {};
     $scope.constructingStep.stepInputs = {};
@@ -96,7 +96,6 @@ angular.module('SkillitAdminApp')
     };
 
     $scope.removeNameBody = function(index) {
-      console.log('removeNameBody start', angular.copy($scope.nameDictionary));
       var name = $scope.nameBodies[index].name;
       for(var key in $scope.nameDictionary) {
         for (var i = $scope.nameDictionary[key].textArr.length - 1; i >= 0; i--) {
@@ -108,7 +107,6 @@ angular.module('SkillitAdminApp')
           }
         }
       }
-      console.log('removeNameBody end', angular.copy($scope.nameDictionary));
       $scope.nameBodies.splice(index, 1);
     };
 
@@ -446,8 +444,13 @@ angular.module('SkillitAdminApp')
       }
       $scope.curStepNumber += 1;
       $scope.constructingStep.stepId = $scope.squishedRecipeName + $scope.curStepNumber;
-      $scope.constructingStep.productKeys = [$scope.constructingStep.productName];
-      $scope.constructingStep.productName = undefined;
+      if($scope.constructingStep.productNames) {
+        $scope.constructingStep.productKeys = utility.pickArray($scope.constructingStep.productNames, 'name');
+        $scope.constructingStep.productNames = undefined;
+      } else {
+        $scope.constructingStep.productKeys = [$scope.constructingStep.productName];
+        $scope.constructingStep.productName = undefined;
+      }
       $scope.recipe.stepList.push($scope.constructingStep);
       $scope.constructingStep = {};
       $scope.constructingStep.stepInputs = {};
@@ -603,10 +606,12 @@ angular.module('SkillitAdminApp')
         $scope.mainPictureURLs[i] = $scope.mainPictureURLs[i].url;
       }
       var compatibilityVersion = compatibilityService.getVersion($scope.recipe);
+      var allowablePrefixIds = computeAllowablePrefixIds();
       recipeService.addNewRecipe({
         recipe: {
           name: $scope.recipe.name,
           nameBodies: $scope.nameDictionary,
+          allowablePrefixIds: allowablePrefixIds,
           description: $scope.recipe.description,
           conditionalDescriptions: $scope.descriptionDictionary,
           defaultServingSize: $scope.recipe.defaultServingSize,

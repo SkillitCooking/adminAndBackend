@@ -14,9 +14,9 @@
   <div ng-if="showStepIdMultiple(input)">
     SourceId: <select name="sourceIdSelect" ng-model="sourceIdStep[$index]" ng-options="step as getSourceIdSelectName(step, index) for (index, step) in stepList track by step.stepId" ng-change="registerSourceIdMultiple(input, $index, sourceIdStep)" ng-required="showStepIdMultiple(input)"></select>
   </div>
-  Key: <select ng-if="input.sourceType === 'StepProduct'" name="stepKeySelect" ng-model="input.key" ng-options="product for product in getProductKeys(sourceIdStep[$index])" ng-required="input.sourceType === 'StepProduct'"></select>
-  <select ng-if="input.sourceType === 'IngredientList'" name="ingredKeySelect" ng-model="input.key" ng-options="type.typeName as type.typeName for type in ingredientList.ingredientTypes" ng-required="input.sourceType === 'IngredientList'"></select>
-  <select ng-if="input.sourceType === 'EquipmentList'" name="equipKeySelect" ng-model="input.key" ng-options="dish.name as dish.name for dish in ingredientList.equipmentNeeded" ng-required="input.sourceType === 'EquipmentList'"></select>
+  Key: <select ng-if="input.sourceType === 'StepProduct'" name="stepKeySelect" ng-model="input.key" ng-options="product for product in getProductKeys(sourceIdStep[$index])" ng-change="multipleStepInputPropertyChange(input, $index)" ng-required="input.sourceType === 'StepProduct'"></select>
+  <select ng-if="input.sourceType === 'IngredientList'" name="ingredKeySelect" ng-model="input.key" ng-options="type.typeName as type.typeName for type in ingredientList.ingredientTypes" ng-change="multipleStepInputPropertyChange(input, $index)" ng-required="input.sourceType === 'IngredientList'"></select>
+  <select ng-if="input.sourceType === 'EquipmentList'" name="equipKeySelect" ng-model="input.key" ng-options="dish.name as dish.name for dish in ingredientList.equipmentNeeded" ng-change="multipleStepInputPropertyChange(input, $index)" ng-required="input.sourceType === 'EquipmentList'"></select>
   <button class="btn btn-danger btn-xs" ng-click="removeInput($index)">Remove Input</button>
 </div>
 <button ng-if="isMultiple === 'true'" class="btn btn-info btn-sm" ng-click="addInput()">Add Input</button>

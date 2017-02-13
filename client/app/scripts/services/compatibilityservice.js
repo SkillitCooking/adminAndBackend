@@ -19,7 +19,12 @@ angular.module('SkillitAdminApp')
           case 'Move':
           case 'BreakEgg':
           case 'Serve':
-            compatibilitySet = 2;
+            if(compatibilitySet < 2) {
+              compatibilitySet = 2;
+            }
+            break;
+          case 'Remove':
+            compatibilitySet = 3;
             break;
           default:
             break;
