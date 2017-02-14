@@ -6,6 +6,7 @@ middleware(router);
 
 var logger = require('../../util/logger').serverLogger;
 var constants = require('../../util/constants');
+var mailingService = require('../lib/mailingService');
 
 var mongoose = require('mongoose');
 var underscore = require('underscore');
@@ -34,6 +35,7 @@ router.get('/', function(req, res, next) {
   Ingredient.model.find(function (err, ingredients) {
     if(err) {
       logger.error('ERROR GET api/ingredients/', {error: err});
+      mailingService.mailServerError({error: err, location: 'GET api/ingredients/'});
       return next(err);
     }
     logger.info('END GET api/ingredients/');
@@ -59,6 +61,7 @@ router.get('/getIngredientsForSelection', function(req, res, next) {
   Ingredient.model.find(function (err, ingredients) {
     if(err) {
       logger.error('ERROR GET api/ingredients/getIngredientsForSelection', {error: err});
+      mailingService.mailServerError({error: err, location: 'GET api/ingredients/getIngredientsForSelection/'});
       return next(err);
     }
     var ingredientSets = underscore.groupBy(ingredients, "inputCategory");
@@ -81,12 +84,14 @@ router.post('/getIngredientsForSelection', function(req, res, next) {
   Ingredient.model.find({showInSelection: true}, function (err, ingredients) {
     if(err) {
       logger.error('ERROR POST api/ingredients/getIngredientsForSelection', {error: err});
+       mailingService.mailServerError({error: err, location: 'POST api/ingredients/getIngredientsForSelection/'});
       return next(err);
     }
     if(req.body.userId && req.body.userToken) {
       User.model.findById(req.body.userId, function(err, user) {
         if(err) {
           logger.error('ERROR POST api/ingredients/getIngredientsForSelection', {error: err});
+           mailingService.mailServerError({error: err, location: 'POST api/ingredients/getIngredientsForSelection/'});
           return next(err);
         }
         if(!user) {
@@ -95,6 +100,7 @@ router.post('/getIngredientsForSelection', function(req, res, next) {
             message: 'No user for given id'
           };
           logger.error('ERROR POST api/ingredients/getIngredientsForSelection - no user found', {error: error});
+           mailingService.mailServerError({error: err, location: 'POST api/ingredients/getIngredientsForSelection/', extra: 'no user found for id ' + req.body.userId});
           return next(error);
         }
         if(req.body.userToken !== user.curToken) {
@@ -129,13 +135,13 @@ router.post('/getIngredientsForSelection', function(req, res, next) {
 router.post('/', function(req, res, next) {
   logger.info('START POST api/ingredients/');
   try {
-    console.log('inger', req.body.ingredient);
     var query = {'name': req.body.ingredient.name};
     req.body.ingredient.dateModified = Date.parse(new Date().toUTCString());
     Ingredient.model.findOneAndUpdate(query, req.body.ingredient,
       {upsert: true, setDefaultsOnInsert: true}, function(err, ingredient) {
       if (err) {
         logger.error('ERROR POST api/ingredients/', {error: err, body: req.body});
+         mailingService.mailServerError({error: err, location: 'POST api/ingredients/'});
         return next(err);
       }
       if(ingredient === null){
@@ -144,7 +150,7 @@ router.post('/', function(req, res, next) {
           function(err, ingredient) {
             if(err) {
               logger.error('ERROR POST api/ingredients/', {error: err, body: req.body});
-
+              mailingService.mailServerError({error: err, location: 'POST api/ingredients/'});
               return next(err);
             }
             logger.info('END POST api/ingredients/');
@@ -158,6 +164,7 @@ router.post('/', function(req, res, next) {
     });
   } catch(error) {
     logger.error('ERROR - exception in POST api/ingredients/', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/ingredients/'});
     return next(error);
   }
 });
@@ -169,6 +176,7 @@ router.get('/:id', function(req, res, next) {
     Ingredient.model.findById(req.params.id, function(err, ingredient) {
       if (err) {
         logger.error('ERROR GET api/ingredients/' + req.params.id, {error: err});
+        mailingService.mailServerError({error: err, location: 'GET api/ingredients/' + req.params.id});
         return next(err);
       }
       logger.info('END GET api/ingredients/' + req.params.id);
@@ -176,6 +184,7 @@ router.get('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in GET api/ingredients/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'GET api/ingredients/:id'});
     return next(error);
   }
 });
@@ -188,6 +197,7 @@ router.put('/:id', function(req, res, next) {
     Ingredient.model.findByIdAndUpdate(req.params.id, req.body.ingredient, {new: true, setDefaultsOnInsert: true}, function(err, ingredient) {
       if (err) {
         logger.error('ERROR PUT api/ingredients' + req.params.id, {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'PUT api/ingredients/' + req.params.id});
         return next(err);
       }
       //update Recipe references
@@ -195,6 +205,7 @@ router.put('/:id', function(req, res, next) {
       Recipe.model.find({}, 'ingredientList _id', function(err, recipes) {
         if(err) {
           logger.error('ERROR PUT api/ingredients/' + req.params.id + ' in Recipe.model.find', {error: err, body: req.body, ingredientId: ingredient._id});
+          mailingService.mailServerError({error: err, location: 'PUT api/ingredients/' + req.params.id, extra: 'Recipe.find'});
           return next(err);
         }
         for (var i = recipes.length - 1; i >= 0; i--) {
@@ -215,6 +226,7 @@ router.put('/:id', function(req, res, next) {
             recipes[i].save(function(err, recipe, numAffected) {
               if(err) {
                 logger.error('ERROR PUT api/ingredients/' + req.params.id + ' in Recipe.model.save', {error: err, body: req.body, ingredient: ingredient._id});
+                mailingService.mailServerError({error: err, location: 'PUT api/ingredients/' + req.params.id, extra: 'Recipe.save'});
                 return next(err);
               }
             });
@@ -227,6 +239,7 @@ router.put('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in PUT api/ingredients/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION PUT api/ingredients/:id'});
     return next(error);
   }
 });
@@ -238,6 +251,7 @@ router.delete('/:id', function(req, res, next) {
     Ingredient.model.findByIdAndRemove(req.params.id, function(err, ingredient) {
       if (err) {
         logger.error('ERROR DELETE api/ingredients/' + req.params.id, {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'DELETE api/ingredients/' + req.params.id});
         return next(err);
       }
       //update Recipe references
@@ -245,6 +259,7 @@ router.delete('/:id', function(req, res, next) {
       Recipe.model.find({}, 'ingredientList _id', function(err, recipes) {
         if(err) {
           logger.error('ERROR DELETE api/ingredients/' + req.params.id + ' in Recipe.model.find', {error: err, body: req.body, ingredient: ingredient._id});
+          mailingService.mailServerError({error: err, location: 'DELETE api/ingredients/' + req.params.id, extra: 'Recipe.find'});
           return next(err);
         }
         for (var i = recipes.length - 1; i >= 0; i--) {
@@ -265,6 +280,7 @@ router.delete('/:id', function(req, res, next) {
             recipes[i].save(function(err, recipe, numAffected) {
               if(err) {
                 logger.error('ERROR DELETE api/ingredients/' + req.params.id + ' in Recipe.model.save', {error: err, body: req.body, ingredientId: ingredient._id});
+                mailingService.mailServerError({error: err, location: 'DELETE api/ingredients/' + req.params.id, extra: 'Recipe.save'});
                 return next(err);
               }
             });
@@ -277,6 +293,7 @@ router.delete('/:id', function(req, res, next) {
     });
   } catch(error) {
     logger.error('ERROR - exception in DELETE api/ingredients/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION DELETE api/ingredients/' + req.params.id});
     return next(error);
   }
 });

@@ -4,6 +4,7 @@ var middleware = require('../middleware');
 middleware(router);
 
 var logger = require('../../util/logger').serverLogger;
+var mailingService = require('../lib/mailingService');
 
 var mongoose = require('mongoose');
 var db = require('../../database');
@@ -21,6 +22,7 @@ router.get('/', function(req, res, next) {
   SeasoningProfile.model.find(function (err, profiles) {
     if(err) {
       logger.error('ERROR GET api/seasoningProfiles/', {error: err});
+      mailingService.mailServerError({error: err, location: 'GET api/seasoningProfiles/'});
       return next(err);
     }
     var retVal = {
@@ -42,6 +44,7 @@ router.post('/', function(req, res, next) {
       function(err, profile) {
         if (err) {
           logger.error('ERROR POST api/seasoningProfiles/', {error: err, body: req.body});
+          mailingService.mailServerError({error: err, location: 'POST api/seasoningProfiles/'});
           return next(err);
         }
         if(profile === null) {
@@ -49,6 +52,7 @@ router.post('/', function(req, res, next) {
           SeasoningProfile.model.findOne(query, function(err, profile) {
             if(err) {
               logger.error('ERROR POST api/seasoningProfiles/', {error: err, body: req.body});
+              mailingService.mailServerError({error: err, location: 'POST api/seasoningProfiles/'});
               return next(err);
             }
             logger.info('END POST api/seasoningProfiles/');
@@ -62,6 +66,7 @@ router.post('/', function(req, res, next) {
     });
   } catch(error) {
     logger.error('ERROR - exception in POST api/seasoningProfiles/', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/seasoningProfiles/'});
     return next(error);
   }
 });
@@ -73,6 +78,7 @@ router.get('/:id', function(req, res, next) {
     SeasoningProfile.model.findById(req.params.id, function(err, profile) {
       if (err) {
         logger.error('ERROR GET api/seasoningProfiles/' + req.params.id, {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'GET api/seasoningProfiles/' + req.params.id});
         return next(err);
       }
       logger.info('END GET api/seasoningProfiles/' + req.params.id);
@@ -80,6 +86,7 @@ router.get('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in GET api/seasoningProfiles/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION GET api/seasoningProfiles/:id'});
     return next(error);
   }
 });
@@ -92,6 +99,7 @@ router.put('/:id', function(req, res, next) {
     SeasoningProfile.model.findByIdAndUpdate(req.params.id, req.body.seasoningProfile, {new: true, setDefaultsOnInsert: true}, function(err, profile) {
       if (err) {
         logger.error('ERROR PUT api/seasoningProfiles/' + req.params.id, {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'PUT api/seasoningProfiles/' + req.params.id});
         return next(err);
       }
       //update recipe references
@@ -99,6 +107,7 @@ router.put('/:id', function(req, res, next) {
       Recipe.model.find({}, 'defaultSeasoningProfile choiceSeasoningProfiles _id', function(err, recipes) {
         if(err) {
           logger.error('ERROR PUT api/seasoningProfiles/' + req.params.id + ' in Recipe.model.find', {error: err, body: req.body, profileId: profile._id});
+          mailingService.mailServerError({error: err, location: 'PUT api/seasoningProfiles/' + req.params.id, extra: 'Recipe.find'});
           return next(err);
         }
         for (var i = recipes.length - 1; i >= 0; i--) {
@@ -119,6 +128,7 @@ router.put('/:id', function(req, res, next) {
             recipes[i].save(function(err, recipe, numAffected) {
               if(err) {
                 logger.error('ERROR PUT api/seasoningProfiles/' + req.params.id + ' in Recipe.model.save', {error: err, body: req.body, profileId: profile._id});
+                mailingService.mailServerError({error: err, location: 'PUT api/seasoningProfiles/' + req.params.id, extra: 'Recipe.save'});
                 return next(err);
               }
             });
@@ -131,6 +141,7 @@ router.put('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in PUT api/seasoningProfiles/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION PUT api/seasoningProfiles/:id'});
     return next(error);
   }
 });
@@ -142,6 +153,7 @@ router.delete('/:id', function(req, res, next) {
     SeasoningProfile.model.findByIdAndRemove(req.params.id, function(err, profile) {
       if (err) {
         logger.error('ERROR DELETE api/seasoningProfiles/' + req.params.id, {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'DELETE api/seasoningProfiles/' + req.params.id});
         return next(err);
       }
       //update recipe references
@@ -149,6 +161,7 @@ router.delete('/:id', function(req, res, next) {
       Recipe.model.find({}, 'defaultSeasoningProfile choiceSeasoningProfiles _id', function(err, recipes) {
         if(err) {
           logger.error('ERROR DELETE api/seasoningProfiles/' + req.params.id + ' in Recipe.model.find', {error: err, body: req.body, profileId: profile._id});
+          mailingService.mailServerError({error: err, location: 'DELETE api/seasoningProfiles/' + req.params.id, extra: 'Recipe.find'});
           return next(err);
         }
         for (var i = recipes.length - 1; i >= 0; i--) {
@@ -169,6 +182,7 @@ router.delete('/:id', function(req, res, next) {
             recipes[i].save(function(err, recipe, numAffected) {
               if(err) {
                 logger.error('ERROR DELETE api/seasoningProfiles/' + req.params.id + ' in Recipe.model.save', {error: err, body: req.body, profileId: profile._id});
+                mailingService.mailServerError({error: err, location: 'DELETE api/seasoningProfiles/' + req.params.id, extra: 'Recipe.save'});
                 return next(err);
               }
             });
@@ -181,6 +195,7 @@ router.delete('/:id', function(req, res, next) {
     });
   } catch(error) {
     logger.error('ERROR - exception in DELETE api/seasoningProfiles/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'DELETE api/seasoningProfiles/:id'});
     return next(error);
   }
 });

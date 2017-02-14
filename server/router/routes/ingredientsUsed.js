@@ -5,6 +5,7 @@ middleware(router);
 
 var logger = require('../../util/logger').serverLogger;
 var constants = require('../../util/constants');
+var mailingService = require('../lib/mailingService');
 
 var mongoose = require('mongoose');
 var db = require('../../database');
@@ -18,6 +19,7 @@ router.post('/', function(req, res, next) {
       User.model.findById(req.body.userId, 'curToken', function(err, user) {
         if(err) {
           logger.error('ERROR POST api/ingredientsUsed/ in finding a user', {error: err});
+          mailingService.mailServerError({error: err, location: 'POST api/ingredientsUsed/'});
           return next(err);
         }
         if(user) {
@@ -37,6 +39,7 @@ router.post('/', function(req, res, next) {
             message: 'No user found from supplied id'
           };
           logger.error('ERROR POST api/ingredientsUsed/', {error: error, userId: req.body.userId});
+          mailingService.mailServerError({error: err, location: 'POST api/ingredientsUsed/', extra: 'no user found from id ' + req.params.id});
           return next(error);
         }
       });
@@ -50,6 +53,7 @@ router.post('/', function(req, res, next) {
     IngredientsUsed.model.create(usedIngredients, function(err, usedIngredients) {
       if(err) {
         logger.error('ERROR POST api/ingredientsUsed/', {error: err});
+        mailingService.mailServerError({error: err, location: 'POST api/ingredientsUsed/'});
         return next(err);
       }
       logger.info('END POST api/ingredientsUsed/');
@@ -57,6 +61,7 @@ router.post('/', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/ingredientsUsed/');
+    mailingService.mailServerError({error: err, location: 'EXCEPTION POST api/ingredientsUsed/'});
     return next(error);
   }
 });

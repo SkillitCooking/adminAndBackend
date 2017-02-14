@@ -4,6 +4,7 @@ var middleware = require('../middleware');
 middleware(router);
 
 var logger = require('../../util/logger').serverLogger;
+var mailingService = require('../lib/mailingService');
 var underscore = require('underscore');
 var constants = require('../../util/constants');
 
@@ -44,10 +45,12 @@ router.post('/getItemsWithTypesAndIds', function(req, res, next) {
       res.json({data: results});
     }).catch(function(err) {
       logger.error('ERROR POST api/contentItems/getItemsWithTypesAndIds', {error: err, body: req.body});
+      mailingService.mailServerError({error: err, location: 'POST api/contentItems/getItemsWithTypesAndIds'});
       return next(err);
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/contentItems/getItemsWithTypesAndIds', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/contentItems/getItemsWithTypesAndIds'});
     return next(error);
   }
 });

@@ -4,6 +4,7 @@ var middleware = require('../middleware');
 middleware(router);
 
 var logger = require('../../util/logger').serverLogger;
+var mailingService = require('../lib/mailingService');
 
 var mongoose = require('mongoose');
 var db = require('../../database');
@@ -21,6 +22,7 @@ router.get('/', function(req, res, next) {
   DailyTip.model.find(function (err, tips) {
     if(err) {
       logger.error('ERROR GET api/dailyTips/', {error: err});
+      mailingService.mailServerError({error: err, location: 'GET api/dailyTips/'});
       return next(err);
     }
     var retVal = {
@@ -39,6 +41,7 @@ router.put('/:id', function(req, res, next) {
     DailyTip.model.findByIdAndUpdate(req.params.id, req.body.tip, {new: true, setDefaultsOnInsert: true}, function(err, tip) {
       if(err) {
         logger.error('ERROR PUT api/dailyTips/' + req.params.id);
+        mailingService.mailServerError({error: err, location: 'PUT api/dailyTips/' + req.params.id});
         return next(err);
       }
       //adjust affected Articles
@@ -46,6 +49,7 @@ router.put('/:id', function(req, res, next) {
       Article.model.find(function(err, articles) {
         if(err) {
           logger.error('ERROR PUT api/dailyTips/' + req.params.id + 'in Article.model.find', {tipId: tip._id});
+          mailingService.mailServerError({error: err, location: 'PUT api/dailyTips/' + req.params.id, extra: 'Article.find'});
           return next(err);
         }
         for (var i = articles.length - 1; i >= 0; i--) {
@@ -72,6 +76,7 @@ router.put('/:id', function(req, res, next) {
             articles[i].save(function(err, article, numAffected) {
               if(err) {
                 logger.error('ERROR PUT api/dailyTips/' + req.params.id + 'in Article.model.save', {tipId: tip._id});
+                mailingService.mailServerError({error: err, location: 'PUT api/dailyTips/' + req.params.id, extra: 'Article.save'});
                 return next(err);
               }
             });
@@ -84,6 +89,7 @@ router.put('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in PUT api/dailyTips/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION PUT api/dailyTips/'});
     return next(error);
   }
 });
@@ -95,6 +101,7 @@ router.delete('/:id', function(req, res, next) {
     DailyTip.model.findByIdAndRemove(req.params.id, function(err, tip) {
       if(err) {
         logger.error('ERROR DELETE api/dailyTips/' + req.params.id);
+        mailingService.mailServerError({error: err, location: 'DELETE api/dailyTips/' + req.params.id});
         return next(err);
       }
       //Lesson and Article reference adjustment
@@ -103,6 +110,7 @@ router.delete('/:id', function(req, res, next) {
       Lesson.model.find(function(err, lessons) {
         if(err) {
           logger.error('ERROR DELETE api/dailyTips/' + req.params.id + 'in Lesson.model.find', {tipId: tip._id});
+          mailingService.mailServerError({error: err, location: 'DELETE api/dailyTips/' + req.params.id, extra: 'Lesson.find'});
           return next(err);
         }
         for (var i = lessons.length - 1; i >= 0; i--) {
@@ -121,6 +129,7 @@ router.delete('/:id', function(req, res, next) {
               lessons[i].save(function(err, lesson, numAffected) {
                 if(err) {
                   logger.error('ERROR DELETE api/dailyTips/' + req.params.id + 'in Lesson.model.save', {tipId: tip._id});
+                  mailingService.mailServerError({error: err, location: 'DELETE api/dailyTips/' + req.params.id, extra: 'Lesson.save'});
                   return next(err);
                 }
               });
@@ -135,6 +144,7 @@ router.delete('/:id', function(req, res, next) {
       Article.model.find(function(err, articles) {
         if(err) {
           logger.error('ERROR DELETE api/dailyTips/' + req.params.id + 'in Article.model.find', {tipId: tip._id});
+          mailingService.mailServerError({error: err, location: 'DELETE api/dailyTips/' + req.params.id, extra: 'Article.find'});
           return next(err);
         }
         for (var i = articles.length - 1; i >= 0; i--) {
@@ -162,6 +172,7 @@ router.delete('/:id', function(req, res, next) {
             articles[i].save(function(err, article, numAffected) {
               if(err) {
                 logger.error('ERROR DELETE api/dailyTips/' + req.params.id + 'in Article.model.save', {tipId: tip._id});
+                mailingService.mailServerError({error: err, location: 'DELETE api/dailyTips/' + req.params.id, extra: 'Article.save'});
                 return next(err);
               }
             });
@@ -174,6 +185,7 @@ router.delete('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in DELETE api/dailyTips/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION DELETE api/dailyTips/' + req.params.id});
     return next(error);
   }
 });
@@ -187,6 +199,7 @@ router.post('/', function(req, res, next) {
     DailyTip.model.findOne(query, function(err, dailyTip) {
       if(err) {
         logger.error('ERROR POST api/dailyTips/', {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'POST api/dailyTips/'});
         return next(err);
       }
       try {
@@ -208,6 +221,7 @@ router.post('/', function(req, res, next) {
           DailyTip.model.create(postedTip, function(err, dailyTip) {
             if(err) {
               logger.error('ERROR POST api/dailyTips/', {error: err, body: req.body});
+              mailingService.mailServerError({error: err, location: 'POST api/dailyTips/'});
               return next(err);
             }
             var retVal = {
@@ -219,11 +233,13 @@ router.post('/', function(req, res, next) {
         }
       } catch (error) {
         logger.error('ERROR - exception in POST api/dailyTips/', {error: error});
+        mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/dailyTips/'});
         return next(error);
       }
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/dailyTips/', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/dailyTips/'});
     return next(error);
   }
 });
@@ -238,6 +254,7 @@ router.post('/getTipsOfTheDay', function(req, res, next) {
   .exec(function(err, tips) {
     if(err) {
       logger.error('ERROR POST api/dailyTips/getTipsOfTheDay', {error: err});
+      mailingService.mailServerError({error: err, location: 'POST api/dailyTips/getTipsOfTheDay'});
       return next(err);
     }
     var retVal = {
@@ -256,6 +273,7 @@ router.post('/getTipsForCollection', function(req, res, next) {
     DailyTip.model.find({collectionIds: {$in: [req.body.collectionId]}}, function(err, tips) {
       if(err) {
         logger.error('ERROR POST api/dailyTips/getTipsForCollection', {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'POST api/dailyTips/getTipsForCollection'});
         return next(err);
       }
       var retVal = {
@@ -266,6 +284,7 @@ router.post('/getTipsForCollection', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/dailyTips/getTipsForCollection', {error: error});
+    mailingService.mailServerError({error: err, location: 'EXCEPTION POST api/dailyTips/getTipsForCollection'});
     return next(error);
   }
 });

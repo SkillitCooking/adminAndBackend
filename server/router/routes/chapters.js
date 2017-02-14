@@ -4,6 +4,7 @@ var middleware = require('../middleware');
 middleware(router);
 
 var logger = require('../../util/logger').serverLogger;
+var mailingService = require('../lib/mailingService');
 
 var mongoose = require('mongoose');
 var db = require('../../database');
@@ -14,6 +15,7 @@ router.get('/', function(req, res, next) {
   Chapter.model.find(function(err, chapters) {
     if(err) {
       logger.error('ERROR GET api/chapters/', {error: err});
+      mailingService.mailServerError({error: err, location: 'GET api/chapters/'});
       return next(err);
     }
     logger.info('END GET api/chapters/');
@@ -28,6 +30,7 @@ router.put('/:id', function(req, res, next) {
     Chapter.model.findByIdAndUpdate(req.params.id, req.body.chapter, {new: true, setDefaultsOnInsert: true}, function(err, chapter) {
       if(err) {
         logger.error('ERROR PUT api/chapters/' + req.params.id, {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'PUT api/chapters/' + req.params.id});
         return next(err);
       }
       logger.info('END PUT api/chapters/' + req.params.id);
@@ -35,6 +38,7 @@ router.put('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in PUT api/chapters/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION PUT api/chapters/:id'});
     return next(error);
   }
 });
@@ -45,6 +49,7 @@ router.delete('/:id', function(req, res, next) {
     Chapter.model.findByIdAndRemove(req.params.id, function(err, chapter) {
       if(err) {
         logger.error('ERROR DELETE api/chapters/' + req.params.id, {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'DELETE api/chapters/' + req.params.id});
         return next(err);
       }
       logger.info('END DELETE api/chapters/' + req.params.id);
@@ -52,6 +57,7 @@ router.delete('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in DELETE api/chapters/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION DELETE api/chapters/:id'});
     return next(error);
   }
 });
@@ -64,6 +70,7 @@ router.post('/', function(req, res, next) {
     Chapter.model.findOneAndUpdate(query, req.body.chapter, {upsert: true, setDefaultsOnInsert: true}, function(err, chapter) {
       if(err) {
         logger.error('ERROR POST api/chapters/', {error: err});
+        mailingService.mailServerError({error: err, location: 'POST api/chapters/'});
         return next(err);
       }
       if(chapter === null) {
@@ -71,6 +78,7 @@ router.post('/', function(req, res, next) {
         Chapter.model.findOne(query, function(err, chapter) {
           if(err) {
             logger.error('ERROR POST api/chapters/', {error: err});
+            mailingService.mailServerError({error: err, location: 'POST api/chapters/'});
             return next(err);
           }
           logger.info('END POST api/chapters/');
@@ -87,6 +95,7 @@ router.post('/', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/chapters/', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/chapters/'});
     return next(error);
   }
 });

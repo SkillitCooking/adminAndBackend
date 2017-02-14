@@ -18,6 +18,7 @@ router.post('/', function(req, res, next) {
       User.model.findById(req.body.userId, 'curToken', function(err, user) {
         if(err) {
           logger.error('ERROR POST api/mealsCooked/ in finding a user', {error: err});
+          mailingService.mailServerError({error: err, location: 'POST api/mealsCooked'});
           return next(err);
         }
         if(user) {
@@ -37,6 +38,7 @@ router.post('/', function(req, res, next) {
             message: 'No user found from supplied id'
           };
           logger.error('ERROR POST api/mealsCooked/', {error: error, userId: req.body.userId});
+          mailingService.mailServerError({error: err, location: 'POST api/mealsCooked/', extra: 'no user found for id ' + req.body.userId});
           return next(error);
         }
       });
@@ -52,6 +54,7 @@ router.post('/', function(req, res, next) {
     MealsCooked.model.create(cookedMeal, function(err, meal) {
       if(err) {
         logger.error('ERROR POST api/mealsCooked/', {error: err});
+        mailingService.mailServerError({error: err, location: 'POST api/mealsCooked/'});
         return next(err);
       }
       logger.info('END POST api/mealsCooked/');
@@ -59,6 +62,7 @@ router.post('/', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/mealsCooked/', {error: error});
+    mailingService.mailServerError({error: error, location: 'POST api/mealsCooked/'});
     return next(error);
   }
 });

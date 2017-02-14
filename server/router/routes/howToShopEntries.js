@@ -4,6 +4,7 @@ var middleware = require('../middleware');
 middleware(router);
 
 var logger = require('../../util/logger').serverLogger;
+var mailingService = require('../lib/mailingService');
 
 var mongoose = require('mongoose');
 var db = require('../../database');
@@ -17,6 +18,7 @@ router.get('/', function(req, res, next) {
   HowToShopEntry.model.find(function(err, entries) {
     if(err) {
       logger.error('ERROR GET api/howToShopEntries/', {error: err});
+      mailingService.mailServerError({error: err, location: 'GET api/howToShopEntries/'});
       return next(err);
     }
     var retVal = {
@@ -34,6 +36,7 @@ router.put('/:id', function(req, res, next) {
     HowToShopEntry.model.findByIdAndUpdate(req.params.id, req.body.entry, {new: true, setDefaultsOnInsert: true}, function(err, entry) {
       if(err) {
         logger.error('ERROR PUT api/howToShopEntries/' + req.params.id, {error: err});
+        mailingService.mailServerError({error: err, location: 'PUT api/howToShopEntries/' + req.params.id});
         return next(err);
       }
       //adjust affected Articles
@@ -41,6 +44,7 @@ router.put('/:id', function(req, res, next) {
       Article.model.find(function(err, articles) {
         if(err) {
           logger.error('ERROR PUT api/howToShopEntries/' + req.params.id + 'in Article.model.find', {howToShopId: entry._id});
+           mailingService.mailServerError({error: err, location: 'PUT api/howToShopEntries/' + req.params.id, extra: 'Article.find'});
           return next(err);
         }
         for (var i = articles.length - 1; i >= 0; i--) {
@@ -67,6 +71,7 @@ router.put('/:id', function(req, res, next) {
             articles[i].save(function(err, article, numAffected) {
               if(err) {
                 logger.error('ERROR PUT api/howToShopEntries/' + req.params.id + 'in Article.model.save', {howToShopId: entry._id});
+                mailingService.mailServerError({error: err, location: 'PUT api/howToShopEntries/' + req.params.id, extra: 'Article.save'});
                 return next(err);
               }
             });
@@ -79,6 +84,7 @@ router.put('/:id', function(req, res, next) {
     });
   } catch(error) {
     logger.error('ERROR - exception in PUT api/howToShopEntries/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'PUT api/howToShopEntries/:id'});
     return next(error);
   }
 });
@@ -89,6 +95,7 @@ router.delete('/:id', function(req, res, next) {
     HowToShopEntry.model.findByIdAndRemove(req.params.id, function(err, entry) {
       if(err) {
         logger.error('ERROR DELETE api/howToShopEntries/' + req.params.id, {error: err});
+        mailingService.mailServerError({error: err, location: 'DELETE api/howToShopEntries/' + req.params.id});
         return next(err);
       }
       //Lesson and Article reference adjustment
@@ -97,6 +104,7 @@ router.delete('/:id', function(req, res, next) {
       Lesson.model.find(function(err, lessons) {
         if(err) {
           logger.error('ERROR DELETE api/howToShopEntries/' + req.params.id + 'in Lesson.model.find', {howToShopId: entry._id});
+          mailingService.mailServerError({error: err, location: 'PUT api/howToShopEntries/' + req.params.id, extra: 'Lesson.find'});
           return next(err);
         }
         for (var i = lessons.length - 1; i >= 0; i--) {
@@ -115,6 +123,7 @@ router.delete('/:id', function(req, res, next) {
               lessons[i].save(function(err, lesson, numAffected) {
                 if(err) {
                   logger.error('ERROR DELETE api/howToShopEntries/' + req.params.id + 'in Lesson.model.save', {howToShopId: entry._id});
+                  mailingService.mailServerError({error: err, location: 'DELETE api/howToShopEntries/' + req.params.id, extra: 'Lesson.save'});
                   return next(err);
                 }
               });
@@ -129,6 +138,7 @@ router.delete('/:id', function(req, res, next) {
       Article.model.find(function(err, articles) {
         if(err) {
           logger.error('ERROR DELETE api/howToShopEntries/' + req.params.id + 'in Article.model.find', {howToShopId: entry._id});
+          mailingService.mailServerError({error: err, location: 'DELETE api/howToShopEntries/' + req.params.id, extra: 'Article.find'});
           return next(err);
         }
         for (var i = articles.length - 1; i >= 0; i--) {
@@ -156,6 +166,7 @@ router.delete('/:id', function(req, res, next) {
             articles[i].save(function(err, article, numAffected) {
               if(err) {
                 logger.error('ERROR DELETE api/howToShopEntries/' + req.params.id + 'in Article.model.save', {howToShopId: entry._id});
+                mailingService.mailServerError({error: err, location: 'DELETE api/howToShopEntries/' + req.params.id, extra: 'Article.save'});
                 return next(err);
               }
             });
@@ -168,6 +179,7 @@ router.delete('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in DELETE api/howToShopEntries/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'DELETE api/howToShopEntries'});
     return next(error);
   }
 });
@@ -180,6 +192,7 @@ router.post('/', function(req, res, next) {
     HowToShopEntry.model.findOne(query, function(err, entry) {
       if(err) {
         logger.error('ERROR POST api/howToShopEntries/', {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'POST api/howToShopEntries/'});
         return next(err);
       }
       if(entry) {
@@ -196,6 +209,7 @@ router.post('/', function(req, res, next) {
         HowToShopEntry.model.create(howToShopEntry, function(err, howToShopEntry) {
           if(err) {
             logger.error('ERROR POST api/howToShopEntries/', {error: err, body: req.body});
+            mailingService.mailServerError({error: err, location: 'POST api/howToShopEntries/'});
             return next(err);
           }
           var retVal = {
@@ -208,6 +222,7 @@ router.post('/', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/howToShopEntries/', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/howToShopEntries/'});
     return next(error);
   }
 });
@@ -219,6 +234,7 @@ router.post('/getHowToShopForCollection', function(req, res, next) {
     HowToShopEntry.model.find({collectionIds: {$in: [req.body.collectionId]}}, function(err, entries) {
       if(err) {
         logger.error('ERROR POST api/howToShopEntries/getHowToShopForCollection', {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'POST api/howToShopEntries/getHowToShopForCollection'});
         return next(err);
       }
       var retVal = {
@@ -229,6 +245,7 @@ router.post('/getHowToShopForCollection', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/howToShopEntries/getHowToShopForCollection', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/howToShopEntries/getHowToShopForCollection'});
     return next(error);
   }
 });

@@ -4,14 +4,17 @@ var middleware = require('../middleware');
 middleware(router);
 
 var loggers = require('../../util/logger');
+var mailingService = require('../lib/mailingService');
 
 router.post('/logError', function(req, res, next) {
   loggers.serverLogger.info('START POST api/clientLogging/logError');
   //expect an 'errInfo' property of body, then just log that. The client will
   //be responsible for populating it with more specific information
   if(req.body.errInfo) {
-    console.log('error', req.body.errInfo);
-    console.log('clientLogger', loggers.clientLogger);
+    //if in production environment
+    if(process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging' || process.env.NODE_ENV === 'development') {
+      mailingService.mailClientError(req.body.errInfo);
+    }
     loggers.clientLogger.error('ERROR: ', {err: req.body.errInfo});
     res.json({message: 'Error successfully logged'});
   } else {

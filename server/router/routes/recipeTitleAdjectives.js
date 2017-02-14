@@ -15,6 +15,7 @@ router.get('/', function(req, res, next) {
   RecipeTitleAdjective.model.find(function(err, adjectives) {
     if(err) {
       logger.error('ERROR GET api/recipeTitleAdjectives/', {error: err});
+      mailingService.mailServerError({error: err, location: 'GET api/recipeTitleAdjectives/'});
       return next(err);
     }
     res.json({data: adjectives});
@@ -30,6 +31,7 @@ router.put('/:id', function(req, res, next) {
     RecipeTitleAdjective.model.findOneAndUpdate(req.params.id, req.body.recipeTitleAdjective, {new: true, setDefaultsOnInsert: true}, function(err, adjective) {
       if(err) {
         logger.error('ERROR PUT api/recipeTitleAdjectives/' + req.params.id);
+        mailingService.mailServerError({error: err, location: 'PUT api/recipeTitleAdjectives/' + req.params.id});
         return next(err);
       }
       //adjust affected Recipes
@@ -45,6 +47,7 @@ router.put('/:id', function(req, res, next) {
               recipes[i].save(function(err, recipe, numAffected) {
                 if(err) {
                   logger.error('ERROR PUT api/recipeTitleAdjectives/:id in recipe save', {error: err});
+                  mailingService.mailServerError({error: err, location: 'PUT api/recipeTitleAdjectives/' + req.params.id, extra: 'Recipe.save'});
                   return next(err);
                 }
               });
@@ -57,6 +60,7 @@ router.put('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in PUT api/recipeTitleAdjectives/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION PUT api/recipeTitleAdjectives/:id'});
     return next(error);
   }
 });
@@ -66,8 +70,17 @@ router.delete('/:id', function(req, res, next) {
   try {
     logger.info('START DELETE api/recipeTitleAdjectives/' + req.params.id);
     RecipeTitleAdjective.model.findByIdAndRemove(req.params.id, function(err, adjective) {
+      if(err) {
+        logger.error('ERROR DELETE api/recipeTitleAdjectives/' + req.params.id, {error: err});
+        mailingService.mailServerError({error: err, location: 'DELETE api/recipeTitleAdjectives/' + req.params.id});
+        return next(err);
+      }
       //adjust recipes
       Recipe.model.find({recipeTitleAdjectives: {_id: modifier._id}}, function(err, recipes) {
+        if(err) {
+          logger.error('ERROR DELETE api/recipeTitleAdjectives' + req.params.id, {error: err});
+          mailingService.mailServerError({error: err, location: 'DELETE api/recipeTitleAdjectives/' + req.params.id, extra: 'Recipe.find'});
+        }
         var recipeIds = [];
         for (var i = recipes.length - 1; i >= 0; i--) {
           for (var j = recipes[i].titleAdjectives.length - 1; j >= 0; j--) {
@@ -78,6 +91,7 @@ router.delete('/:id', function(req, res, next) {
               recipes[i].save(function(err, recipe, numAffected) {
                 if(err) {
                   logger.error('ERROR DELETE api/recipeTitleAdjectives/:id', {error: err});
+                  mailingService.mailServerError({error: err, location: 'DELETE api/recipeTitleAdjectives/' + req.params.id, extra: 'Recipe.save'});
                   return next(err);
                 }
               });
@@ -90,6 +104,7 @@ router.delete('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in DELETE api/recipeTitleAdjectives/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION DELETE api/recipeTitleAdjectives/:id'});
     return next(error);
   }
 });
@@ -103,6 +118,7 @@ router.post('/', function(req, res, next) {
     RecipeTitleAdjective.model.findOneAndUpdate(query, req.body.recipeTitleAdjective, {upsert: true, setDefaultsOnInsert: true}, function(err, adjective) {
       if(err) {
         logger.error('ERROR POST api/recipeTitleAdjectives/', {error: err});
+        mailingService.mailServerError({error: err, location: 'POST api/recipeTitleAdjectives/'});
         return next(err);
       }
       if(adjective === null) {
@@ -110,6 +126,7 @@ router.post('/', function(req, res, next) {
         RecipeTitleAdjective.model.findOne(query, function(err, modifier) {
           if(err) {
             logger.error('ERROR POST api/recipeTitleAdjectives/', {error: err, body: req.body});
+            mailingService.mailServerError({error: err, location: 'POST api/recipeTitleAdjectives/'});
             return next(err);
           }
           logger.info('END POST api/recipeTitleAdjectives/');
@@ -122,6 +139,7 @@ router.post('/', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/recipeTitleAdjectives/', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/recipeTitleAdjectives/'});
     return next(error);
   }
 });
@@ -133,6 +151,7 @@ router.get('/:id', function(req, res, next) {
     RecipeTitleAdjective.model.findById(req.params.id, function(err, adjective) {
       if(err) {
         logger.error('ERROR GET api/recipeTitleAdjectives/' + req.params.id);
+        mailingService.mailServerError({error: err, location: 'GET api/recipeTitleAdjectives/' + req.params.id});
         return next(err);
       }
       logger.info('END GET api/recipeTitleAdjectives/' + req.params.id);
@@ -140,6 +159,7 @@ router.get('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in GET api/recipeTitleAdjectives/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION GET api/recipeTitleAdjectives/:id'});
     return next(error);
   }
 });

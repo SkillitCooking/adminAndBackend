@@ -5,6 +5,7 @@ middleware(router);
 
 var logger = require('../../util/logger').serverLogger;
 var constants = require('../../util/constants');
+var mailingService = require('../lib/mailingService');
 
 var mongoose = require('mongoose');
 var underscore = require('underscore');
@@ -27,6 +28,7 @@ router.get('/', function(req, res, next) {
   ItemCollection.model.find(function(err, collections) {
     if(err) {
       logger.error('ERROR GET api/itemCollections/', {error: err});
+      mailingService.mailServerError({error: err, location: 'GET api/itemCollection/'});
       return next(err);
     }
     var typedCollections = underscore.groupBy(collections, "itemType");
@@ -45,6 +47,7 @@ router.put('/:id', function(req, res, next) {
     ItemCollection.model.findByIdAndUpdate(req.params.id, req.body.collection, {new: true, setDefaultsOnInsert:true}, function(err, collection) {
       if(err) {
         logger.error('ERROR PUT api/itemCollections/' + req.params.id, {error: err});
+        mailingService.mailServerError({error: err, location: 'PUT api/itemCollection/' + req.params.id});
         return next(err);
       }
       logger.info('END PUT api/itemCollections/' + req.params.id);
@@ -52,6 +55,7 @@ router.put('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in PUT api/itemCollections/:id', {error: error});
+    mailingService.mailServerError({error: err, location: 'EXCEPTION PUT api/itemCollection/:id'});
     return next(error);
   }
 });
@@ -62,6 +66,7 @@ router.delete('/:id', function(req, res, next) {
     ItemCollection.model.findByIdAndRemove(req.params.id, function(err, collection) {
       if(err) {
         logger.error('ERROR DELETE api/itemCollections/' + req.params.id, {error: err});
+        mailingService.mailServerError({error: err, location: 'DELETE api/itemCollection/' + req.params.id});
         return next(err);
       }
       //update references
@@ -71,6 +76,7 @@ router.delete('/:id', function(req, res, next) {
           DailyTip.model.find({}, 'collectionIds _id', function(err, tips) {
             if(err) {
               logger.error('ERROR DELETE api/itemCollections/' + req.params.id + 'in DailyTip.model.find', {collectionId: collection._id});
+              mailingService.mailServerError({error: err, location: 'DELETE api/itemCollection/' + req.params.id, extra: 'DailyTip.find'});
               return next(err);
             }
             for (var i = tips.length - 1; i >= 0; i--) {
@@ -88,6 +94,7 @@ router.delete('/:id', function(req, res, next) {
                 tips[i].save(function(err, tip, numAffected) {
                   if(err) {
                     logger.error('ERROR DELETE api/itemCollections/' + req.params.id + 'in DailyTip.model.save', {collectionId: collection._id});
+                    mailingService.mailServerError({error: err, location: 'DELETE api/itemCollection/' + req.params.id, extra: 'DailyTip.save'});
                     return next(err);
                   }
                 });
@@ -102,6 +109,7 @@ router.delete('/:id', function(req, res, next) {
           HowToShopEntry.model.find({}, 'collectionIds _id', function(err, entries) {
             if(err) {
               logger.error('ERROR DELETE api/itemCollections/' + req.params.id + 'in HowToShopEntry.model.find', {collectionId: collection._id});
+              mailingService.mailServerError({error: err, location: 'DELETE api/itemCollection/' + req.params.id, extra: 'HowToShopEntry.find'});
               return next(err);
             }
             for (var i = entries.length - 1; i >= 0; i--) {
@@ -119,6 +127,7 @@ router.delete('/:id', function(req, res, next) {
                 entries[i].save(function(err, entry, numAffected) {
                   if(err) {
                     logger.error('ERROR DELETE api/itemCollections/' + req.params.id + 'in HowToShopEntry.model.save', {collectionId: collection._id});
+                    mailingService.mailServerError({error: err, location: 'DELETE api/itemCollection/' + req.params.id, extra: 'HowToShopEntry.save'});
                     return next(err);
                   }
                 });
@@ -133,6 +142,7 @@ router.delete('/:id', function(req, res, next) {
           Recipe.model.find({}, 'collectionIds _id', function(err, recipes) {
             if(err) {
               logger.error('ERROR DELETE api/itemCollections/' + req.params.id + 'in Recipe.model.find', {collectionId: collection._id});
+              mailingService.mailServerError({error: err, location: 'DELETE api/itemCollection/' + req.params.id, extra: 'Recipe.find'});
               return next(err);
             }
             for (var i = recipes.length - 1; i >= 0; i--) {
@@ -150,6 +160,7 @@ router.delete('/:id', function(req, res, next) {
                 recipes[i].save(function(err, recipe, numAffected) {
                   if(err) {
                     logger.error('ERROR DELETE api/itemCollections/' + req.params.id + 'in Recipe.model.save', {collectionId: collection._id});
+                    mailingService.mailServerError({error: err, location: 'DELETE api/itemCollection/' + req.params.id, extra: 'Recipe.save'});
                     return next(err);
                   }
                 });
@@ -164,6 +175,7 @@ router.delete('/:id', function(req, res, next) {
           GlossaryEntry.model.find({}, 'collectionIds _id', function(err, entries) {
             if(err) {
               logger.error('ERROR DELETE api/itemCollections/' + req.params.id + 'in GlossaryEntry.model.find', {collectionId: collection._id});
+              mailingService.mailServerError({error: err, location: 'DELETE api/itemCollection/' + req.params.id, extra: 'GlossaryEntry.find'});
               return next(err);
             }
             for (var i = entries.length - 1; i >= 0; i--) {
@@ -181,6 +193,7 @@ router.delete('/:id', function(req, res, next) {
                 entries[i].save(function(err, entry, numAffected) {
                   if(err) {
                     logger.error('ERROR DELETE api/itemCollections/' + req.params.id + 'in GlossaryEntry.model.save', {collectionId: collection._id});
+                    mailingService.mailServerError({error: err, location: 'DELETE api/itemCollection/' + req.params.id, extra: 'GlossaryEntry.save'});
                     return next(err);
                   }
                 });
@@ -195,6 +208,7 @@ router.delete('/:id', function(req, res, next) {
           TrainingVideo.model.find({}, 'collectionIds _id', function(err, videos) {
             if(err) {
               logger.error('ERROR DELETE api/itemCollections/' + req.params.id + 'in TrainingVideo.model.find', {collectionId: collection._id});
+              mailingService.mailServerError({error: err, location: 'DELETE api/itemCollection/' + req.params.id, extra: 'TrainingVideo.find'});
               return next(err);
             }
             for (var i = videos.length - 1; i >= 0; i--) {
@@ -212,6 +226,7 @@ router.delete('/:id', function(req, res, next) {
                 videos[i].save(function(err, video, numAffected) {
                   if(err) {
                     logger.error('ERROR DELETE api/itemCollections/' + req.params.id + 'in TrainingVideo.model.save', {collectionId: collection._id});
+                    mailingService.mailServerError({error: err, location: 'DELETE api/itemCollection/' + req.params.id, extra: 'TrainingVideo.save'});
                     return next(err);
                   }
                 });
@@ -229,6 +244,7 @@ router.delete('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in PUT api/itemCollections/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION DELETE api/itemCollection/'});
     return next(error);
   }
 });
@@ -246,6 +262,7 @@ router.post('/', function(req, res, next) {
     ItemCollection.model.findOneAndUpdate(query, req.body.itemCollection, {upsert: true, setDefaultsOnInsert: true}, function(err, collection) {
       if(err) {
         logger.error('ERROR POST api/itemCollections/', {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'POST api/itemCollection/'});
         return next(err);
       }
       if(collection === null) {
@@ -253,6 +270,7 @@ router.post('/', function(req, res, next) {
         ItemCollection.model.findOne(query, function(err, collection) {
           if(err) {
             logger.error('ERROR POST api/itemCollections/', {error: err, body: req.body});
+            mailingService.mailServerError({error: err, location: 'POST api/itemCollection/'});
             return next(err);
           }
           var retVal = {
@@ -272,6 +290,7 @@ router.post('/', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/itemCollections/', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/itemCollection/'});
     return next(error);
   }
 });
@@ -284,6 +303,7 @@ router.post('/getCollectionsForItemType', function(req, res, next) {
       User.model.findById(req.body.userId, function(err, user) {
         if(err) {
           logger.error('ERROR POST api/itemCollections/getCollectionsForItemType - user', {error: err});
+          mailingService.mailServerError({error: err, location: 'POST api/itemCollection/getCollectionsForItemType'});
           return next(err);
         }
         if(!user) {
@@ -292,6 +312,7 @@ router.post('/getCollectionsForItemType', function(req, res, next) {
             message: 'No user for given id'
           };
           logger.error('ERROR POST api/itemCollections/getCollectionsForItemType - no user found', {error: error});
+          mailingService.mailServerError({error: err, location: 'POST api/itemCollection/getCollectionsForItemType', extra: 'no user found for id ' + req.body.userId});
           return next(error);
         }
         if(req.body.userToken !== user.curToken) {
@@ -314,6 +335,7 @@ router.post('/getCollectionsForItemType', function(req, res, next) {
         }, function(err, collections) {
           if(err) {
             logger.error('ERROR POST api/itemCollections/getCollectionsForItemType', {error: err});
+            mailingService.mailServerError({error: err, location: 'POST api/itemCollection/getCollectionsForItemType'});
             return next(err);
           }
           var retVal = {
@@ -329,6 +351,7 @@ router.post('/getCollectionsForItemType', function(req, res, next) {
       }, function(err, collections) {
         if(err) {
           logger.error('ERROR POST api/itemCollections/getCollectionsForItemType', {error: err, body: req.body});
+          mailingService.mailServerError({error: err, location: 'POST api/itemCollection/getCollectionsForItemType'});
           return next(err);
         }
         var retVal = {
@@ -340,6 +363,7 @@ router.post('/getCollectionsForItemType', function(req, res, next) {
     }
   } catch (error) {
     logger.error('ERROR - exception in POST api/itemCollections/getCollectionsForItemType', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/itemCollection/getCollectionsForItemType'});
     return next(error);
   }
 });
@@ -355,6 +379,7 @@ router.post('/getCollectionsForItemTypes', function(req, res, next) {
     ItemCollection.model.find().or(typeConditions).exec(function(err, collections) {
       if(err) {
         logger.error('ERROR POST api/itemCollections/getCollectionsForItemTypes', {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'POST api/itemCollection/getCollectionsForItemType'});
         return next(err);
       }
       var groupedCollections = underscore.groupBy(collections, function(collection) {
@@ -368,6 +393,7 @@ router.post('/getCollectionsForItemTypes', function(req, res, next) {
     });
   } catch(error) {
     logger.error('ERROR - exception in POST api/itemCollections/getCollectionsForItemTypes', {error: error});
+    mailingService.mailServerError({error: error, location: 'POST api/itemCollection/getCollectionsForItemType'});
     return next(error);
   }
 });

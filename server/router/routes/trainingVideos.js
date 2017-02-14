@@ -4,6 +4,7 @@ var middleware = require('../middleware');
 middleware(router);
 
 var logger = require('../../util/logger').serverLogger;
+mailingService = require('../lib/mailingService');
 
 var mongoose = require('mongoose');
 var db = require('../../database');
@@ -17,6 +18,7 @@ router.get('/', function(req, res, next) {
   TrainingVideo.model.find(function(err, videos) {
     if(err) {
       logger.error('ERROR GET api/trainingVideos/', {error: err});
+      mailingService.mailServerError({error: err, location: 'GET api/trainingVideos/'});
       return next(err);
     }
     var retVal = {
@@ -34,6 +36,7 @@ router.put('/:id', function(req, res, next) {
     TrainingVideo.model.findByIdAndUpdate(req.params.id, req.body.trainingVideo, {new: true, setDefaultsOnInsert: true}, function(err, video) {
       if (err) {
         logger.error('ERROR PUT api/trainingVideos/' + req.params.id, {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'PUT api/trainingVideos/' + req.params.id});
         return next(err);
       }
       //adjust affected Articles
@@ -41,6 +44,7 @@ router.put('/:id', function(req, res, next) {
       Article.model.find(function(err, articles) {
         if(err) {
           logger.error('ERROR PUT api/trainingVideos/' + req.params.id + 'in Article.model.find', {videoId: video._id});
+          mailingService.mailServerError({error: err, location: 'PUT api/trainingVideos/' + req.params.id, extra: 'Article.find'});
           return next(err);
         }
         for (var i = articles.length - 1; i >= 0; i--) {
@@ -67,6 +71,7 @@ router.put('/:id', function(req, res, next) {
             articles[i].save(function(err, article, numAffected) {
               if(err) {
                 logger.error('ERROR PUT api/trainingVideos/' + req.params.id + 'in Article.model.save', {videoId: video._id});
+                mailingService.mailServerError({error: err, location: 'PUT api/trainingVideos/' + req.params.id, extra: 'Article.save'});
                 return next(err);
               }
             });
@@ -79,6 +84,7 @@ router.put('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in PUT api/trainingVideos/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'PUT api/trainingVideos/:id'});
     return next(error);
   }
 });
@@ -89,6 +95,7 @@ router.delete('/:id', function(req, res, next) {
     TrainingVideo.model.findByIdAndRemove(req.params.id, function(err, video) {
       if (err) {
         logger.error('ERROR DELETE api/trainingVideos/' + req.params.id, {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'DELETE api/trainingVideos/' + req.params.id});
         return next(err);
       }
       //Lesson and Article reference adjustment
@@ -97,6 +104,7 @@ router.delete('/:id', function(req, res, next) {
       Lesson.model.find(function(err, lessons) {
         if(err) {
           logger.error('ERROR DELETE api/trainingVideos/' + req.params.id + 'in Lesson.model.find', {videoId: video._id});
+          mailingService.mailServerError({error: err, location: 'DELETE api/trainingVideos/' + req.params.id, extra: 'Lesson.find'});
           return next(err);
         }
         for (var i = lessons.length - 1; i >= 0; i--) {
@@ -115,6 +123,7 @@ router.delete('/:id', function(req, res, next) {
               lessons[i].save(function(err, lesson, numAffected) {
                 if(err) {
                   logger.error('ERROR DELETE api/trainingVideos/' + req.params.id + 'in Lesson.model.save', {videoId: video._id});
+                  mailingService.mailServerError({error: err, location: 'DELETE api/trainingVideos/' + req.params.id, extra: 'Lesson.save'});
                   return next(err);
                 }
               });
@@ -129,6 +138,7 @@ router.delete('/:id', function(req, res, next) {
       Article.model.find(function(err, articles) {
         if(err) {
           logger.error('ERROR DELETE api/trainingVideos/' + req.params.id + 'in Article.model.find', {videoId: video._id});
+          mailingService.mailServerError({error: err, location: 'DELETE api/trainingVideos/' + req.params.id, extra: 'Article.find'});
           return next(err);
         }
         for (var i = articles.length - 1; i >= 0; i--) {
@@ -156,6 +166,7 @@ router.delete('/:id', function(req, res, next) {
             articles[i].save(function(err, article, numAffected) {
               if(err) {
                 logger.error('ERROR DELETE api/trainingVideos/' + req.params.id + 'in Article.model.save', {videoId: video._id});
+                mailingService.mailServerError({error: err, location: 'DELETE api/trainingVideos/' + req.params.id, extra: 'Article.save'});
                 return next(err);
               }
             });
@@ -168,6 +179,7 @@ router.delete('/:id', function(req, res, next) {
     });
   } catch(error) {
     logger.error('ERROR - exception in DELETE api/trainingVideos/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION PUT api/trainingVideos/:id'});
     return next(error);
   }
 });
@@ -181,6 +193,7 @@ router.post('/', function(req, res, next) {
     TrainingVideo.model.findOne(query, function(err, video) {
       if(err) {
         logger.error('ERROR POST api/trainingVideos/', {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'POST api/trainingVideos/'});
         return next(err);
       }
       if(video) {
@@ -197,6 +210,7 @@ router.post('/', function(req, res, next) {
         TrainingVideo.model.create(trainingVideo, function(err, trainingVideo) {
           if(err) {
             logger.error('ERROR POST api/trainingVideos/', {error: err, body: req.body});
+            mailingService.mailServerError({error: err, location: 'POST api/trainingVideos/'});
             return next(err);
           }
           var retVal = {
@@ -209,6 +223,7 @@ router.post('/', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/trainingVideos/', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/trainingVideos/'});
     return next(error);
   }
 });
@@ -219,6 +234,7 @@ router.post('/getTrainingVideosForCollection', function(req, res, next) {
     TrainingVideo.model.find({collectionIds: {$in: [req.body.collectionId]}}, function(err, videos) {
       if(err) {
         logger.error('ERROR POST api/trainingVideos/getTrainingVideosForCollection', {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'POST api/trainingVideos/getTrainingVideosForCollection'});
         return next(err);
       }
       retVal = {
@@ -229,6 +245,7 @@ router.post('/getTrainingVideosForCollection', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/trainingVideos/getTrainingVideosForCollection', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/trainingVideos/getTrainingVideosForCollection'});
     return next(error);
   }
 });

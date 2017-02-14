@@ -6,6 +6,7 @@ middleware(router);
 var constants = require('../../util/constants');
 
 var logger = require('../../util/logger').serverLogger;
+var mailingService = require('../lib/mailingService');
 
 var mongoose = require('mongoose');
 var db = require('../../database');
@@ -25,13 +26,15 @@ router.post('/socialLogin', function(req, res, next) {
       default:
         //unrecognized socialType - should probably do some sort of appropriate handling
         var error = {message: 'unrecognized socialType for socialLogin', socialType: req.body.socialType};
-        logger.error('ERROR POST api/users/socialLogin/', {error: error});
         error.status = constants.STATUS_CODES.UNPROCESSABLE;
+        logger.error('ERROR POST api/users/socialLogin/', {error: error});
+        mailingService.mailServerError({error: err, location: 'POST api/users/socialLogin', extra: 'unrecognized socialType: ' + req.body.socialType});
         return next(error);
     }
     User.model.findOne(query, function(err, user) {
       if(err) {
         logger.error('ERROR POST api/users/socialLogin/', {error: err});
+        mailingService.mailServerError({error: err, location: 'POST api/users/socialLogin'});
         return next(err);
       }
       if(!user) {
@@ -40,6 +43,7 @@ router.post('/socialLogin', function(req, res, next) {
           message: 'No user for given id'
         };
         logger.error('ERROR POST api/users/socialLogin - no user found', {error: error});
+        mailingService.mailServerError({error: err, location: 'POST api/users/socialLogin', extra: 'no user found for id ' + req.body.userId});
         return next(error);
       }
       user.curToken = req.body.token;
@@ -56,6 +60,7 @@ router.post('/socialLogin', function(req, res, next) {
       user.save(function(err, user, numAffected) {
         if(err) {
           logger.error('ERROR POST api/users/socialLogin in user.save', {error: err});
+          mailingService.mailServerError({error: err, location: 'POST api/users/socialLogin', extra: 'User.save'});
           return next(err);
         }
         logger.info('END POST api/users/socialLogin');
@@ -64,6 +69,7 @@ router.post('/socialLogin', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/users/socialLogin', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/users/socialLogin'});
     return next(error);
   }
 });
@@ -84,8 +90,9 @@ router.post('/socialSignup', function(req, res, next) {
       default:
         //unrecognized socialType - should probably do some sort of appropriate handling
         var error = {message: 'unrecognized socialType for socialSignup', socialType: req.body.socialType};
-        logger.error('ERROR POST api/users/socialSignup/', {error: error});
         error.status = constants.STATUS_CODES.UNPROCESSABLE;
+        logger.error('ERROR POST api/users/socialSignup/', {error: error});
+        mailingService.mailServerError({error: err, location: 'POST api/users/socialSignup', extra: 'unrecognized socialType: ' + req.body.socialType});
         return next(error);
     }
     user.dateCreated = Date.parse(new Date().toUTCString());
@@ -97,6 +104,7 @@ router.post('/socialSignup', function(req, res, next) {
     User.model.create(user, function(err, user) {
       if(err) {
         logger.error('ERROR POST api/users/socialSignup', {error: err});
+         mailingService.mailServerError({error: err, location: 'POST api/users/socialSignup'});
         return next(err);
       }
       logger.info('END POST api/users/socialSignup');
@@ -104,6 +112,7 @@ router.post('/socialSignup', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/users/socialSignup', {error: error});
+     mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/users/socialSignup'});
     return next(error);
   }
 });
@@ -114,6 +123,7 @@ router.post('/emailLogin', function(req, res, next) {
     User.model.findOne({email: req.body.email}, function(err, user) {
       if(err) {
         logger.error('ERROR POST api/users/emailLogin', {error: err});
+         mailingService.mailServerError({error: err, location: 'POST api/users/emailLogin'});
         return next(err);
       }
       if(!user) {
@@ -122,6 +132,7 @@ router.post('/emailLogin', function(req, res, next) {
           message: 'No user for given id'
         };
         logger.error('ERROR POST api/users/emailLogin - no user found', {error: error});
+        mailingService.mailServerError({error: err, location: 'POST api/users/emailLogin', extra: 'no user found for email ' + req.body.email});
         return next(error);
       }
       user.curToken = req.body.token;
@@ -129,6 +140,7 @@ router.post('/emailLogin', function(req, res, next) {
       user.save(function(err, user, numAffected) {
         if(err) {
           logger.error('ERROR POST api/users/emailLogin in save user', {error: err});
+          mailingService.mailServerError({error: err, location: 'POST api/users/emailLogin', extra: 'User.save'});
           return next(err);
         }
         logger.info('END POST api.users/emailLogin');
@@ -137,6 +149,7 @@ router.post('/emailLogin', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/users/emailLogin', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/users/emailLogin'});
     return next(error);
   }
 });
@@ -153,6 +166,7 @@ router.post('/emailSignup', function(req, res, next) {
     User.model.create(user, function(err, user) {
       if(err) {
         logger.error('ERROR POST api/users/emailSignup', {error: err});
+        mailingService.mailServerError({error: err, location: 'POST api/users/emailSignup'});
         return next(err);
       }
       logger.info('END POST api/users/emailSignup');
@@ -160,6 +174,7 @@ router.post('/emailSignup', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/users/emailSignup', {error: error});
+    mailingService.mailServerError({error: err, location: 'EXCEPTION POST api/users/emailSignup'});
     return next(error);
   }
 });
@@ -170,6 +185,7 @@ router.post('/logout', function(req, res, next) {
     User.model.findById(req.body.userId, function(err, user) {
       if(err) {
         logger.error('ERROR POST api/users/logout');
+        mailingService.mailServerError({error: err, location: 'POST api/users/logout'});
         return next(err);
       }
       if(user) {
@@ -186,6 +202,7 @@ router.post('/logout', function(req, res, next) {
         user.save(function(err, user, numAffected) {
           if(err) {
             logger.error('ERROR POST api/users/logout in user.save', {error: err});
+            mailingService.mailServerError({error: err, location: 'POST api/users/logout', extra: 'User.save'});
             return next(err);
           }
           logger.info('END POST api/users/logout');
@@ -197,11 +214,13 @@ router.post('/logout', function(req, res, next) {
           message: 'No user for given id'
         };
         logger.error('ERROR POST api/users/logout - no user found', {error: error});
+        mailingService.mailServerError({error: err, location: 'POST api/users/logout', extra: 'no user found for id ' + req.body.userId});
         return next(error);
       }
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/users/logout', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/users/logout'});
     return next(error);
   }
 });
@@ -213,6 +232,7 @@ router.post('/updatePersonalInfo', function(req, res, next) {
     User.model.findById(req.body.userId, function(err, user) {
       if(err) {
         logger.error('ERROR POST api/users/updatePersonalInfo', {error: err});
+        mailingService.mailServerError({error: err, location: 'POST api/users/updatePersonalInfo'});
         return next(err);
       }
       if(!user) {
@@ -221,6 +241,7 @@ router.post('/updatePersonalInfo', function(req, res, next) {
           message: 'No user for given id'
         };
         logger.error('ERROR POST api/users/updatePersonalInfo - no user found', {error: error});
+        mailingService.mailServerError({error: err, location: 'POST api/users/updatePersonalInfo', extra: 'no user found for id ' + req.body.userId});
         return next(error);
       }
       if(req.body.token !== user.curToken) {
@@ -246,6 +267,7 @@ router.post('/updatePersonalInfo', function(req, res, next) {
       user.save(function(err, user, numAffected) {
         if(err) {
           logger.error('ERROR POST api/users/updatePersonalInfo', {error: err});
+          mailingService.mailServerError({error: err, location: 'POST api/users/updatePersonalInfo', extra: 'User.save'});
           return next(err);
         }
         logger.info('END POST api/users/updatePersonalInfo');
@@ -254,6 +276,7 @@ router.post('/updatePersonalInfo', function(req, res, next) {
     });
   } catch(error) {
     logger.error('ERROR - exception in POST api/users/updatePersonalInfo', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/users/updatePersonalInfo'});
     return next(error);
   }
 });
@@ -265,6 +288,7 @@ router.post('/getPersonalInfo', function(req, res, next) {
     User.model.findById(req.body.userId, function(err, user) {
       if (err) {
         logger.error('ERROR POST api/users/getPersonalInfo', {error: err});
+        mailingService.mailServerError({error: err, location: 'POST api/users/getPersonalInfo'});
         return next(err);
       }
       if(!user) {
@@ -273,7 +297,8 @@ router.post('/getPersonalInfo', function(req, res, next) {
           message: 'No user for given id'
         };
         logger.error('ERROR POST api/users/getPersonalInfo - no user found', {error: error});
-        return next(error);
+        mailingService.mailServerError({error: err, location: 'POST api/users/getPersonalInfo', extra: 'No user found for id ' + req.body.userId});
+        return next(err);
       }
       if(req.body.token !== user.curToken) {
         /*var error = {
@@ -288,6 +313,7 @@ router.post('/getPersonalInfo', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/users/getPersonalInfo', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/users/getPersonalInfo'});
     return next(error);
   }
 });

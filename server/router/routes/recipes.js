@@ -8,6 +8,7 @@ var constants = require('../../util/constants');
 
 var recipeBadgeService = require('../lib/recipebadges');
 var shopifyService = require('../lib/shopifyService');
+var mailingService = require('../lib/mailingService');
 
 var mongoose = require('mongoose');
 var Promise = require('bluebird');
@@ -176,6 +177,7 @@ router.get('/getAllRecipesNameId', function(req, res, next) {
   Recipe.model.find({}, '_id name', function(err, recipes) {
     if(err) {
       logger.error('ERROR GET api/recipes/getAllRecipesNameId', {error: err});
+      mailingService.mailServerError({error: err, location: 'GET api/recipes/'});
       return next(err);
     }
     recipes.sort(function(a, b) {
@@ -196,7 +198,6 @@ router.get('/getAllRecipesNameId', function(req, res, next) {
 router.post('/getSingleRecipe', function(req, res, next) {
   logger.info('START POST api/recipes/getSingleRecipe/');
   var query;
-  console.log(req.body);
   if(req.body.id) {
     query = {
       _id: req.body.id
@@ -209,6 +210,7 @@ router.post('/getSingleRecipe', function(req, res, next) {
   Recipe.model.findOne(query, '-datesUsedAsRecipeOfTheDay', function(err, recipe) {
     if(err) {
       logger.error('ERROR POST api/recipes/getSingleRecipe/', {error: err});
+      mailingService.mailServerError({error: err, location: 'POST api/recipes/getSingleRecipe'});
       return next(err);
     }
     logger.info('END POST api/recipes/getSingleRecipe/');
@@ -236,6 +238,7 @@ router.post('/getRecipesWithIds', function(req, res, next) {
     }, '-datesUsedAsRecipeOfTheDay', function(err, recipes) {
       if(err) {
         logger.error('ERROR POST api/recipes/getRecipesWithIds', {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'POST api/recipes/getRecipesWithIds'});
         return next(err);
       }
       var retVal = {
@@ -246,6 +249,7 @@ router.post('/getRecipesWithIds', function(req, res, next) {
     });
   } catch(error) {
     logger.error('ERROR - exception in POST api/recipes/getRecipesWithIds', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/recipes/getRecipesWithIds'});
     return next(error);
   }
 });
@@ -258,6 +262,7 @@ router.post('/getRecipesOfType', function(req, res, next) {
       User.model.findById(req.body.userId, function(err, user) {
         if(err) {
           logger.error('ERROR POST api/recipes/getRecipesOfType/', {error: err});
+          mailingService.mailServerError({error: err, location: 'POST api/recipes/getRecipesOfType'});
           return next(err);
         }
         if(!user) {
@@ -266,6 +271,7 @@ router.post('/getRecipesOfType', function(req, res, next) {
             message: 'No user for given id'
           };
           logger.error('ERROR POST api/recipes/getRecipesOfType - no user found', {error: error});
+          mailingService.mailServerError({error: err, location: 'POST api/recipes/getSingleRecipe', extra: 'no user found for id ' + req.body.userId});
           return next(error);
         }
         if(req.body.userToken !== user.curToken) {
@@ -297,6 +303,7 @@ router.post('/getRecipesOfType', function(req, res, next) {
         }, '-datesUsedAsRecipeOfTheDay', function(err, recipes) {
           if(err) {
             logger.error('ERROR POST api/recipes/getRecipesOfType', {error: err, body: req.body});
+            mailingService.mailServerError({error: err, location: 'POST api/recipes/getRecipesOfType', extra: 'Recipe.find'});
             return next(err);
           }
           var retVal = {
@@ -313,6 +320,7 @@ router.post('/getRecipesOfType', function(req, res, next) {
       }, '-datesUsedAsRecipeOfTheDay', function(err, recipes) {
         if(err) {
           logger.error('ERROR POST api/recipes/getRecipesOfType', {error: err, body: req.body});
+          mailingService.mailServerError({error: err, location: 'POST api/recipes/getRecipesOfType', extra: 'Recipe.find'});
           return next(err);
         }
         var retVal = {
@@ -324,6 +332,7 @@ router.post('/getRecipesOfType', function(req, res, next) {
     }
   } catch (error) {
     logger.error('ERROR - exception in POST api/recipes/getRecipesOfType', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/recipes/getRecipesOfType'});
     return next(error);
   }
 });
@@ -337,6 +346,7 @@ router.post('/getRecipesForCollection', function(req, res, next) {
       User.model.findById(req.body.userId, function(err, user) {
         if(err) {
           logger.error('ERROR POST api/ingredients/getRecipesForCollection', {error: err});
+          mailingService.mailServerError({error: err, location: 'POST api/recipes/getRecipesForCollection'});
           return next(err);
         }
         if(!user) {
@@ -345,6 +355,7 @@ router.post('/getRecipesForCollection', function(req, res, next) {
             message: 'No user for given id'
           };
           logger.error('ERROR POST api/recipes/getRecipesForCollection - no user found', {error: error});
+          mailingService.mailServerError({error: err, location: 'POST api/recipes/getRecipesForCollection', extra: 'no user found for id ' + req.body.userId});
           return next(error);
         }
         if(req.body.userToken !== user.curToken) {
@@ -391,6 +402,7 @@ router.post('/getRecipesForCollection', function(req, res, next) {
         Recipe.model.find(query, '-datesUsedAsRecipeOfTheDay', {skip: skipNumber, limit: constants.RECIPES_PER_PAGE}, function(err, recipes) {
           if(err) {
             logger.error('ERROR POST api/recipes/getRecipesForCollection', {error: err, body: req.body});
+            mailingService.mailServerError({error: err, location: 'POST api/recipes/getRecipesForCollection', extra: 'Recipe.find'});
             return next(err);
           }
           var retVal = {
@@ -414,6 +426,7 @@ router.post('/getRecipesForCollection', function(req, res, next) {
       }, '-datesUsedAsRecipeOfTheDay', {skip: skipNumber, limit: constants.RECIPES_PER_PAGE}, function(err, recipes) {
         if(err) {
           logger.error('ERROR POST api/recipes/getRecipesForCollection', {error: err, body: req.body});
+          mailingService.mailServerError({error: err, location: 'POST api/recipes/getRecipesForCollection', extra: 'Recipe.find'});
           return next(err);
         }
         var retVal = {
@@ -430,6 +443,7 @@ router.post('/getRecipesForCollection', function(req, res, next) {
     }
   } catch(error) {
     logger.error('ERROR - exception in POST api/recipes/getRecipesForCollection', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/recipes/getRecipesForCollection'});
     return next(error);
   }
 });
@@ -617,6 +631,7 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
   }, '-datesUsedAsRecipeOfTheDay -stepList -choiceSeasoningProfiles', (err, recipes) => {
     if(err) {
       logger.error('ERROR POST api/recipes/getRecipesWithIngredients', {error: err, body: req.body});
+      mailingService.mailServerError({error: err, location: 'POST api/recipes/getRecipesWithIngredients', extra: 'Recipe.find'});
       return next(err);
     }
     try {
@@ -625,6 +640,7 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
         User.model.findById(req.body.userId, function(err, user) {
           if(err) {
             logger.error('ERROR POST api/recipes/getRecipesWithIngredients', {error: err});
+            mailingService.mailServerError({error: err, location: 'POST api/recipes/getRecipesWithIngredients'});
             return next(err);
           }
           if(!user) {
@@ -633,6 +649,7 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
               message: 'No user for given id'
             };
             logger.error('ERROR POST api/recipes/getRecipesWithIngredients - no user found', {error: error});
+            mailingService.mailServerError({error: err, location: 'POST api/recipes/getRecipesWithIngredients', extra: 'no user found for id ' + req.body.userId});
             return next(error);
           }
           if(req.body.userToken !== user.curToken) {
@@ -675,6 +692,7 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
       }
     } catch (error) {
       logger.error('ERROR - exception in POST api/recipes/getRecipesWithIngredients', {error: error});
+      mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/recipes/getRecipesWithIngredients'});
       return next(error);
     }
   });
@@ -689,6 +707,7 @@ router.post('/getMoreRecipesForCategory', function(req, res, next) {
     }, '-datesUsedAsRecipeOfTheDay -stepList -choiceSeasoningProfiles', (err, recipes) => {
       if(err) {
         logger.error('ERROR - POST api/recipes/getMoreRecipesForCategory', {error: err});
+        mailingService.mailServerError({error: err, location: 'POST api/recipes/getMoreRecipesForCategory'});
         return next(err);
       }
       var retRecipes, additionalRecipeIds;
@@ -713,6 +732,7 @@ router.post('/getMoreRecipesForCategory', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/recipes/getMoreRecipesForCategory', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/recipes/getMoreRecipesForCategory'});
     return next(error);
   }
 });
@@ -727,6 +747,7 @@ router.post('/', function(req, res, next) {
     Recipe.model.findOne(query, function(err, recipe) {
       if (err) {
         logger.error('ERROR POST api/recipes/', {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'POST api/recipes/'});
         return next(err);
       }
       if (recipe) {
@@ -740,6 +761,7 @@ router.post('/', function(req, res, next) {
         Recipe.model.create(req.body.recipe, function(err, recipe) {
           if(err) {
             logger.error('ERROR POST api/recipes/', {error: err, body: req.body});
+            mailingService.mailServerError({error: err, location: 'POST api/recipes/'});
             return next(err);
           }
           logger.info('END POST api/recipes/');
@@ -749,6 +771,7 @@ router.post('/', function(req, res, next) {
     });
   } catch(error) {
     logger.error('ERROR - exception in POST api/recipes/', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/recipes/'});
     return next(error);
   }
 });
@@ -768,6 +791,7 @@ router.post('/getShopifyDescription', function(req, res, next) {
         message: 'need a recipeName or recipeId'
       };
       logger.error('ERROR POST api/recipes/getShopifyDescription - token', {error: error});
+      mailingService.mailServerError({error: err, location: 'POST api/recipes/getShopifyDescription'});
       return next(error);
     }
     Recipe.model.find(query, function(err, recipes) {
@@ -783,6 +807,7 @@ router.post('/getShopifyDescription', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception POST in api/recipes/getShopifyDescription', {error: error});
+     mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/recipes/getShopifyDescription'});
     return next(error);
   }
 });
@@ -794,6 +819,7 @@ router.get('/:id', function(req, res, next) {
     Recipe.model.findById(req.params.id, function(err, recipe) {
       if(err) {
         logger.error('ERROR GET api/recipes/' + req.params.id, {error: err});
+         mailingService.mailServerError({error: err, location: 'GET api/recipes/' + req.params.id});
         return next(err);
       }
       logger.info('END GET api/recipes/' + req.params.id);
@@ -801,6 +827,7 @@ router.get('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception GET in api/recipes/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION GET api/recipes/:id'});
     return next(error);
   }
 });
@@ -823,6 +850,7 @@ router.post('/getRecipesOfTheDay', function(req, res, next) {
   .exec(function(err, recipes) {
     if(err) {
       logger.error('ERROR POST api/recipes/getRecipesOfTheDay', {error: err, body: req.body});
+      mailingService.mailServerError({error: err, location: 'POST api/recipes/getRecipesOfTheDay'});
       return next(err);
     }
     var retVal = {
@@ -841,6 +869,7 @@ router.put('/:id', function(req, res, next) {
     Recipe.model.findByIdAndUpdate(req.params.id, req.body.recipe, {new: true, setDefaultsOnInsert: true}, function(err, recipe) {
       if(err) {
         logger.error('ERROR PUT api/recipes/' + req.params.id, {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'PUT api/recipes/' + req.params.id});
         return next(err);
       }
       logger.info('END PUT api/recipes/' + req.params.id);
@@ -848,6 +877,7 @@ router.put('/:id', function(req, res, next) {
     });
   } catch(error) {
     logger.error('ERROR - exception in PUT api/recipes/:id', {error: error});
+    mailingService.mailServerError({error: err, location: 'EXCEPTION PUT api/recipes/:id'});
     return next(error);
   }
 });
@@ -859,6 +889,7 @@ router.delete('/:id', function(req, res, next) {
     Recipe.model.findByIdAndRemove(req.params.id, function(err, recipe) {
       if(err) {
         logger.error('ERROR DELETE api/recipes/' + req.params.id, {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'DELETE api/recipes/' + req.params.id});
         return next(err);
       }
       logger.info('END DELETE api/recipes/' + req.params.id);
@@ -866,6 +897,7 @@ router.delete('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in DELETE api/recipes/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION DELETE api/recipes/:id'});
     return next(error);
   }
 });

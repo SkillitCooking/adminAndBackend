@@ -5,6 +5,7 @@ middleware(router);
 var underscore = require('underscore');
 
 var logger = require('../../util/logger').serverLogger;
+var mailingService = require('../lib/mailingService');
 
 var mongoose = require('mongoose');
 var db = require('../../database');
@@ -21,6 +22,7 @@ router.get('/', function(req, res, next) {
   Dish.model.find(function (err, dishes) {
     if(err) {
       logger.error('ERROR GET api/dishes/', {error: err});
+      mailingService.mailServerError({error: err, location: 'GET api/dishes'});
       return next(err);
     }
     logger.info('END GET api/dishes/');
@@ -32,27 +34,23 @@ router.get('/', function(req, res, next) {
 /* check for same dish name */
 router.post('/', function(req, res, next) {
   logger.info('START POST api/dishes/');
-  console.log('here');
   try{
     var query = {'name': req.body.dish.name};
     req.body.dish.dateModified = Date.parse(new Date().toUTCString());
-    console.log('dish', req.body.dish);
     Dish.model.findOneAndUpdate(query, req.body.dish, {upsert: true, setDefaultsOnInsert: true},function(err, dish) {
       if (err) {
-        console.log('err', err);
         logger.error('ERROR POST api/dishes/', {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'POST api/dishes'});
         return next(err);
       }
-      console.log('there', dish);
       if(dish === null){
         //then inserted, and need it to return
         Dish.model.findOne({'name': req.body.dish.name}, function(err, dish) {
           if(err) {
-            console.log('err2', err);
             logger.error('ERROR POST api/dishes/', {error: err, body: req.body});
+            mailingService.mailServerError({error: err, location: 'POST api/dishes'});
             return next(err);
           }
-          console.log('dish', dish);
           logger.info('END POST api/dishes/');
           res.json(dish);
         });
@@ -64,6 +62,7 @@ router.post('/', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/dishes/', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/dishes'});
     return next(error);
   }
 });
@@ -75,6 +74,7 @@ router.get('/:id', function(req, res, next) {
     Dish.model.findById(req.params.id, function(err, dish) {
       if (err) {
         logger.error('ERROR GET api/dishes/' + req.params.id, {error: err});
+        mailingService.mailServerError({error: err, location: 'GET api/dishes/' + req.params.id});
         return next(err);
       }
       logger.info('START GET api/dishes/' + req.params.id);
@@ -82,6 +82,7 @@ router.get('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in GET api/dishes/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'GET api/dishes/:id'});
     return next(error);
   }
 });
@@ -95,6 +96,7 @@ router.put('/:id', function(req, res, next) {
       {new: true, setDefaultsOnInsert: true}, function(err, dish) {
       if (err) {
         logger.error('ERROR PUT api/dishes/' + req.params.id, {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'PUT api/dishes/' + req.params.id});
         return next(err);
       }
       //update applicable recipes... careful of payload, though - just get ingredientList.equipmentNeeded
@@ -102,6 +104,7 @@ router.put('/:id', function(req, res, next) {
       Recipe.model.find({}, 'ingredientList _id', function(err, recipes) {
         if(err) {
           logger.error('ERROR PUT api/dishes/' + req.params.id + ' in Recipe.model.find', {error: err, body: req.body, dishId: dish._id});
+          mailingService.mailServerError({error: err, location: 'PUT api/dishes/' + req.params.id, extra: 'Recipe.find'});
           return next(err);
         }
         for (var i = recipes.length - 1; i >= 0; i--) {
@@ -120,6 +123,7 @@ router.put('/:id', function(req, res, next) {
             recipes[i].save(function(err, recipe, numAffected) {
               if(err) {
                 logger.error('ERROR PUT api/dishes/' + req.params.id + ' in Recipe.model.save', {error: err, body: req.body, dishId: dish._id});
+                mailingService.mailServerError({error: err, location: 'PUT api/dishes/' + req.params.id, extra: 'Recipe.save'});
                 return next(err);
               }
             });
@@ -132,6 +136,7 @@ router.put('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in PUT api/dishes/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION PUT api/dishes/:id'});
     return next(error);
   }
 });
@@ -143,6 +148,7 @@ router.delete('/:id', function(req, res, next) {
     Dish.model.findByIdAndRemove(req.params.id, function(err, dish) {
       if (err) {
         logger.error('ERROR DELETE api/dishes/' + req.params.id, {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'DELETE api/dishes/' + req.params.id});
         return next(err);
       }
       //propagate to recipes
@@ -150,6 +156,7 @@ router.delete('/:id', function(req, res, next) {
       Recipe.model.find({}, 'ingredientList _id', function(err, recipes) {
         if(err) {
           logger.error('ERROR DELETE api/dishes/' + req.params.id + ' in Recipe.model.find', {error: err, body: req.body, dishId: dish._id});
+          mailingService.mailServerError({error: err, location: 'DELETE api/dishes/' + req.params.id, extra: 'Recipe.find'});
           return next(err);
         }
         for (var i = recipes.length - 1; i >= 0; i--) {
@@ -168,6 +175,7 @@ router.delete('/:id', function(req, res, next) {
             recipes[i].save(function(err, recipe, numAffected) {
               if(err) {
                 logger.error('ERROR DELETE api/dishes/' + req.params.id + ' in Recipe.model.save', {error: err, body: req.body, dishId: dish._id});
+                mailingService.mailServerError({error: err, location: 'DELETE api/dishes/' + req.params.id, extra: 'Recipe.save'});
                 return next(err);
               }
             });
@@ -180,6 +188,7 @@ router.delete('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in DELETE api/dishes/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION DELETE api/dishes/'});
     return next(error);
   }
 });

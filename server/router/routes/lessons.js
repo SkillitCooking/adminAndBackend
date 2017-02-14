@@ -4,6 +4,7 @@ var middleware = require('../middleware');
 middleware(router);
 
 var logger = require('../../util/logger').serverLogger;
+var mailingService = require('../lib/mailingService');
 
 var mongoose = require('mongoose');
 var db = require('../../database');
@@ -15,6 +16,7 @@ router.get('/', function(req, res, next) {
   Lesson.model.find(function(err, lessons) {
     if(err) {
       logger.error('ERROR GET api/lessons/', {error: err});
+      mailingService.mailServerError({error: err, location: 'GET api/lessons/'});
       return next(err);
     }
     logger.info('END GET api/lessons/');
@@ -29,6 +31,7 @@ router.put('/:id', function(req, res, next) {
     Lesson.model.findByIdAndUpdate(req.params.id, req.body.lesson, {new: true, setDefaultsOnInsert: true}, function(err, lesson) {
       if(err) {
         logger.error('ERROR PUT api/lessons/' + req.params.id, {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'PUT api/lessons/' + req.params.id});
         return next(err);
       }
       logger.info('END PUT api/lessons/' + req.params.id);
@@ -36,6 +39,7 @@ router.put('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in PUT api/lessons/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION PUT api/lessons/:id'});
     return next(error);
   }
 });
@@ -46,6 +50,7 @@ router.delete('/:id', function(req, res, next) {
     Lesson.model.findByIdAndRemove(req.params.id, function(err, lesson) {
       if(err) {
         logger.error('ERROR DELETE api/lessons/' + req.params.id, {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'DELETE api/lessons/' + req.params.id});
         return next(err);
       }
       //update Chapter references
@@ -53,6 +58,7 @@ router.delete('/:id', function(req, res, next) {
       Chapter.model.find(function(err, chapters) {
         if(err) {
           logger.error('ERROR DELETE api/lessons/' + req.params.id + ' in Chapter.model.find', {error: err, body: req.body, lessonId: lesson._id});
+        mailingService.mailServerError({error: err, location: 'DELETE api/lessons/' + req.params.id, extra: 'Chapter.find'});
           return next(err);
         }
         for (var i = chapters.length - 1; i >= 0; i--) {
@@ -68,6 +74,7 @@ router.delete('/:id', function(req, res, next) {
             chapters[i].save(function(err, chapter, numAffected) {
               if(err) {
                 logger.error('ERROR DELETE api/lessons/' + req.params.id + ' in Chapter.model.save', {error: err, body: req.body, lessonId: lesson._id});
+                mailingService.mailServerError({error: err, location: 'DELETE api/lessons/' + req.params.id, extra: 'Chapter.save'});
                 return next(err);
               }
             });
@@ -80,6 +87,7 @@ router.delete('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in DELETE api/lessons/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'DELETE api/lessons/:id'});
     return next(error);
   }
 });
@@ -89,6 +97,7 @@ router.get('/getLessonsForChapterConstruction', function(req, res, next) {
   Lesson.model.find({}, 'name _id timeEstimate', function(err, lessons) {
     if(err) {
       logger.error('ERROR GET api/lessons/getLessonsForChapterConstruction', {error: err});
+      mailingService.mailServerError({error: err, location: 'GET api/lessons/getLessonsForChapterConstruction' + req.params.id});
       return next(err);
     }
     var retVal = {
@@ -107,6 +116,7 @@ router.post('/getLessonsWithIds', function(req, res, next) {
     }, function(err, lessons) {
       if(err) {
         logger.error('ERROR POST api/lessons/getLessonsWithIds', {error: err});
+        mailingService.mailServerError({error: err, location: 'POST api/lessons/getLessonsWithIds'});
         return next(err);
       }
       logger.info('END POST api/lessons/getLessonsWithIds');
@@ -114,6 +124,7 @@ router.post('/getLessonsWithIds', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/lessons/getLessonsWithIds', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/lessons/getLessonsWithIds'});
     return next(error);
   }
 });
@@ -126,6 +137,7 @@ router.post('/', function(req, res, next) {
     Lesson.model.findOneAndUpdate(query, req.body.lesson, {upsert: true, setDefaultsOnInsert: true}, function(err, lesson) {
       if(err) {
         logger.error('ERROR POST api/lessons/', {error: err});
+        mailingService.mailServerError({error: err, location: 'POST api/lessons/'});
         return next(err);
       }
       if(lesson === null) {
@@ -133,6 +145,7 @@ router.post('/', function(req, res, next) {
         Lesson.model.findOne(query, function(err, lesson) {
           if(err) {
             logger.error('ERROR POST api/lessons/', {error: err});
+            mailingService.mailServerError({error: err, location: 'POST api/lessons/'});
             return next(err);
           }
           logger.info('END POST api/lessons/');
@@ -149,6 +162,7 @@ router.post('/', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/lessons/', {error: error});
+    mailingService.mailServerError({error: error, location: 'POST api/lessons/'});
     return next(error);
   }
 });

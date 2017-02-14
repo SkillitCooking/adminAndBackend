@@ -5,6 +5,7 @@ middleware(router);
 
 var logger = require('../../util/logger').serverLogger;
 var constants = require('../../util/constants');
+var mailingService = require('../lib/mailingService');
 
 var mongoose = require('mongoose');
 var db = require('../../database');
@@ -20,6 +21,7 @@ router.post('/', function(req, res, next) {
       User.model.findById(req.body.userId, 'curToken', function(err, user) {
         if(err) {
           logger.error('ERROR POST api/seasoningUsed/ in finding a user', {error: err});
+          mailingService.mailServerError({error: err, location: 'POST api/seasoningUsed/'});
           return next(err);
         }
         if(user) {
@@ -39,6 +41,7 @@ router.post('/', function(req, res, next) {
             message: 'No user found from supplied id'
           };
           logger.error('ERROR POST api/seasoningUsed/', {error: error, userId: req.body.userId});
+          mailingService.mailServerError({error: err, location: 'POST api/seasoningUsed/', extra: 'no user found for id ' + req.boyd.userId});
           return next(error);
         }
       });
@@ -52,6 +55,7 @@ router.post('/', function(req, res, next) {
     SeasoningUsed.model.create(usedSeasoning, function(err, usedSeasoning) {
       if(err) {
         logger.error('ERROR POST api/seasoningUsed/', {error: err});
+        mailingService.mailServerError({error: err, location: 'POST api/seasoningUsed/'});
         return next(err);
       }
       logger.info('END POST api/seasoningUsed/');
@@ -59,6 +63,7 @@ router.post('/', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/seasoningUsed/');
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/seasoningUsed/'});
     return next(error);
   }
 });

@@ -4,6 +4,8 @@ var middleware = require('../middleware');
 middleware(router);
 
 var logger = require('../../util/logger').serverLogger;
+var mailingService  = require('../lib/mailingService');
+
 var mongoose = require('mongoose');
 var db = require('../../database');
 var HealthModifier = db.healthModifiers;
@@ -15,6 +17,7 @@ router.get('/', function(req, res, next) {
   HealthModifier.model.find(function(err, modifiers) {
     if(err) {
       logger.error('ERROR GET api/healthModifiers/', {error: err});
+      mailingService.mailServerError({error: err, location: 'GET api/healthModifiers/'});
       return next(err);
     }
     var retVal = {
@@ -33,6 +36,7 @@ router.put('/:id', function(req, res, next) {
     HealthModifier.model.findOneAndUpdate(req.params.id, req.body.healthModifier, {new: true, setDefaultsOnInsert: true}, function(err, modifier) {
       if(err) {
         logger.error('ERROR PUT api/healthModifiers/' + req.params.id);
+        mailingService.mailServerError({error: err, location: 'PUT api/healthModifiers/' + req.params.id});
         return next(err);
       }
       //adjust affected Recipes
@@ -47,6 +51,7 @@ router.put('/:id', function(req, res, next) {
               recipes[i].save(function(err, recipe, numAffected) {
                 if(err) {
                   logger.error('ERROR PUT api/healthModifiers/:id in recipe save', {error: err});
+                  mailingService.mailServerError({error: err, location: 'PUT api/healthModifiers/' + req.params.id, extra: 'Recipe.save'});
                   return next(err);
                 }
               });
@@ -59,6 +64,7 @@ router.put('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in PUT api/healthModifiers/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION PUT api/healthModifiers/'});
     return next(error);
   }
 });
@@ -67,6 +73,11 @@ router.delete('/:id', function(req, res, next) {
   try {
     logger.info('START DELETE api/healthModifiers/' + req.params.id);
     HealthModifier.model.findByIdAndRemove(req.params.id, function(err, modifier) {
+      if(err) {
+        logger.error('ERROR DELETE api/healthModifiers/:id', {error: err});
+        mailingService.mailServerError({error: err, location: 'DELETE api/healthModifiers/' + req.params.id});
+        return next(err);
+      }
       //adjust Recipes
       Recipe.model.find({healthModifiers: {_id: modifier._id}}, function(err, recipes) {
         var recipeIds = [];
@@ -79,6 +90,7 @@ router.delete('/:id', function(req, res, next) {
               recipes[i].save(function(err, recipe, numAffected) {
                 if(err) {
                   logger.error('ERROR DELETE api/healthModifiers/:id', {error: err});
+                  mailingService.mailServerError({error: err, location: 'DELETE api/healthModifiers/' + req.params.id, extra: 'Recipe.save'});
                   return next(err);
                 }
               });
@@ -91,6 +103,7 @@ router.delete('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in DELETE api/healthModifiers/:id', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION DELETE api/healthModifiers/:id'});
     return next(error);
   }
 });
@@ -99,20 +112,20 @@ router.delete('/:id', function(req, res, next) {
 router.post('/', function(req, res, next) {
   logger.info('START POST api/healthModifiers/');
   try {
-    console.log('healthModifier: ', req.body.healthModifier);
     var query = {name: req.body.healthModifier.name};
     req.body.healthModifier.dateModified = Date.parse(new Date().toUTCString());
     HealthModifier.model.findOneAndUpdate(query, req.body.healthModifier, {upsert: true, setDefaultsOnInsert: true}, function(err, modifier) {
       if(err) {
         logger.error('ERROR POST api/healthModifiers/', {error: err});
+        mailingService.mailServerError({error: err, location: 'POST api/healthModifiers/'});
         return next(err);
       }
-      console.log('modifier', modifier);
       if(modifier === null) {
         //then inserted and need it to return
         HealthModifier.model.findOne({name: req.body.healthModifier.name}, function(err, modifier) {
           if(err) {
             logger.error('ERROR POST api/healthModifiers/', {error: err, body: req.body});
+            mailingService.mailServerError({error: err, location: 'POST api/healthModifiers/', extra: 'HealthModifier.findOne'});
             return next(err);
           }
           console.log('mod', modifier);
@@ -126,6 +139,7 @@ router.post('/', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/healthModifiers/', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/healthModifiers/'});
     return next(error);
   }
 });
@@ -137,6 +151,7 @@ router.get('/:id', function(req, res, next) {
     HealthModifier.model.findById(req.params.id, function(err, modifier) {
       if(err) {
         logger.error('ERROR GET api/healthModifiers/' + req.params.id);
+        mailingService.mailServerError({error: err, location: 'GET api/healthModifiers/' + req.params.id});
         return next(err);
       }
       logger.info('END GET api/healthModifiers/' + req.params.id);
@@ -144,6 +159,7 @@ router.get('/:id', function(req, res, next) {
     });
   } catch (error) {
     logger.error('ERROR - exception in GET api/healthModifiers/:id', {error: error});
+    mailingService.mailServerError({error: err, location: 'EXCEPTION GET api/healthModifiers/:id'});
     return next(error);
   }
 });
