@@ -80,7 +80,7 @@ angular.module('SkillitAdminApp')
 
     $scope.ingredientTips = [];
 
-    $scope.stepTypes = ["Bake", "Boil", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "Heat", "Place", "PreheatOven", "Sautee", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir", "General"];
+    $scope.stepTypes = ["Bake", "Boil", "BringToBoil", "BreakEgg", "Cook", "Custom", "Cut", "Dry", "Heat", "Move", "Place", "PreheatOven", "Remove", "Sautee", "Serve", "Season", "SlowCook", "Steam", "EquipmentPrep", "Stir", "General"];
     $scope.subTypes = [];
 
     $scope.setSubTypes = function(type, tipIndex) {
