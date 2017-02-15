@@ -235,6 +235,7 @@ angular.module('SkillitAdminApp')
           }
         }
         $scope.stepList = $scope.recipe.stepList;
+        console.log('stepList', $scope.stepList);
         $scope.typeMinimizedIndicatorArray = new Array($scope.recipe.ingredientList.ingredientTypes.length);
         $scope.typeMinimizedIndicatorArray.fill(true);
         $scope.stepMinimizedIndicatorArray = new Array($scope.stepList.length);

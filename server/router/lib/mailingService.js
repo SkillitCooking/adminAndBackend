@@ -23,8 +23,6 @@ service.mailClientError = function(error) {
     if(error) {
       console.log('error', error);
     }
-    console.log('there, there');
-    console.log(info);
   });
 };
 
@@ -40,8 +38,6 @@ service.mailServerError = function(error) {
     if(error) {
       console.log('error', error);
     }
-    console.log('there, there');
-    console.log('info', info);
   });
 };
 
