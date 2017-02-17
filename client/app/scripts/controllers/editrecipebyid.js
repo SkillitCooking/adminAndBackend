@@ -578,8 +578,10 @@ angular.module('SkillitAdminApp')
         for (var j = $scope.recipe.stepList[i].stepSpecifics.length - 1; j >= 0; j--) {
           delete $scope.recipe.stepList[i].stepSpecifics[j]._id;
         }
-        for (var j = $scope.recipe.stepList[i].auxiliarySteps.length - 1; j >= 0; j--) {
-          delete $scope.recipe.stepList[i].auxiliarySteps[j]._id;
+        if($scope.recipe.stepList[i].auxiliarySteps) {
+          for (var j = $scope.recipe.stepList[i].auxiliarySteps.length - 1; j >= 0; j--) {
+            delete $scope.recipe.stepList[i].auxiliarySteps[j]._id;
+          }
         }
       }
       $scope.recipe.choiceSeasoningProfiles = [];

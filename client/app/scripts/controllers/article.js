@@ -54,7 +54,6 @@ angular.module('SkillitAdminApp')
       if(!$scope.article.contentSections){
         $scope.article.contentSections = [];
       }
-      console.log("contentSection", angular.copy($scope.contentSection));
       $scope.article.contentSections.push($scope.contentSection);
       $scope.contentSection = angular.copy({});
     };
@@ -72,7 +71,6 @@ angular.module('SkillitAdminApp')
         title: $scope.article.title,
         contentSections: $scope.article.contentSections
       }, $scope.useProdServer, $scope.useDevServer).then(function(articles) {
-        console.log('articles', articles);
         var article = articles[0].data;
         var alertMsg = "Success! Article " + article.title + " was saved!";
         alert(alertMsg);
