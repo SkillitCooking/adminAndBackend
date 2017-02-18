@@ -235,7 +235,6 @@ angular.module('SkillitAdminApp')
           }
         }
         $scope.stepList = $scope.recipe.stepList;
-        console.log('stepList', $scope.stepList);
         $scope.typeMinimizedIndicatorArray = new Array($scope.recipe.ingredientList.ingredientTypes.length);
         $scope.typeMinimizedIndicatorArray.fill(true);
         $scope.stepMinimizedIndicatorArray = new Array($scope.stepList.length);
@@ -245,6 +244,9 @@ angular.module('SkillitAdminApp')
           types[i].ingredientMinimizedIndicator = new Array(types[i].ingredients.length);
           types[i].ingredientMinimizedIndicator.fill(true);
         }
+        $scope.currentTypeNames = types.map(function(type) {
+          return type.typeName;
+        });
         if($scope.recipeCollections) {
           for (var i = $scope.recipe.collectionIds.length - 1; i >= 0; i--) {
             var index = _.findIndex($scope.recipeCollections, function(collection) {
@@ -328,8 +330,40 @@ angular.module('SkillitAdminApp')
       return false;
     };
 
+    $scope.logTypeName = function(index, type) {
+      $scope.currentTypeNames[index] = type.typeName;
+    };
+
+    function hasStepComposition(step) {
+      switch(step.stepType) {
+        case "Remove":
+          return true;
+        default:
+          return false;
+      }
+    }
+
+    $scope.commuteTypeNameChange = function(index, type) {
+      if($scope.currentTypeNames[index] !== type.typeName) {
+        for (var i = $scope.recipe.stepList.length - 1; i >= 0; i--) {
+          var step = $scope.recipe.stepList[i];
+          if(hasStepComposition(step)) {
+            for(var key in step.stepComposition) {
+              var ingredientTypeKeys = step.stepComposition[key];
+              for (var j = ingredientTypeKeys.length - 1; j >= 0; j--) {
+                if(ingredientTypeKeys[j] === $scope.currentTypeNames[index]) {
+                  ingredientTypeKeys[j] = type.typeName;
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+
     $scope.addTypeIngredient = function(typeIndex, typeIngredient) {
       if($scope.ingredientCanBeAdded(typeIngredient)){
+        $scope.currentTypeNames.push("");
         var chosenForms = [];
         for (var i = typeIngredient.ingredientForms.length - 1; i >= 0; i--) {
           if($scope.selectedIngredientForms[i]){
@@ -389,6 +423,7 @@ angular.module('SkillitAdminApp')
     $scope.removeIngredientType = function(index) {
       $scope.typeMinimizedIndicatorArray.splice(index, 1);
       $scope.recipe.ingredientList.ingredientTypes.splice(index, 1);
+      $scope.currentTypeNames.splice(index, 1);
     };
 
     $scope.addIngredientType = function() {

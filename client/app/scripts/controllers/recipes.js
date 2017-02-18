@@ -20,6 +20,7 @@ angular.module('SkillitAdminApp')
       }
       $scope.serverType = serverName;
       $scope.nameBodies = angular.copy([]);
+      $scope.currentTypeNames = [];
       $scope.conditionalDescriptions = angular.copy([]);
       $scope.nameDictionary = angular.copy({});
       $scope.descriptionDictionary = angular.copy({});
@@ -228,6 +229,10 @@ angular.module('SkillitAdminApp')
       return false;
     };
 
+    $scope.logTypeName = function(index, type) {
+      $scope.currentTypeNames[index] = type.typeName;
+    };
+
     $scope.ingredientCanBeAdded = function(ingredient){
       var ingredientTypes = $scope.ingredientList.ingredientTypes;
       var ingredients;
@@ -242,8 +247,36 @@ angular.module('SkillitAdminApp')
       return true;
     };
 
+    function hasStepComposition(step) {
+      switch(step.stepType) {
+        case "Remove":
+          return true;
+        default:
+          return false;
+      }
+    }
+
+    $scope.commuteTypeNameChange = function(index, type) {
+      if($scope.currentTypeNames[index] !== type.typeName) {
+        for (var i = $scope.recipe.stepList.length - 1; i >= 0; i--) {
+          var step = $scope.recipe.stepList[i];
+          if(hasStepComposition(step)) {
+            for(var key in step.stepComposition) {
+              var ingredientTypeKeys = step.stepComposition[key];
+              for (var j = ingredientTypeKeys.length - 1; j >= 0; j--) {
+                if(ingredientTypeKeys[j] === $scope.currentTypeNames[index]) {
+                  ingredientTypeKeys[j] = type.typeName;
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+
     $scope.addTypeIngredient = function(typeIndex, typeIngredient) {
       if($scope.ingredientCanBeAdded(typeIngredient)){
+        $scope.currentTypeNames.push("");
         var chosenForms = [];
         for (var i = typeIngredient.ingredientForms.length - 1; i >= 0; i--) {
           if($scope.selectedIngredientForms[i]){
@@ -270,6 +303,7 @@ angular.module('SkillitAdminApp')
 
     $scope.removeIngredientType = function(index){
       $scope.ingredientList.ingredientTypes.splice(index, 1);
+      $scope.currentTypeNames.splice(index, 1);
     };
 
     $scope.addIngredientType = function() {

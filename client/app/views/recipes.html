@@ -74,7 +74,7 @@
     <h4>Ingredient List</h4>
     <b>Ingredient Types</b><br/><br/>
     <div ng-repeat="type in ingredientList.ingredientTypes" class="bg-warning" ng-form="typeForm">
-      TypeName: <input type="text" ng-model="type.typeName" size="50" required name="typeNameInput"/>
+      TypeName: <input type="text" ng-blur="logTypeName($index, type)" ng-focus="commuteTypeNameChange($index, type)" ng-model="type.typeName" size="50" required name="typeNameInput"/>
       <span ng-show="typeForm.typeName.$invalid">give a type name</span><br/><br/>
       DisplayName: <input type="text" ng-model="type.displayName" size="50" required name="displayNameInput"/>
       <span ng-show="typeForm.displayName.$invalid">give a display name</span><br/><br/>
