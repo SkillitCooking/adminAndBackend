@@ -45,6 +45,7 @@ var RecipeSchema = new mongoose.Schema({
   conditionalDescriptions: mongoose.Schema.Types.Mixed,
   allowablePrefixIds: [ObjectId],
   recipeType: String,
+  badges: [String],
   recipeCategory: String,
   ingredientList: IngredientListSchema,
   stepList: [StepSchema],

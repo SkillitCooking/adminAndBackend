@@ -338,6 +338,7 @@ router.post('/getRecipesOfType', function(req, res, next) {
 });
 
 /* getRecipesForCollection */
+/* Seems like this method could stand for a reduction in payload... */
 router.post('/getRecipesForCollection', function(req, res, next) {
   logger.info('START POST api/recipes/getRecipesForCollection');
   try {
@@ -405,6 +406,10 @@ router.post('/getRecipesForCollection', function(req, res, next) {
             mailingService.mailServerError({error: err, location: 'POST api/recipes/getRecipesForCollection', extra: 'Recipe.find'});
             return next(err);
           }
+          for (var i = recipes.length - 1; i >= 0; i--) {
+            recipes[i].badges = recipeBadgeService.getBadgesForRecipe(recipes[i]);
+            console.log(recipes[i].badges);
+          }
           var retVal = {
             data: recipes
           };
@@ -428,6 +433,10 @@ router.post('/getRecipesForCollection', function(req, res, next) {
           logger.error('ERROR POST api/recipes/getRecipesForCollection', {error: err, body: req.body});
           mailingService.mailServerError({error: err, location: 'POST api/recipes/getRecipesForCollection', extra: 'Recipe.find'});
           return next(err);
+        }
+        for (var i = recipes.length - 1; i >= 0; i--) {
+          recipes[i].badges = recipeBadgeService.getBadgesForRecipe(recipes[i]);
+          console.log(recipes[i].badges);
         }
         var retVal = {
           data: recipes
@@ -539,9 +548,9 @@ function processRecipes(req, recipes, recipesToReturn, outlawIngredients) {
             }
           }
           if(flag){
-            //recipes[k].badges = recipeBadgeService.getBadgesForRecipe(recipes[k]);
+            recipes[k].badges = recipeBadgeService.getBadgesForRecipe(recipes[k]);
             if(recipes[k].recipeType === constants.RECIPE_TYPES.ALACARTE) {
-              var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'ingredientList', 'manActiveTime', 'manTotalTime');
+              var pickedRecipe = underscore.pick(recipes[k], '_id', 'badges', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'ingredientList', 'manActiveTime', 'manTotalTime');
               retRecipes[0][pickedRecipe.recipeType].push(pickedRecipe);
             } else {
               var pickedRecipe = underscore.pick(recipes[k], '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'setModifiedDisclaimer', 'badges');
@@ -573,8 +582,8 @@ function processRecipes(req, recipes, recipesToReturn, outlawIngredients) {
           if(retRecipes[missingIngredientLevel] && retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL] && retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL].length > 0) {
             for (var i = retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL].length - 1; i >= 0; i--) {
               var recipeToAdd = retRecipes[missingIngredientLevel][constants.RECIPE_TYPES.FULL][i];
-              //recipeToAdd.badges = recipeBadgeService.getBadgesForRecipe(recipeToAdd);
-              recipeToAdd = underscore.pick(recipeToAdd, '_id', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'mainPictureURLs', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'missingIngredients', 'nameBodies');
+              recipeToAdd.badges = recipeBadgeService.getBadgesForRecipe(recipeToAdd);
+              recipeToAdd = underscore.pick(recipeToAdd, '_id', 'badges', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'mainPictureURLs', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'missingIngredients', 'nameBodies');
               recipeToAdd.usesMissingIngredients = true;
               recipesToReturn[constants.RECIPE_TYPES.FULL].push(recipeToAdd);
               recipesAdded += 1;
@@ -716,12 +725,18 @@ router.post('/getMoreRecipesForCategory', function(req, res, next) {
         var additionalRecipeIds = underscore.map(recipes.slice(constants.RECIPE_CATEGORY_PAGE_SIZE), function(recipe) {
           return recipe._id;
         });
+        for (var i = retRecipes.length - 1; i >= 0; i--) {
+          retRecipes[i].badges = recipeBadgeService.getBadgesForRecipe(retRecipes[i]);
+        }
         retRecipes = {
           recipes: retRecipes,
           additionalRecipeIds: additionalRecipeIds,
           hasMoreToLoad: true
         };
       } else {
+        for (var i = recipes.length - 1; i >= 0; i--) {
+          recipes[i].badges = recipeBadgeService.getBadgesForRecipe(recipes[i]);
+        }
         retRecipes = {
           recipes: recipes,
           additionalRecipeIds: [],
