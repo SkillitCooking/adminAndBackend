@@ -67,6 +67,7 @@ angular.module('SkillitAdminApp')
           //initialize productNames
           if((!scope.constructingStep.productNames || scope.constructingStep.productNames.length === 0) && scope.constructingStep.productKeys) {
             scope.constructingStep.productNames = [];
+            console.log('constructingStep', angular.copy(scope.constructingStep));
             for (var z = scope.constructingStep.productKeys.length - 1; z >= 0; z--) {
               var key = scope.constructingStep.productKeys[z];
               scope.constructingStep.productNames.push({

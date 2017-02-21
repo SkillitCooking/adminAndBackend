@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var middleware = require('../middleware');
 middleware(router);
+var _ = require('lodash');
 
 var logger = require('../../util/logger').serverLogger;
 var constants = require('../../util/constants');
@@ -408,7 +409,6 @@ router.post('/getRecipesForCollection', function(req, res, next) {
           }
           for (var i = recipes.length - 1; i >= 0; i--) {
             recipes[i].badges = recipeBadgeService.getBadgesForRecipe(recipes[i]);
-            console.log(recipes[i].badges);
           }
           var retVal = {
             data: recipes
@@ -436,7 +436,6 @@ router.post('/getRecipesForCollection', function(req, res, next) {
         }
         for (var i = recipes.length - 1; i >= 0; i--) {
           recipes[i].badges = recipeBadgeService.getBadgesForRecipe(recipes[i]);
-          console.log(recipes[i].badges);
         }
         var retVal = {
           data: recipes
@@ -461,7 +460,7 @@ router.post('/getRecipesForCollection', function(req, res, next) {
 /* A future iteration will probably have some Mongo query that will reduce the returned set while performing further processing on the server*/
 /*Why not identify with ids?*/
 
-function processRecipes(req, recipes, recipesToReturn, outlawIngredients) {
+function processRecipesOld(req, recipes, recipesToReturn, outlawIngredients) {
   var retRecipes = [];
   retRecipes[0] = {
     [constants.RECIPE_TYPES.ALACARTE]: [],
@@ -678,7 +677,7 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
             [constants.RECIPE_TYPES.BYO]: [],
             [constants.RECIPE_TYPES.FULL]: []
           };
-          processRecipes(req, recipes, recipesToReturn, outlawIngredients);
+          processRecipesOld(req, recipes, recipesToReturn, outlawIngredients);
           var retVal = {
             data: recipesToReturn
           };
@@ -692,7 +691,7 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
           [constants.RECIPE_TYPES.BYO]: [],
           [constants.RECIPE_TYPES.FULL]: []
         };
-        processRecipes(req, recipes, recipesToReturn);
+        processRecipesOld(req, recipes, recipesToReturn);
         var retVal = {
           data: recipesToReturn
         };
@@ -705,6 +704,261 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
       return next(error);
     }
   });
+});
+
+
+function filterRecipesByDietaryPreferences(recipes, outlawIngredients) {
+  console.log('outlawIngredients', outlawIngredients);
+  var returnRecipes = [];
+  for (var i = recipes.length - 1; i >= 0; i--) {
+    var filterOut = false;
+    var types = recipes[i].ingredientList.ingredientTypes;
+    for (var j = types.length - 1; j >= 0; j--) {
+      var ingredients = types[j].ingredients;
+      for (var k = ingredients.length - 1; k >= 0; k--) {
+        var outlawIndex = outlawIngredients.indexOf(ingredients[k].name.standardForm);
+        if(outlawIndex !== -1) {
+          filterOut = true;
+        }
+      }
+    }
+    if(!filterOut) {
+      returnRecipes.push(recipes[i]);
+    }
+  }
+  return returnRecipes;
+}
+
+function mapId(element) {
+  return element._id;
+}
+
+function mapIngredientFormIds(ingred) {
+  return {
+    _id: ingred._id,
+    formIds: ingred.ingredientForms.map(mapId)
+  };
+}
+
+function looseEquality(a, b) {
+  return a == b;
+}
+
+function ingredientIdObjsEqual(idObjA, idObjB) {
+  if(idObjA._id == idObjB._id) {
+    var intersection = _.intersectionWith(idObjA.formIds, idObjB.formIds, looseEquality);
+    if(intersection.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+}
+
+function getScores(recipe, ingredientIds) {
+  //I think ingredientIds are enough given the structure of the recipe.ingredientTypes
+  var matchTotal = 0;
+  var missingTotal = 0;
+  var minNeededMet = true;
+  for (var i = recipe.ingredientList.ingredientTypes.length - 1; i >= 0; i--) {
+    var type = recipe.ingredientList.ingredientTypes[i];
+    var recipeIngredientIds = type.ingredients.map(mapIngredientFormIds);
+    var intersection = _.intersectionWith(ingredientIds, recipeIngredientIds, ingredientIdObjsEqual);
+    if(type.minNeeded > 0) {
+      if(intersection.length < type.minNeeded) {
+        minNeededMet = false;
+      }
+    }
+    matchTotal += intersection.length;
+    missingTotal += Math.abs(recipeIngredientIds.length - intersection.length);
+  }
+  var score = {};
+  score.matchTotal = matchTotal;
+  score.missingTotal = missingTotal;
+  score.minNeededMet = minNeededMet;
+  return score;
+}
+
+function recipeMatchScore(recipeA, recipeB) {
+  if(recipeA.scores.minNeededMet && recipeB.scores.minNeededMet) {
+    if(recipeA.scores.matchTotal > recipeB.scores.matchTotal) {
+      return -1;
+    } else if(recipeB.scores.matchTotal > recipeA.scores.matchTotal) {
+      return 1;
+    } else {
+      if(recipeA.scores.missingTotal < recipeB.scores.missingTotal) {
+        return -1;
+      } else if(recipeB.scores.missingTotal < recipeA.scores.missingTotal) {
+        return 1;
+      } else {
+        return 0;
+      }
+    }
+  } else if(recipeA.scores.minNeededMet && !recipeB.scores.minNeededMet) {
+    return -1;
+  } else if(!recipeA.scores.minNeededMet && recipeB.scores.minNeededMet) {
+    return 1;
+  } else {
+    if(recipeA.scores.matchTotal > recipeB.scores.matchTotal) {
+      return -1;
+    } else if(recipeB.scores.matchTotal > recipeA.scores.matchTotal) {
+      return 1;
+    } else {
+      if(recipeA.scores.missingTotal < recipeB.scores.missingTotal) {
+        return -1;
+      } else if(recipeB.scores.missingTotal < recipeA.scores.missingTotal) {
+        return 1;
+      } else {
+        return 0;
+      }
+    }
+  }
+}
+
+function processRecipes(recipes, ingredientIds, outlawIngredients) {
+  var returnObject = {
+    orderedRecipeIds: [],
+    returnRecipes: []
+  };
+  var returnRecipes = [];
+  var filteredRecipes;
+  if(outlawIngredients) {
+    filteredRecipes = filterRecipesByDietaryPreferences(recipes, outlawIngredients);
+    console.log('filteredRecipes', filteredRecipes);
+  } else {
+    filteredRecipes = recipes;
+  }
+  for (var i = filteredRecipes.length - 1; i >= 0; i--) {
+    filteredRecipes[i].scores = getScores(filteredRecipes[i], ingredientIds);
+  }
+  filteredRecipes.sort(recipeMatchScore);
+  returnObject.orderedRecipeIds = filteredRecipes.map(function(recipe) {
+    return recipe._id;
+  });
+  returnRecipes = filteredRecipes.slice(0, constants.RECIPES_PER_PAGE);
+  for (var j = returnRecipes.length - 1; j >= 0; j--) {
+    returnRecipes[j].badges = recipeBadgeService.getBadgesForRecipe(returnRecipes[j]);
+    returnRecipes[j] = underscore.pick(returnRecipes[j], '_id', 'badges', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'mainPictureURLs', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'missingIngredients', 'nameBodies');
+  }
+  returnObject.returnRecipes = returnRecipes;
+  returnObject.currentIndex = constants.RECIPES_PER_PAGE;
+  return returnObject;
+}
+
+router.post('/getRecipesWithIngredientsNew', function(req, res, next) {
+  logger.info('START POST api/recipes/getRecipesWithIngredients');
+  var ingredientFormIds = [];
+  if(req.body.ingredientIds) {
+    for (var i = req.body.ingredientIds.length - 1; i >= 0; i--) {
+      ingredientFormIds = ingredientFormIds.concat(req.body.ingredientIds[i].formIds);
+    }
+  }
+  Recipe.model.find({
+    compatibilityVersion: {$lte: req.body.compatibilityVersion},
+    recipeType: constants.RECIPE_TYPES.FULL,
+    "ingredientList.ingredientTypes": {
+      "$elemMatch": {
+        "ingredients": {
+          "$elemMatch": {
+            "_id": {"$in": req.body.ingredientIds},
+            "ingredientForms": {
+              "$elemMatch": {
+                "_id": {"$in": ingredientFormIds}
+              }
+            }
+          }
+        }
+      }
+    }
+  }, '-datesUsedAsRecipeOfTheDay -stepList -choiceSeasoningProfiles', (err, recipes) => {
+    if(err) {
+      logger.error('ERROR POST api/recipes/getRecipesWithIngredients', {error: err, body: req.body});
+      mailingService.mailServerError({error: err, location: 'POST api/recipes/getRecipesWithIngredients', extra: 'Recipe.find'});
+      return next(err);
+    }
+    try {
+      if(req.body.userId && req.body.userToken) {
+        //then user
+        User.model.findById(req.body.userId, function(err, user) {
+          if(err) {
+            logger.error('ERROR POST api/recipes/getRecipesWithIngredients', {error: err});
+            mailingService.mailServerError({error: err, location: 'POST api/recipes/getRecipesWithIngredients'});
+            return next(err);
+          }
+          if(!user) {
+            var error = {
+              status: constants.STATUS_CODES.UNPROCESSABLE,
+              message: 'No user for given id'
+            };
+            logger.error('ERROR POST api/recipes/getRecipesWithIngredients - no user found', {error: error});
+            mailingService.mailServerError({error: err, location: 'POST api/recipes/getRecipesWithIngredients', extra: 'no user found for id ' + req.body.userId});
+            return next(error);
+          }
+          if(req.body.userToken !== user.curToken) {
+            /*var error = {
+              status: constants.STATUS_CODES.UNAUTHORIZED,
+              message: 'Credentials for method are missing'
+            };
+            logger.error('ERROR POST api/recipes/getRecipesWithIngredients - token', {error: error});
+            return next(error);*/
+          }
+          var outlawIngredients = [];
+          for (var i = user.dietaryPreferences.length - 1; i >= 0; i--) {
+            outlawIngredients = outlawIngredients.concat(user.dietaryPreferences[i].outlawIngredients);
+          }
+          var returnObject = processRecipes(recipes, req.body.ingredientIds, outlawIngredients);
+          var retVal = {
+            data: returnObject
+          };
+          logger.info('END POST api/recipes/getRecipesWithIngredients');
+          res.json(retVal);
+        });
+      } else {
+        //then no user
+        var returnObject = processRecipes(recipes, req.body.ingredientIds);
+        var retVal = {
+          data: returnObject
+        };
+        logger.info('END POST api/recipes/getRecipesWithIngredients');
+        res.json(retVal);
+      }
+    } catch (error) {
+      logger.error('ERROR - exception in POST api/recipes/getRecipesWithIngredients', {error: error});
+      mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/recipes/getRecipesWithIngredients'});
+      return next(error);
+    }
+  });
+});
+
+router.post('/getMoreRecipesForSelection', function(req, res, next) {
+  logger.info('START POST api/recipes/getMoreRecipesForSelection');
+  try {
+    //will have to return new start index
+    Recipe.model.find({
+      "_id": {"$in": req.body.ingredientIds},
+      compatibilityVersion: {$lte: req.body.compatibilityVersion}
+    }, function(err, recipes) {
+      if(err) {
+        logger.error('ERROR - POST api/recipes/getMoreRecipesForSelection');
+        return next(err);
+      }
+      for (var i = recipes.length - 1; i >= 0; i--) {
+        recipes[i].badges = recipeBadgeService.getBadgesForRecipe(recipes[i]);
+        recipes[i] = underscore.pick(recipes[i], '_id', 'badges', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'mainPictureURLs', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'missingIngredients', 'nameBodies');
+      }
+      var retObj = {
+        data: recipes
+      };
+      logger.info('END POST api/recipes/getMoreRecipesForSelection');
+      res.json(retObj);
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in POST api/recipes/getMoreRecipesForSelection', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/recipes/getMoreRecipesForSelection'});
+    return next(error);
+  }
 });
 
 router.post('/getMoreRecipesForCategory', function(req, res, next) {
