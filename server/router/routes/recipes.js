@@ -740,6 +740,14 @@ function mapIngredientFormIds(ingred) {
   };
 }
 
+function mapMissingIngredObj(ingred) {
+  return {
+    nameObj: ingred.name,
+    _id: ingred._id,
+    formIds: ingred.ingredientForms.map(mapId)
+  };
+}
+
 function looseEquality(a, b) {
   return a == b;
 }
@@ -817,6 +825,20 @@ function recipeMatchScore(recipeA, recipeB) {
   }
 }
 
+function getMissingIngredientsForRecipe(recipe, ingredientIds) {
+  var missingIngredients = [];
+  var types = recipe.ingredientList.ingredientTypes;
+  for (var i = types.length - 1; i >= 0; i--) {
+    var ingredients = types[i].ingredients;
+    var typeIngredientIds = ingredients.map(mapMissingIngredObj);
+    var typeIngredientsMissing = _.differenceWith(typeIngredientIds, ingredientIds, ingredientIdObjsEqual);
+    if(typeIngredientIds.length - typeIngredientsMissing.length < types[i].minNeeded) {
+      Array.prototype.push.apply(missingIngredients, typeIngredientsMissing);
+    }
+  }
+  return missingIngredients;
+}
+
 function processRecipes(recipes, ingredientIds, outlawIngredients) {
   var returnObject = {
     orderedRecipeIds: [],
@@ -840,6 +862,7 @@ function processRecipes(recipes, ingredientIds, outlawIngredients) {
   returnRecipes = filteredRecipes.slice(0, constants.RECIPES_PER_PAGE);
   for (var j = returnRecipes.length - 1; j >= 0; j--) {
     returnRecipes[j].badges = recipeBadgeService.getBadgesForRecipe(returnRecipes[j]);
+    returnRecipes[j].missingIngredients = getMissingIngredientsForRecipe(returnRecipes[j], ingredientIds);
     returnRecipes[j] = underscore.pick(returnRecipes[j], '_id', 'badges', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'mainPictureURLs', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'missingIngredients', 'nameBodies');
   }
   returnObject.returnRecipes = returnRecipes;
@@ -936,6 +959,7 @@ router.post('/getMoreRecipesForSelection', function(req, res, next) {
   logger.info('START POST api/recipes/getMoreRecipesForSelection');
   try {
     //will have to return new start index
+    //'ingredientIds' is a misnomer...
     Recipe.model.find({
       "_id": {"$in": req.body.ingredientIds},
       compatibilityVersion: {$lte: req.body.compatibilityVersion}
@@ -946,6 +970,9 @@ router.post('/getMoreRecipesForSelection', function(req, res, next) {
       }
       for (var i = recipes.length - 1; i >= 0; i--) {
         recipes[i].badges = recipeBadgeService.getBadgesForRecipe(recipes[i]);
+        if(req.body.availableIngredientIds) {
+          recipes[i].missingIngredients = getMissingIngredientsForRecipe(recipes[i], req.body.availableIngredientIds);
+        }
         recipes[i] = underscore.pick(recipes[i], '_id', 'badges', 'name', 'description', 'recipeType', 'recipeCategory', 'mainPictureURL', 'mainPictureURLs', 'prepTime', 'totalTime', 'manActiveTime', 'manTotalTime', 'missingIngredients', 'nameBodies');
       }
       var retObj = {
