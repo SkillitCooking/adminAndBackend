@@ -181,8 +181,13 @@ angular.module('SkillitAdminApp')
       var descriptionMap = {};
       for(var key in $scope.recipe.nameBodies) {
         for (var i = $scope.recipe.nameBodies[key].textArr.length - 1; i >= 0; i--) {
-          if(!nameMap[$scope.recipe.nameBodies[key].textArr[i]]) {
+          if($scope.recipe.nameBodies[key].textArr[i] && typeof nameMap[$scope.recipe.nameBodies[key].textArr[i]] === 'undefined') {
             nameMap[$scope.recipe.nameBodies[key].textArr[i]] = true;
+          } else if(!$scope.recipe.nameBodies[key].textArr[i]) {
+            $scope.recipe.nameBodies[key].textArr.splice(i, 1);
+            if($scope.recipe.nameBodies[key].textArr.length === 0) {
+              delete $scope.recipe.nameBodies[key];
+            }
           }
         }
       }
@@ -193,7 +198,7 @@ angular.module('SkillitAdminApp')
           }
         }
       }
-
+      console.log('nameMap', nameMap);
       for(var name in nameMap) {
         $scope.nameBodies.push({name: name});
       }

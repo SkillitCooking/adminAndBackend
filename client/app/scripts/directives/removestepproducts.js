@@ -70,6 +70,7 @@ angular.module('SkillitAdminApp')
             console.log('constructingStep', angular.copy(scope.constructingStep));
             for (var z = scope.constructingStep.productKeys.length - 1; z >= 0; z--) {
               var key = scope.constructingStep.productKeys[z];
+              c
               scope.constructingStep.productNames.push({
                 name: key,
                 type: scope.constructingStep.stepComposition[key].type
