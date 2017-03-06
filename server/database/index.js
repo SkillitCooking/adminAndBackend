@@ -34,6 +34,8 @@ var devDB = 'mongodb://dane:ALDSJFljk345j2@aws-us-east-1-portal.17.dblayer.com:1
 var productionDB = 'mongodb://dane:ALDSJFljk345j2@aws-us-west-2-portal.0.dblayer.com:15198/skillit-prod-db?ssl=true';
 var usedDB;
 
+console.log('BLAH', process.env.BLAH);
+
 //if in development
 if(process.env.NODE_ENV === 'staging') {
   //ssl information
