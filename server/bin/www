@@ -19,6 +19,7 @@ if(app.get('env') === 'development') {
 
 
 var port = normalizePort(process.env.PORT || portNum);
+console.log('port', port);
 app.set('port', port);
 
 /**
