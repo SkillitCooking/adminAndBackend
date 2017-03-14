@@ -15,10 +15,10 @@ var ItemCollectionSchema = new mongoose.Schema({
     type: Date,
     default: curUTCDate
   },
-  pictureURL: String,
+  pictureURLs: [String],
   orderPreference: Number,
   isBYOCollection: Boolean,
-  dietaryPreferenceIds: [ObjectId] 
+  dietaryPreferenceIds: [ObjectId]
 });
 
 module.exports.model = mongoose.model('ItemCollection', ItemCollectionSchema);
