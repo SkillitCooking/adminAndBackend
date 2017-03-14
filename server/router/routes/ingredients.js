@@ -29,6 +29,25 @@ var User = db.users;
   });
 });*/
 
+/*router.get('/getIds', function(req, res, next) {
+  Ingredient.model.find({}, '_id ingredientForms', function(err, ingredients) {
+    if(err){
+      console.log('error', err);
+      return next(err);
+    }
+    var retVal = ingredients.map(function(ingredient) {
+      var formIds = ingredient.ingredientForms.map(function(form) {
+        return form._id;
+      });
+      return {
+        _id: ingredient._id,
+        formIds: formIds
+      };
+    });
+    res.json(retVal);
+  });
+});*/
+
 /* GET ingredients listing. */
 router.get('/', function(req, res, next) {
   logger.info('START GET api/ingredients/');

@@ -45,6 +45,19 @@ router.use(function(req, res, next) {
   next();
 });
 
+/*router.get('/getIds', function(req, res, next) {
+  Recipe.model.find({}, '_id', function(err, recipes) {
+    if(err) {
+      console.log('error', err);
+      return next(err);
+    }
+    var retVal = recipes.map(function(recipe) {
+      return recipe._id;
+    });
+    res.json(retVal);
+  });
+});*/
+
 /*router.get('/csv', function(req, res, next) {
   var filename = '/Users/dbratz/Desktop/recipes-ready.csv';
   var nameArr = [];
