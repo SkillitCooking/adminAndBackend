@@ -16,7 +16,12 @@
       <input type="checkbox" ng-model="preference.addToCollection" />
       <span>{{preference.title}}</span>
     </div><br/><br/>
-    Picture URL: <input type="url" placeholder="URL" ng-model="itemCollection.pictureURL" size="60" name="pictureURLInput" /><br/><br/>
+    Add Picture URL: <input type="url" placeholder="URL" ng-model="pictureURL" size="60" name="pictureURLInput" />
+    <button class="btn btn-info" ng-click="addPictureURL()">Add Picture URL</button><br/>
+    Picture URLs: <div ng-repeat="url in itemCollection.pictureURLs">
+      <p>{{url}}</p>
+      <button class="btn btn-warning" ng-click="removePictureURL($index)">Remove</button>
+    </div><br/><br/>
     ItemType: <select name="itemTypeSelect" ng-model="itemCollection.itemType" ng-options="itemType as itemType for itemType in itemTypes" required></select><br/><br/>
     <div>
       Use PRODUCTION Server: <input type="checkbox" ng-model="useProdServer" /><br/>

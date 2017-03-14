@@ -62,6 +62,15 @@ angular.module('SkillitAdminApp')
       $scope.changeSelectedCollection();
     };
 
+    $scope.addPictureURL = function() {
+      $scope.itemCollection.pictureURLs.push($scope.pictureURL);
+      $scope.pictureURL = "";
+    };
+
+    $scope.removePictureURL = function(index) {
+      $scope.itemCollection.pictureURLs.splice(index, 1);
+    };
+
     $scope.noServerSelected = function() {
       return !$scope.useProdServer && !$scope.useDevServer;
     };
@@ -80,7 +89,7 @@ angular.module('SkillitAdminApp')
         name: $scope.itemCollection.name,
         description: $scope.itemCollection.description,
         itemType: $scope.itemCollection.itemType,
-        pictureURL: $scope.itemCollection.pictureURL,
+        pictureURLs: $scope.itemCollection.pictureURLs,
         orderPreference: $scope.itemCollection.orderPreference,
         isBYOCollection: $scope.itemCollection.isBYOCollection,
         dietaryPreferenceIds: dietaryPreferenceIds,

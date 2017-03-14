@@ -22,6 +22,20 @@ var User = db.users;
 /* Add Credentials appropriately when time comes */
 /* Add Error checking as well */
 
+
+/*router.get('/getIds', function(req, res, next) {
+  ItemCollection.model.find({itemType: 'recipe'}, '_id', function(err, collections) {
+    if(err) {
+      console.log('error', err);
+      return next(err);
+    }
+    var retVal = collections.map(function(collection) {
+      return collection._id;
+    });
+    res.json(retVal);
+  });
+});*/
+
 /* GET all itemCollections - organize by type */
 router.get('/', function(req, res, next) {
   logger.info('START GET api/itemCollections/');
@@ -51,6 +65,7 @@ router.put('/:id', function(req, res, next) {
         return next(err);
       }
       logger.info('END PUT api/itemCollections/' + req.params.id);
+      console.log('collection', collection);
       res.json({data: collection});
     });
   } catch (error) {
@@ -276,6 +291,7 @@ router.post('/', function(req, res, next) {
           var retVal = {
             data: collection
           };
+          console.log('collection', collection);
           logger.info('END POST api/itemCollections/');
           res.json(retVal);
         });
@@ -284,6 +300,7 @@ router.post('/', function(req, res, next) {
         retVal = {
           data: collection
         };
+        console.log('collection', collection);
         logger.info('END POST api/itemCollections/');
         res.json(retVal);
       }

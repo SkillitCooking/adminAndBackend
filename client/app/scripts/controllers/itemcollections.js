@@ -9,9 +9,11 @@
  */
 angular.module('SkillitAdminApp')
   .controller('ItemcollectionsCtrl', ['$window', '$scope', 'itemCollectionService', 'dietaryPreferenceService', function ($window, $scope, itemCollectionService, dietaryPreferenceService) {
-    
+
     $scope.integerval = /^\d*$/;
-    $scope.itemCollection = {};
+    $scope.itemCollection = {
+      pictureURLs: []
+    };
     $scope.itemTypes = ["dailyTip", "trainingVideo", "howToShop", "glossary", "recipe"];
 
     $scope.serverType = 'DEVELOPMENT';
@@ -40,6 +42,15 @@ angular.module('SkillitAdminApp')
       return !$scope.useProdServer && !$scope.useDevServer;
     };
 
+    $scope.addPictureURL = function() {
+      $scope.itemCollection.pictureURLs.push($scope.pictureURL);
+      $scope.pictureURL = "";
+    };
+
+    $scope.removePictureURL = function(index) {
+      $scope.itemCollection.pictureURLs.splice(index, 1);
+    };
+
     $scope.save = function() {
       if(!$scope.itemCollection.orderPreference) {
         //some signal
@@ -56,7 +67,7 @@ angular.module('SkillitAdminApp')
           name: $scope.itemCollection.name,
           description: $scope.itemCollection.description,
           itemType: $scope.itemCollection.itemType,
-          pictureURL: $scope.itemCollection.pictureURL,
+          pictureURLs: $scope.itemCollection.pictureURLs,
           orderPreference: $scope.itemCollection.orderPreference,
           isBYOCollection: $scope.itemCollection.isBYOCollection,
           dietaryPreferenceIds: dietaryPreferenceIds
@@ -71,6 +82,6 @@ angular.module('SkillitAdminApp')
         console.log('Server Error: ', response);
         alert("Server Error: ", response);
         $scope.reset();
-      }); 
+      });
     };
   }]);

@@ -15,6 +15,7 @@ var ItemCollectionSchema = new mongoose.Schema({
     type: Date,
     default: curUTCDate
   },
+  pictureURL: String,
   pictureURLs: [String],
   orderPreference: Number,
   isBYOCollection: Boolean,
