@@ -23,12 +23,20 @@
       <button class="btn btn-warning" ng-click="removePictureURL($index)">Remove</button>
     </div><br/><br/>
     ItemType: <select name="itemTypeSelect" ng-model="itemCollection.itemType" ng-options="itemType as itemType for itemType in itemTypes" required></select><br/><br/>
+    <button class="btn btn-success" ng-click="setBulkAdd()" ng-disabled="itemCollection.itemType !== 'recipe'">Do Bulk Recipe Add</button>
+    <div ng-if="doBulkAdd">
+      <div ng-repeat="recipe in recipes">
+        <input type="checkbox" ng-model="recipe.addToCollection" />
+        <span>{{recipe.name}}</span>
+      </div>
+    </div>
     <div>
       Use PRODUCTION Server: <input type="checkbox" ng-model="useProdServer" /><br/>
       Use DEVELOPMENT Server: <input type="checkbox" ng-model="useDevServer" /><br/>
     </div>
     <button class="btn btn-warning btn-large" ng-click="cancelChanges()">Cancel Changes</button>
     <button class="btn btn-primary btn-large" ng-click="saveChanges()" ng-disabled="noServerSelected()">Save Changes</button>
+    <button class="btn btn-large btn-info" ng-click="saveBulkAdd()" ng-disabled="!doBulkAdd">Save Changes and Bulk Add</button>
     <button class="btn btn-danger btn-large" ng-click="deleteCollection()" ng-disabled="noServerSelected()">Delete Collection</button>
   </form>
 </div>

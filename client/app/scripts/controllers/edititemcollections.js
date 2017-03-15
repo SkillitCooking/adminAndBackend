@@ -8,12 +8,14 @@
  * Controller of the SkillitAdminApp
  */
 angular.module('SkillitAdminApp')
-  .controller('EditItemCollectionsCtrl', ['$window', '$scope', 'itemCollectionService', 'dietaryPreferenceService', function ($window, $scope, itemCollectionService, dietaryPreferenceService) {
+  .controller('EditItemCollectionsCtrl', ['$window', '$scope', 'itemCollectionService', 'dietaryPreferenceService', 'recipeService', function ($window, $scope, itemCollectionService, dietaryPreferenceService, recipeService) {
 
     $scope.integerval = /^\d*$/;
     $scope.itemTypes = $scope.itemTypes = ["dailyTip", "trainingVideo", "howToShop", "glossary", "recipe"];
 
     $scope.serverType = 'DEVELOPMENT';
+
+    $scope.doBulkAdd = false;
 
     $scope.reloadStuff = function(serverName) {
       var isProd = false;
@@ -41,9 +43,19 @@ angular.module('SkillitAdminApp')
         console.log("Server Error: ", response);
         alert("Server Error: " + response.message);
       });
+      recipeService.getAllRecipesNameId(isProd).then(function(res) {
+        $scope.recipes = res.data;
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+      });
     };
 
     $scope.reloadStuff('DEVELOPMENT');
+
+    $scope.setBulkAdd = function() {
+      $scope.doBulkAdd = true;
+    };
 
     $scope.changeSelectedCollection = function() {
       if($scope.selectedCollection) {
@@ -95,6 +107,40 @@ angular.module('SkillitAdminApp')
         dietaryPreferenceIds: dietaryPreferenceIds,
         _id: $scope.itemCollection._id
       }, $scope.useProdServer, $scope.useDevServer).then(function(res) {
+        alert("ItemCollection successfully updated! Refresh page.");
+        $window.location.reload(true);
+      }, function(response) {
+        console.log("Server Error: ", response);
+        alert("Server Error: " + response.message);
+        $window.location.reload(true);
+      });
+    };
+
+    $scope.saveBulkAdd = function() {
+      if(!$scope.itemCollection.orderPreference) {
+        $scope.itemCollection.orderPreference = -1;
+      }
+      var dietaryPreferenceIds = [];
+      for (var i = $scope.dietaryPreferences.length - 1; i >= 0; i--) {
+        if($scope.dietaryPreferences[i].addToCollection) {
+          dietaryPreferenceIds.push($scope.dietaryPreferences[i]._id);
+        }
+      }
+      var recipeIds = $scope.recipes.filter(function(recipe) {
+        return recipe.addToCollection;
+      }).map(function(recipe) {
+        return recipe._id;
+      });
+      itemCollectionService.updateItemCollectionBulk({
+        name: $scope.itemCollection.name,
+        description: $scope.itemCollection.description,
+        itemType: $scope.itemCollection.itemType,
+        pictureURLs: $scope.itemCollection.pictureURLs,
+        orderPreference: $scope.itemCollection.orderPreference,
+        isBYOCollection: $scope.itemCollection.isBYOCollection,
+        dietaryPreferenceIds: dietaryPreferenceIds,
+        _id: $scope.itemCollection._id
+      }, recipeIds, $scope.useProdServer, $scope.useDevServer).then(function(res) {
         alert("ItemCollection successfully updated! Refresh page.");
         $window.location.reload(true);
       }, function(response) {

@@ -67,6 +67,13 @@ angular.module('SkillitAdminApp')
           promises.push(baseRecipes.customDELETE('/' + recipe._id));
         }
         return Promise.all(promises);
+      },
+      getRecipesForBulkAdd: function(useProd) {
+        if(useProd) {
+          return baseProductionRecipes.customGET('/getRecipesForBulkAdd');
+        } else {
+          return baseRecipes.customGET('/getRecipesForBulkAdd');
+        }
       }
     };
   });

@@ -57,6 +57,26 @@ angular.module('SkillitAdminApp')
           promises.push(baseItemCollections.customDELETE('/' + collection._id));
         }
         return Promise.all(promises);
+      },
+      updateItemCollectionBulk: function(collection, recipeIds, useProd, useDev) {
+        var promises = [];
+        if(useProd) {
+          promises.push(baseProductionItemCollections.customPUT({collection: collection, recipeIds: recipeIds}, 'bulk/' + collection._id));
+        } 
+        if(useDev) {
+          promises.push(baseItemCollections.customPUT({collection: collection, recipeIds: recipeIds}, 'bulk/' + collection._id));
+        }
+        return Promise.all(promises);
+      },
+      addNewItemCollectionBulk: function(newItemCollection, recipeIds, useProd, useDev) {
+        var promises = [];
+        if(useProd) {
+          promises.push(baseProductionItemCollections.customPOST({collection: newItemCollection.itemCollection, recipeIds: recipeIds}, 'addBulk'));
+        } 
+        if(useDev) {
+          promises.push(baseItemCollections.customPOST({collection: newItemCollection.itemCollection, recipeIds: recipeIds}, 'addBulk'));
+        }
+        return Promise.all(promises);
       }
     };
   });

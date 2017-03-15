@@ -58,19 +58,43 @@ router.put('/:id', function(req, res, next) {
   try {
     logger.info('START PUT api/itemCollections/' + req.params.id);
     req.body.collection.dateModified = Date.parse(new Date().toUTCString());
-    ItemCollection.model.findByIdAndUpdate(req.params.id, req.body.collection, {new: true, setDefaultsOnInsert:true}, function(err, collection) {
+    ItemCollection.model.findByIdAndUpdate(req.params.id, req.body.collection, {new: true, setDefaultsOnInsert: true}, function(err, collection) {
       if(err) {
         logger.error('ERROR PUT api/itemCollections/' + req.params.id, {error: err});
         mailingService.mailServerError({error: err, location: 'PUT api/itemCollection/' + req.params.id});
         return next(err);
       }
       logger.info('END PUT api/itemCollections/' + req.params.id);
-      console.log('collection', collection);
       res.json({data: collection});
     });
   } catch (error) {
     logger.error('ERROR - exception in PUT api/itemCollections/:id', {error: error});
     mailingService.mailServerError({error: err, location: 'EXCEPTION PUT api/itemCollection/:id'});
+    return next(error);
+  }
+});
+
+router.put('/bulk/:id', function(req, res, next) {
+  try {
+    logger.info('START PUT api/itemCollections/' + req.params.id);
+    req.body.collection.dateModified = Date.parse(new Date().toUTCString());
+    var promiseArr = [];
+    promiseArr.push(ItemCollection.model.findByIdAndUpdate(req.params.id, req.body.collection, {new: true, setDefaultsOnInsert: true}));
+    promiseArr.push(Recipe.model.updateMany({
+      _id: {$in: req.body.recipeIds},
+      collectionIds: {$nin:  [req.params.id]} },
+      {$push: {collectionIds: req.params.id}}));
+    Promise.all(promiseArr).then(function(result) {
+      logger.info('END PUT api/itemCollections/bulk/' + req.params.id);
+      res.json({data: result});
+    }).catch(function(err) {
+      logger.error('ERROR PUT api/itemCollections/bulk/' + req.params.id, {error: err});
+      mailingService.mailServerError({error: err, location: 'PUT api/itemCollection/bulk/' + req.params.id});
+      return next(err);
+    });
+  } catch (error) {
+    logger.error('ERROR - exception in PUT api/itemCollections/:id', {error: error});
+    mailingService.mailServerError({error: err, location: 'EXCEPTION PUT api/itemCollection/bulk/:id'});
     return next(error);
   }
 });
@@ -300,7 +324,6 @@ router.post('/', function(req, res, next) {
         retVal = {
           data: collection
         };
-        console.log('collection', collection);
         logger.info('END POST api/itemCollections/');
         res.json(retVal);
       }
@@ -308,6 +331,59 @@ router.post('/', function(req, res, next) {
   } catch (error) {
     logger.error('ERROR - exception in POST api/itemCollections/', {error: error});
     mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/itemCollection/'});
+    return next(error);
+  }
+});
+
+router.post('/addBulk', function(req, res, next) {
+  logger.info('START POST api/itemCollections/addBulk/');
+  try {
+    var query = {
+      'name': req.body.collection.name,
+      'itemType': req.body.collection.itemType
+    };
+    req.body.dateModified = Date.parse(new Date().toUTCString());
+    ItemCollection.model.findOneAndUpdate(query, req.body.collection, {upsert: true, setDefaultsOnInsert: true}, function(err, collection) {
+      if(err) {
+        logger.error('ERROR POST api/itemCollections/addBulk', {error: err, body: req.body});
+        mailingService.mailServerError({error: err, location: 'POST api/itemCollection/addBulk'});
+        return next(err);
+      }
+      if(collection === null) {
+        //then inserted
+        ItemCollection.model.findOne(query, function(err, collection) {
+          if(err) {
+            logger.error('ERROR POST api/itemCollections/addBulk', {error: err, body: req.body});
+            mailingService.mailServerError({error: err, location: 'POST api/itemCollection/addBulk'});
+            return next(err);
+          }
+          //recipes
+          Recipe.model.updateMany({_id: {$in: req.body.recipeIds}}, {$push: {collectionIds: collection._id}}, function(err, raw) {
+            if(err) {
+              logger.error('ERROR POST api/itemCollections/addBulk', {error: err, body: req.body});
+              mailingService.mailServerError({error: err, location: 'POST api/itemCollection/addBulk'});
+              return next(err);
+            }
+            logger.info('END POST api/itemCollections/addBulk');
+            res.json({data: collection});
+          });
+        });
+      } else {
+        //then updated
+        Recipe.model.updateMany({_id: {$in: req.body.recipeIds}}, {$push: {collectionIds: collection._id}}, function(err, raw) {
+          if(err) {
+            logger.error('ERROR POST api/itemCollections/addBulk', {error: err, body: req.body});
+            mailingService.mailServerError({error: err, location: 'POST api/itemCollection/addBulk'});
+            return next(err);
+          }
+          logger.info('END POST api/itemCollections/addBulk');
+          res.json({data: collection});
+        });
+      }
+    });
+  } catch(error) {
+    logger.error('ERROR - exception in POST api/itemCollections/addBulk', {error: error});
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/itemCollection/addBulk'});
     return next(error);
   }
 });

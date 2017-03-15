@@ -233,7 +233,6 @@ angular.module('SkillitAdminApp')
         updateNamesAndDescriptions();
         $scope.ingredientList = $scope.recipe.ingredientList;
         $scope.mainPictureURLs = angular.copy([]);
-        console.log('recipe', $scope.recipe);
         if($scope.recipe.mainPictureURLs) {
           for (var i = 0; i < $scope.recipe.mainPictureURLs.length; i++) {
             $scope.mainPictureURLs.push({url: $scope.recipe.mainPictureURLs[i]});

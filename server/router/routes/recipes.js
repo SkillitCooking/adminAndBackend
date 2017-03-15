@@ -186,6 +186,7 @@ router.get('/', function(req, res, next) {
   });
 });
 
+
 router.get('/getAllRecipesNameId', function(req, res, next) {
   logger.info('START GET api/recipes/getAllRecipesNameId/');
   Recipe.model.find({}, '_id name', function(err, recipes) {
