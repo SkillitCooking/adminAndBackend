@@ -191,7 +191,7 @@ angular
       .otherwise({
         redirectTo: '/'
       });
-    RestangularProvider.setBaseUrl("http://localhost:8000/api");
-    //RestangularProvider.setBaseUrl("https://skillicookingdevapi.info/api");
+    //RestangularProvider.setBaseUrl("http://localhost:8000/api");
+    RestangularProvider.setBaseUrl("https://skillicookingdevapi.info/api");
     RestangularProvider.setDefaultHeaders({password: "MDm|C7oQQIm&AZyhx4g7m^+uNGqm$7Ctt2-60O&Ek-%0o!NuLT"});
   });
