@@ -359,7 +359,7 @@ router.post('/addBulk', function(req, res, next) {
             return next(err);
           }
           //recipes
-          Recipe.model.update({_id: {$in: req.body.recipeIds}}, {$push: {collectionIds: collection._id}}, {multi: true} function(err, raw) {
+          Recipe.model.update({_id: {$in: req.body.recipeIds}}, {$push: {collectionIds: collection._id}}, {multi: true}, function(err, raw) {
             if(err) {
               logger.error('ERROR POST api/itemCollections/addBulk', {error: err, body: req.body});
               mailingService.mailServerError({error: err, location: 'POST api/itemCollection/addBulk'});
