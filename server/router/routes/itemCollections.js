@@ -80,10 +80,11 @@ router.put('/bulk/:id', function(req, res, next) {
     req.body.collection.dateModified = Date.parse(new Date().toUTCString());
     var promiseArr = [];
     promiseArr.push(ItemCollection.model.findByIdAndUpdate(req.params.id, req.body.collection, {new: true, setDefaultsOnInsert: true}));
-    promiseArr.push(Recipe.model.updateMany({
+    promiseArr.push(Recipe.model.update({
       _id: {$in: req.body.recipeIds},
       collectionIds: {$nin:  [req.params.id]} },
-      {$push: {collectionIds: req.params.id}}));
+      {$push: {collectionIds: req.params.id}},
+      {multi: true}));
     Promise.all(promiseArr).then(function(result) {
       logger.info('END PUT api/itemCollections/bulk/' + req.params.id);
       res.json({data: result});
@@ -358,7 +359,7 @@ router.post('/addBulk', function(req, res, next) {
             return next(err);
           }
           //recipes
-          Recipe.model.updateMany({_id: {$in: req.body.recipeIds}}, {$push: {collectionIds: collection._id}}, function(err, raw) {
+          Recipe.model.update({_id: {$in: req.body.recipeIds}}, {$push: {collectionIds: collection._id}}, {multi: true} function(err, raw) {
             if(err) {
               logger.error('ERROR POST api/itemCollections/addBulk', {error: err, body: req.body});
               mailingService.mailServerError({error: err, location: 'POST api/itemCollection/addBulk'});
@@ -370,7 +371,7 @@ router.post('/addBulk', function(req, res, next) {
         });
       } else {
         //then updated
-        Recipe.model.updateMany({_id: {$in: req.body.recipeIds}}, {$push: {collectionIds: collection._id}}, function(err, raw) {
+        Recipe.model.update({_id: {$in: req.body.recipeIds}}, {$push: {collectionIds: collection._id}}, {multi: true}, function(err, raw) {
           if(err) {
             logger.error('ERROR POST api/itemCollections/addBulk', {error: err, body: req.body});
             mailingService.mailServerError({error: err, location: 'POST api/itemCollection/addBulk'});
