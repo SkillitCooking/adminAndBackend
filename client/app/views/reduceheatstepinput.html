@@ -1,4 +1,4 @@
-<div ng-form="removeHeatStepForm">
+<div ng-form="reduceHeatStepForm">
   <p ng-if="isAuxiliaryStep === 'true'"><b>Auxiliary Step</b></p>
   <p ng-if="isAuxiliaryStep === 'false'"><b>Reduce Heat Step</b></p>
   <div ng-if="isAuxiliaryStep === 'false'">
@@ -16,7 +16,7 @@
   </div>
   <div ng-if="isAuxiliaryStep === 'true'">
     Heat Setting: <input type="text" ng-model="constructingStep.auxiliarySteps[0].stepSpecifics[0].val" size="50" required /><br/>
-    Remove From Heat?: <input type="text" ng-model="constructingStep.auxiliarySteps[0].stepSpecifics[0].val" size="50" required /><br/>
+    Remove From Heat?: <input type="checkbox" ng-model="constructingStep..auxiliarySteps[0].stepSpecifics[1].val" /><br/>
   </div>
   <div ng-if="isAuxiliaryStep === 'false'">
     <button ng-show="!tipAdded" class="btn btn-sm btn-primary" ng-click="addTip()">Add Tip</button><br/>

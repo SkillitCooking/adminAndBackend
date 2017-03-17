@@ -117,7 +117,12 @@
         <heat-step-input ng-if="constructingStep.stepType === 'Heat'"></heat-step-input>
         <place-step-input ng-if="constructingStep.stepType === 'Place'"></place-step-input>
         <preheat-oven-step-input ng-if="constructingStep.stepType === 'PreheatOven'"></preheat-oven-step-input>
-        <reduce-heat-step-input ng-if="constructingStep.stepType === 'ReduceHeat'"></reduce-heat-step-input>
+        <reduce-heat-step-input ng-if="constructingStep.stepType === 'ReduceHeat'"
+          is-aux-step="false"
+          constructing-step="constructingStep"
+          ingredient-list="ingredientList"
+          step-list="stepList"
+          aux-step-arr-index=""></reduce-heat-step-input>
         <remove-step-input ng-if="constructingStep.stepType === 'Remove'"></remove-step-input>
         <sautee-step-input ng-if="constructingStep.stepType === 'Sautee'"></sautee-step-input>
         <season-step-input ng-if="constructingStep.stepType === 'Season'"></season-step-input>
@@ -128,7 +133,7 @@
           is-aux-step="false"
           constructing-step="constructingStep"
           ingredient-list="ingredientList"
-          stepList="stepList"
+          step-list="stepList"
           aux-step-arr-index=""></stir-step-input>
         <equipment-prep-step-input ng-if="constructingStep.stepType === 'EquipmentPrep'"></equipment-prep-step-input>
         <move-step-input ng-if="constructingStep.stepType === 'Move'"></move-step-input>

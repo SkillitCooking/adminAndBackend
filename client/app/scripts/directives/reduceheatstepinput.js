@@ -2,14 +2,14 @@
 
 /**
  * @ngdoc directive
- * @name SkillitAdminApp.directive:removeHeatStepInput
+ * @name SkillitAdminApp.directive:reduceHeatStepInput
  * @description
- * # removeHeatStepInput
+ * # reduceHeatStepInput
  */
 angular.module('SkillitAdminApp')
   .directive('reduceHeatStepInput', function () {
     return {
-      templateUrl: 'views/removeheatstepinput.html',
+      templateUrl: 'views/reduceheatstepinput.html',
       restrict: 'E',
       transclude: false,
       scope: {

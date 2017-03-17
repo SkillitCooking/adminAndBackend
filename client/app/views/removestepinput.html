@@ -17,6 +17,16 @@
   composing-types="composingTypes"
   input-dish="inputDish"></remove-step-products>
   <br/><br/>
+  <button ng-show="!auxStepAdded" class="btn btn-primary btn-sm" ng-click="addAuxStep()">Add Auxiliary Reduce Heat Step</button>
+  <div ng-if="auxStepAdded">
+    <b>Auxiliary Reduce Heat Step:</b><br/>
+    <reduce-heat-step-input is-aux-step="true"
+      constructing-step="constructingStep"
+      ingredient-list="ingredientList"
+      step-list="stepList"
+      aux-step-arr-index=""></reduce-heat-step-input>
+    <button class="btn btn-danger btn-xs" ng-click="removeAuxStep()">Remove Auxiliary Step</button>
+  </div><br/><br/>
   <button ng-show="!tipAdded" class="btn btn-sm btn-primary" ng-click="addTip()">Add Tip</button><br/>
   <button ng-show="tipAdded" class="btn btn-sm btn-primary" ng-click="toggleTipVisibility()">{{getTipToggleText()}}</button>
   <div ng-if="tipAdded">
