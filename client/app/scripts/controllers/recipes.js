@@ -75,7 +75,7 @@ angular.module('SkillitAdminApp')
       mainPictureURLs: []
     };
 
-    $scope.stepTypes = ["Bake", "Boil", "BreakEgg", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "EquipmentPrep", "Heat", "Move", "Place", "PreheatOven", "Remove", "Sautee", "Season", "SlowCook", "Serve", "Steam", "Stir"];
+    $scope.stepTypes = ["Bake", "Boil", "BreakEgg", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "EquipmentPrep", "Heat", "Move", "Place", "PreheatOven", "ReduceHeat", "Remove", "Sautee", "Season", "SlowCook", "Serve", "Steam", "Stir"];
     $scope.recipeTypes = ["AlaCarte", "BYO", "Full"];
     $scope.recipeCategories = ["Sautee", "Easy Dinners", "Seafood Plates", "Scramble", "Roast", "Pasta", "Hash", "Rice", "Quinoa"];
     $scope.cookingMethods = ["Bake", "Sautee", "Boil", "Steam", "SlowCook"];

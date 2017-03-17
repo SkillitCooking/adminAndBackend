@@ -18,6 +18,7 @@ angular.module('SkillitAdminApp')
         scope.tipAdded = false;
         scope.tipIsMinimized = true;
         scope.showExampleText = false;
+        scope.auxStepAdded = false;
 
         scope.removeTypes = ["Remove"];
 
@@ -158,7 +159,27 @@ angular.module('SkillitAdminApp')
         scope.removeTip = function() {
           scope.tipAdded = !scope.tipAdded;
           scope.constructingStep.stepTip = undefined;
-        };        
+        };
+
+        scope.addAuxStep = function() {
+          scope.auxStepAdded = !scope.auxStepAdded;
+          //remove from heat - in future, will probably want to be able
+          //to plug in auxStep of choice
+          scope.constructingStep.auxiliarySteps = [{
+            stepSpecifics: [{
+              propName: "heatSetting",
+              val: ""
+            }, {
+              propName: "removeFromHeat",
+              val: ""
+            }]
+          }];
+        };
+
+        scope.removeAuxStep = function() {
+          scope.auxStepAdded = !scope.auxStepAdded;
+          scope.constructingStep.auxiliarySteps = [];
+        };
       }
     };
   });

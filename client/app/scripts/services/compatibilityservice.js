@@ -24,7 +24,12 @@ angular.module('SkillitAdminApp')
             }
             break;
           case 'Remove':
-            compatibilitySet = 3;
+            if(compatibilitySet < 3) {
+              compatibilitySet = 3;
+            }
+            break;
+          case 'ReduceHeat':
+            compatibilitySet = 4;
             break;
           default:
             break;

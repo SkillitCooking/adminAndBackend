@@ -79,6 +79,7 @@ angular.module('SkillitAdminApp')
           description: $scope.itemCollection.description,
           itemType: $scope.itemCollection.itemType,
           pictureURLs: $scope.itemCollection.pictureURLs,
+          pictureURL: $scope.itemCollection.pictureURLs[0],
           orderPreference: $scope.itemCollection.orderPreference,
           isBYOCollection: $scope.itemCollection.isBYOCollection,
           dietaryPreferenceIds: dietaryPreferenceIds
@@ -118,6 +119,7 @@ angular.module('SkillitAdminApp')
           description: $scope.itemCollection.description,
           itemType: $scope.itemCollection.itemType,
           pictureURLs: $scope.itemCollection.pictureURLs,
+          pictureURL: $scope.itemCollection.pictureURLs[0],
           orderPreference: $scope.itemCollection.orderPreference,
           isBYOCollection: $scope.itemCollection.isBYOCollection,
           dietaryPreferenceIds: dietaryPreferenceIds 

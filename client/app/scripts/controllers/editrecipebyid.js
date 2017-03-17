@@ -15,7 +15,7 @@ angular.module('SkillitAdminApp')
     $scope.recipeCategories = ["Sautee", "Scramble", "Easy Dinners", "Roast", "Pasta", "Hash", "Rice", "Quinoa"];
     $scope.servingSizes = ["1-2", "2-3", "3-4", "4-5", "5-6", "6-7", "7-8", "8-9", "9-10"];
     $scope.cookingMethods = ["Bake", "Sautee", "Boil", "Steam", "SlowCook"];
-    $scope.stepTypes = ["Bake", "Boil", "BreakEgg", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "EquipmentPrep", "Heat", "Move", "Place", "PreheatOven", "Remove", "Sautee", "Serve", "Season", "SlowCook", "Steam", "Stir"];
+    $scope.stepTypes = ["Bake", "Boil", "BreakEgg", "BringToBoil", "Cook", "Custom", "Cut", "Dry", "EquipmentPrep", "Heat", "Move", "Place", "PreheatOven", "ReduceHeat", "Remove", "Sautee", "Serve", "Season", "SlowCook", "Steam", "Stir"];
     //initialize constructingStep and its stepInputs
     $scope.constructingStep = {};
     $scope.constructingStep.stepInputs = {};
