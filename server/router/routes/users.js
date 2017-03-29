@@ -12,6 +12,34 @@ var mongoose = require('mongoose');
 var db = require('../../database');
 var User = db.users;
 
+router.post('/registerDevice', function(req, res, next) {
+  logger.info('START POST api/users/registerDevice');
+  try {
+    //check for User with uuid
+    var query = {deviceUUID: req.body.deviceUUID};
+    User.model.findOneAndUpdate(query, {
+      timezoneString: req.body.timezoneString,
+      pushToken: req.body.pushToken,
+      deviceUUID: req.body.deviceUUID
+    }, {
+      new: true,
+      upsert: true,
+      setDefaultsOnInsert: true
+    }, function(err, user) {
+      if(err) {
+        logger.error('ERROR POST api/users/registerDevice/', {error: err});
+        mailingService.mailServerError({error: err, location: 'POST api/users/registerDevice'});
+        return next(err);
+      }
+      res.json({data: user});
+    })
+  } catch(error) {
+    logger.error('ERROR - exception in POST api/users/registerDevice');
+    mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/users/registerDevice'});
+    return next(error);
+  }
+});
+
 router.post('/socialLogin', function(req, res, next) {
   logger.info('START POST api/users/socialLogin');
   try {
@@ -101,7 +129,15 @@ router.post('/socialSignup', function(req, res, next) {
     user.socialEmail = req.body.email;
     user.socialName = req.body.name;
     user.socialUsername = req.body.username;
-    User.model.create(user, function(err, user) {
+    user.deviceUUID = req.body.deviceUUID;
+    var query = {deviceUUID: req.body.deviceUUID};
+    var options = {
+      new: true,
+      upsert: true,
+      setDefaultsOnInsert: true
+    };
+    //find by uuid first - findOneAndUpdate
+    User.model.findOneAndUpdate(query, user, options, function(err, user) {
       if(err) {
         logger.error('ERROR POST api/users/socialSignup', {error: err});
          mailingService.mailServerError({error: err, location: 'POST api/users/socialSignup'});
@@ -163,7 +199,14 @@ router.post('/emailSignup', function(req, res, next) {
     user.signInSource = constants.SIGN_IN_SOURCES.EMAIL;
     user.dateCreated = Date.parse(new Date().toUTCString());
     user.lastLoginDate = Date.parse(new Date().toUTCString());
-    User.model.create(user, function(err, user) {
+    user.deviceUUID = req.body.deviceUUID;
+    var query = {deviceUUID: req.body.deviceUUID};
+    var options = {
+      new: true,
+      upsert: true,
+      setDefaultsOnInsert: true
+    };
+    User.model.findOneAndUpdate(query, user, options, function(err, user) {
       if(err) {
         logger.error('ERROR POST api/users/emailSignup', {error: err});
         mailingService.mailServerError({error: err, location: 'POST api/users/emailSignup'});

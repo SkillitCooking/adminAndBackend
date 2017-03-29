@@ -8,6 +8,7 @@ var UserSchema = new mongoose.Schema({
   socialUsername: String,
   curToken: String,
   deviceTokenDict: mongoose.Schema.Types.Mixed,
+  deviceUUID: String,
   socialEmail: String,
   email: String,
   firstName: String,
@@ -24,7 +25,9 @@ var UserSchema = new mongoose.Schema({
   },
   facebookId: String,
   googleId: String,
-  dietaryPreferences: [DietaryPreference.schema]
+  dietaryPreferences: [DietaryPreference.schema],
+  timezoneString: String,
+  pushToken: String
 });
 
 module.exports.model = mongoose.model('User', UserSchema);
