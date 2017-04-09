@@ -7,6 +7,7 @@ var constants = require('../../util/constants');
 
 var logger = require('../../util/logger').serverLogger;
 var mailingService = require('../lib/mailingService');
+var timezoneService = require('../../util/timezones');
 
 var mongoose = require('mongoose');
 var db = require('../../database');
@@ -17,10 +18,14 @@ router.post('/registerDevice', function(req, res, next) {
   try {
     //check for User with uuid
     var query = {deviceUUID: req.body.deviceUUID};
+    var timezoneString = timezoneService.convertTimezone(req.body.timezoneString);
     User.model.findOneAndUpdate(query, {
-      timezoneString: req.body.timezoneString,
+      timezoneString: timezoneString,
       pushToken: req.body.pushToken,
-      deviceUUID: req.body.deviceUUID
+      actualTimezoneString: req.body.timezoneString,
+      deviceUUID: req.body.deviceUUID,
+      lastActivityDate: Date.parse(new Date().toUTCString()),
+      haveSentInactivityNotification: false 
     }, {
       new: true,
       upsert: true,
@@ -82,6 +87,12 @@ router.post('/socialLogin', function(req, res, next) {
       if(req.body.name && req.body.name !== "") {
         user.socialName = req.body.name;
       }
+      if(req.body.firstName && req.body.firstName !== "") {
+        user.firstName = req.body.firstName;
+      }
+      if(req.body.lastName && req.body.lastName !== "") {
+        user.lastName = req.body.lastName;
+      }
       if(req.body.username && req.body.username !== "") {
         user.socialUsername = req.body.username;
       }
@@ -128,6 +139,8 @@ router.post('/socialSignup', function(req, res, next) {
     user.curToken = req.body.token;
     user.socialEmail = req.body.email;
     user.socialName = req.body.name;
+    user.firstName = req.body.firstName;
+    user.lastName = req.body.lastName;
     user.socialUsername = req.body.username;
     user.deviceUUID = req.body.deviceUUID;
     var query = {deviceUUID: req.body.deviceUUID};

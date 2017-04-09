@@ -27,7 +27,10 @@ var UserSchema = new mongoose.Schema({
   googleId: String,
   dietaryPreferences: [DietaryPreference.schema],
   timezoneString: String,
-  pushToken: String
+  actualTimezoneString: String,
+  pushToken: String,
+  lastActivityDate: Date,
+  haveSentInactivityNotification: Boolean
 });
 
 module.exports.model = mongoose.model('User', UserSchema);
