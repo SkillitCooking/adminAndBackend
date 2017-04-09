@@ -99,7 +99,7 @@ router.post('/socialLogin', function(req, res, next) {
       console.log('appSecret: ', fbAppSecretProof);
       socialService.getFacebookUserAPIPromise(fbAppSecretProof, req.body.fbAccessToken, req.body.socialId, constants.FB_LOGIN_FIELDS).then(function(response, body) {
         console.log('response: ', response);
-        console.log('body: ', body)
+        console.log('body: ', body);
       }).catch(function(error) {
         console.log('error: ', error);
       });
