@@ -7,6 +7,8 @@ var constants = require('../../util/constants');
 
 var logger = require('../../util/logger').serverLogger;
 var mailingService = require('../lib/mailingService');
+var securityService = require('../../util/security');
+var socialService = require('../lib/socialService');
 
 var mongoose = require('mongoose');
 var db = require('../../database');
@@ -40,16 +42,29 @@ router.post('/registerDevice', function(req, res, next) {
   }
 });
 
+
+
 router.post('/socialLogin', function(req, res, next) {
   logger.info('START POST api/users/socialLogin');
   try {
-    var query = {};
+    var query;
+    console.log('req.body', req.body);
     switch(req.body.socialType) {
       case constants.SIGN_IN_SOURCES.FACEBOOK:
-        query.facebookId = req.body.socialId;
+        query = {
+          $or: [
+            {facebookId: req.body.socialId},
+            {email: req.body.email}
+          ]
+        };
         break;
       case constants.SIGN_IN_SOURCES.GOOGLE:
-        query.googleId = req.body.socialId;
+        query = {
+          $or: [
+            {googleId: req.body.socialId},
+            {email: req.body.email}
+          ]
+        };
         break;
       default:
         //unrecognized socialType - should probably do some sort of appropriate handling
@@ -75,6 +90,9 @@ router.post('/socialLogin', function(req, res, next) {
         return next(error);
       }
       user.curToken = req.body.token;
+      var fbAppSecretProof = securityService.getFacebookAppSecretProof(req.body.token);
+      console.log('appSecret: ', fbAppSecretProof);
+      socialService.makeFacebookAPICall(fbAppSecretProof, req.body.fbAccessToken, req.body.socialId);
       user.lastLoginDate = Date.parse(new Date().toUTCString());
       if(req.body.email && req.body.email !== "") {
         user.socialEmail = req.body.email;
@@ -84,6 +102,12 @@ router.post('/socialLogin', function(req, res, next) {
       }
       if(req.body.username && req.body.username !== "") {
         user.socialUsername = req.body.username;
+      }
+      if(req.body.googleId && req.body.googleId !== "") {
+        user.googleId = req.body.googleId;
+      }
+      if(req.body.facebookId && req.body.facebookId) {
+        user.facebookId = req.body.facebookId;
       }
       user.save(function(err, user, numAffected) {
         if(err) {
@@ -106,6 +130,7 @@ router.post('/socialSignup', function(req, res, next) {
   logger.info('START POST api/users/socialSignup');
   try {
     var user = {};
+    console.log('req.body', req.body);
     switch(req.body.socialType) {
       case constants.SIGN_IN_SOURCES.FACEBOOK:
         user.facebookId = req.body.socialId;
@@ -126,6 +151,10 @@ router.post('/socialSignup', function(req, res, next) {
     user.dateCreated = Date.parse(new Date().toUTCString());
     user.lastLoginDate = Date.parse(new Date().toUTCString());
     user.curToken = req.body.token;
+    //test
+    var fbAppSecretProof = securityService.getFacebookAppSecretProof(req.body.token);
+    console.log('appSecret: ', fbAppSecretProof);
+    socialService.makeFacebookAPICall(fbAppSecretProof, req.body.fbAccessToken, req.body.socialId);
     user.socialEmail = req.body.email;
     user.socialName = req.body.name;
     user.socialUsername = req.body.username;
