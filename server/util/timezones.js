@@ -8,7 +8,7 @@ var service = {};
 //Could probably work in some version of regex 
 //interpretation
 var timezoneMap = {
-  'America/Alaska': 'America/Alaska',
+  'America/Alaska': 'America/Anchorage',
   'America/Anchorage': 'America/Anchorage',
   'America/Boise': 'America/Denver',
   'America/Cancun': 'America/New_York',
@@ -20,7 +20,7 @@ var timezoneMap = {
   'America/Halifax': 'America/Puerto_Rico',
   'America/Indiana/Indianapolis': 'America/New_York',
   'America/Indianapolis': 'America/New_York',
-  'America/Juneau': 'America/Alaska',
+  'America/Juneau': 'America/Anchorage',
   'America/Los_Angeles': 'America/Los_Angeles',
   'America/Mexico_City': 'America/Chicago',
   'America/Monterrey': 'America/Chicago',

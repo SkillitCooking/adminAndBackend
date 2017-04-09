@@ -14,6 +14,7 @@ var UserSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
   age: String,
+  gender: String,
   signInSource: String,
   dateCreated: {
     type: Date,
