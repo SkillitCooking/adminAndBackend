@@ -57,5 +57,7 @@ module.exports = Object.freeze({
     NO_TIMEZONE: 'NO_TIMEZONE',
     DEFAULT: 'America/Los_Angeles'
   },
-  IONIC_API_TOKEN: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjNTA4N2YxNS1hNDkzLTQ1ZWItODhjYi1mMmZlM2E4YzBlYWEifQ.kyVV756xmtyftjsFmjZDDSjNXpJ3fDRT6lMLUnirGwA'
+  IONIC_API_TOKEN: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjNTA4N2YxNS1hNDkzLTQ1ZWItODhjYi1mMmZlM2E4YzBlYWEifQ.kyVV756xmtyftjsFmjZDDSjNXpJ3fDRT6lMLUnirGwA',
+  FACEBOOK_APP_SECRET: '85e2e4b309752c7f3329808d4acbc6ff',
+  FB_LOGIN_FIELDS: ['gender', 'age_range']
 });

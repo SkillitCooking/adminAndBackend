@@ -17,8 +17,15 @@ var postOptions = {
   headers: {
     'Authorization': 'Bearer' + token,
     'Content-Type': 'application/json'
-  }
+  },
+  json: true
 };
+
+function notificationCallback(error, response, body) {
+  if(!error && response.statusCode == 200) {
+    var info = JSON.parse(body);
+  }
+}
 
 function sendAppropriateDailyPushes(timezone) {
   //pull appropriate users
