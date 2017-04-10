@@ -27,7 +27,7 @@ router.post('/registerDevice', function(req, res, next) {
       actualTimezoneString: req.body.timezoneString,
       deviceUUID: req.body.deviceUUID,
       lastActivityDate: Date.parse(new Date().toUTCString()),
-      haveSentInactivityNotification: false 
+      haveSentInactivityNotification: false
     }, {
       new: true,
       upsert: true,
@@ -58,6 +58,7 @@ router.post('/socialLogin', function(req, res, next) {
     switch(req.body.socialType) {
       case constants.SIGN_IN_SOURCES.FACEBOOK:
         query = {
+          deviceUUID: req.body.deviceUUID,
           $or: [
             {facebookId: req.body.socialId},
             {email: req.body.email}
@@ -66,6 +67,7 @@ router.post('/socialLogin', function(req, res, next) {
         break;
       case constants.SIGN_IN_SOURCES.GOOGLE:
         query = {
+          deviceUUID: req.body.deviceUUID,
           $or: [
             {googleId: req.body.socialId},
             {email: req.body.email}
@@ -233,6 +235,7 @@ router.post('/emailLogin', function(req, res, next) {
         return next(error);
       }
       user.curToken = req.body.token;
+      user.deviceUUID = req.body.deviceUUID;
       user.lastLoginDate = Date.parse(new Date().toUTCString());
       user.save(function(err, user, numAffected) {
         if(err) {
