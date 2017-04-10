@@ -18,14 +18,18 @@ var timezoneLib = require('../util/timezones');
 
 var jobs = [];
 
+var testJob = new CronJob('* * * * * *', function() {
+  
+}, null, true, 'America/Los_Angeles');
+
 //midnight UTC on non-Sundays
-var dailyJob = new CronJob('00 00 00 * * 1-6', function() {
+/*var dailyJob = new CronJob('00 00 00 * * 1-6', function() {
 
 }, null, true, 'Etc/UTC');
 
 //midnight UTC on Sundays
 var sundayJob = new CronJob('00 00 00 * * 0', function() {
 
-}, null, true, 'Etc/UTC');
+}, null, true, 'Etc/UTC');*/
 
 module.exports.pushNotificationJobs = jobs;
