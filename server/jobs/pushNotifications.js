@@ -6,6 +6,7 @@ var db = require('../database');
 var logger = require('../util/logger').serverLogger;
 var constants = require('../util/constants');
 var timezoneLib = require('../util/timezones');
+var CronJob = require('cron').CronJob;
 
 var User = db.users;
 
@@ -15,7 +16,7 @@ var postOptions = {
   method: 'POST',
   url: 'https://api.ionic.io/push/notifications',
   headers: {
-    'Authorization': 'Bearer' + token,
+    'Authorization': 'Bearer' + constants.IONIC_API_TOKEN,
     'Content-Type': 'application/json'
   },
   json: true
@@ -92,8 +93,8 @@ var MSTDailyJob = new CronJob('00 00 18 * * 1-6', function() {
 jobs.push(MSTDailyJob);
 
 var AlaskaDailyJob = new CronJob('00 00 18 * * 1-6', function() {
-  sendAppropriateDailyPushes('America/Alaska');
-}, null, true, 'America/Alaska');
+  sendAppropriateDailyPushes('America/Anchorage');
+}, null, true, 'America/Anchorage');
 
 jobs.push(AlaskaDailyJob);
 
@@ -136,8 +137,8 @@ var MSTSundayJob = new CronJob('00 00 12 * * 0', function() {
 jobs.push(MSTSundayJob);
 
 var AlaskaSundayJob = new CronJob('00 00 12 * * 0', function() {
-  sendAppropriateSundayPushes('America/Alaska');
-}, null, true, 'America/Alaska');
+  sendAppropriateSundayPushes('America/Anchorage');
+}, null, true, 'America/Anchorage');
 
 jobs.push(AlaskaSundayJob);
 
