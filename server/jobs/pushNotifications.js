@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var moment = require('moment');
 var request = require('request');
 var db = require('../database');
+var mailingService = require('../lib/mailingService');
 
 var logger = require('../util/logger').serverLogger;
 var constants = require('../util/constants');
@@ -16,7 +17,7 @@ var postOptions = {
   method: 'POST',
   url: 'https://api.ionic.io/push/notifications',
   headers: {
-    'Authorization': 'Bearer' + constants.IONIC_API_TOKEN,
+    'Authorization': 'Bearer ' + constants.IONIC_API_TOKEN,
     'Content-Type': 'application/json'
   },
   json: true
@@ -28,12 +29,12 @@ function notificationCallback(error, response, body) {
   }
 }
 
-function sendAppropriateDailyPushes(timezone) {
+function sendAppropriateDailyPushes() {
   //pull appropriate users
   User.model.find({
-    timezoneString: timezone,
+    timezoneString: {$exists: true},
     pushToken: {$exists: true}
-  }, 'pushToken lastActivityDate socialName firstName', function(err, users) {
+  }, 'pushToken lastActivityDate socialName firstName haveSentInactivityNotification', function(err, users) {
     if(err) {
       //may want different error direction here, eventually
       logger.error('ERROR sendAppropriateDailyPushes', {error: err});
@@ -41,19 +42,52 @@ function sendAppropriateDailyPushes(timezone) {
     try {
       var inactivityQueue, dailyQueue = [];
       for (var i = users.length - 1; i >= 0; i--) {
-        if(moment().subtract(14, 'days').isSameOrAfter(users[i].lastActivityDate, 'day')) {
+        if(moment().subtract(14, 'days').isSameOrAfter(users[i].lastActivityDate, 'day') &&
+          !users[i].haveSentInactivityNotification) {
           //then inactivity
           users[i].haveSentInactivityNotification = true;
           inactivityQueue.push(users[i]);
         } else {
           //then no inactivity
-          
           dailyQueue.push(users[i]);
         }
       }
-      
+      var opts = Object.assign({}, postOptions);
+      var name, pushMessage, scheduleDate;
+      for (var j = inactivityQueue.length - 1; j >= 0; j--) {
+        //set name
+        name = getName(inactivityQueue[j], 'you');
+        pushMessage = getPushMessage(name, constants.PUSH_NOTIFICATIONS.INACTIVE);
+        scheduleDate = getScheduleDate(inactivityQueue[j]);
+        opts.body = {
+          "tokens": [inactivityQueue[j].pushToken],
+          "profile": "prod",
+          "notification": {
+            "title": "",
+            "message": pushMessage
+          },
+          "scheduled": scheduleDate
+        };
+        request(opts, function(err, response, body) {  /*Any error Handling?*/   });
+      }
+      for (var k = dailyQueue.length - 1; k >= 0; k--) {
+        name = getName(dailyQueue[k], 'boss');
+        pushMessage = getPushMessage(name, constants.PUSH_NOTIFICATIONS.GENERAL);
+        scheduleDate = getScheduleDate(dailyQueue[k]);
+        opts.body = {
+          "tokens": [dailyQueue[k].pushToken],
+          "profile": "prod",
+          "notification": {
+            "title": "",
+            "message": pushMessage
+          },
+          "scheduled": scheduleDate
+        };
+        request(opts, function(err, response, body) {  /*Any error handling?*/  });
+      }
     } catch (error) {
       logger.error('ERROR - exception thrown in "sendAppropriateDailyPushes"', {error: error});
+      mailingService.mailServerError({error: error, location: 'EXCEPTION in "sendAppropriateDailyPushes"'});
     }
   });
 }
@@ -62,90 +96,21 @@ function sendAppropriateSundayPushes(timezone) {
 
 }
 
-var PacificDailyJob = new CronJob('00 00 18 * * 1-6', function() {
-  sendAppropriateDailyPushes('America/Los_Angeles');
-}, null, true, 'America/Los_Angeles');
-
-jobs.push(PacificDailyJob);
-
-var EasternDailyJob = new CronJob('00 00 18 * * 1-6', function() {
-  sendAppropriateDailyPushes('America/New_York');
-}, null, true, 'America/New_York');
-
-jobs.push(EasternDailyJob);
-
-var AtlanticDailyJob = new CronJob('00 00 18 * * 1-6', function() {
-  sendAppropriateDailyPushes('America/Puerto_Rico');
-}, null, true, 'America/Puerto_Rico');
-
-jobs.push(AtlanticDailyJob);
-
-var MountainDailyJob = new CronJob('00 00 18 * * 1-6', function() {
-  sendAppropriateDailyPushes('America/Denver');
-}, null, true, 'America/Denver');
-
-jobs.push(MountainDailyJob);
-
-var MSTDailyJob = new CronJob('00 00 18 * * 1-6', function() {
-  sendAppropriateDailyPushes('America/Phoenix');
-}, null, true, 'America/Phoenix');
-
-jobs.push(MSTDailyJob);
-
-var AlaskaDailyJob = new CronJob('00 00 18 * * 1-6', function() {
-  sendAppropriateDailyPushes('America/Anchorage');
-}, null, true, 'America/Anchorage');
-
-jobs.push(AlaskaDailyJob);
-
-var HawaiiDailyJob = new CronJob('00 00 18 * * 1-6', function() {
-  sendAppropriateDailyPushes('Pacific/Honolulu');
-}, null, true, 'Pacific/Honolulu');
-
-jobs.push(HawaiiDailyJob);
-
-//sunday jobs
-
-var PacificSundayJob = new CronJob('00 00 12 * * 0', function() {
-  sendAppropriateSundayPushes('America/Los_Angeles');
-}, null, true, 'America/Los_Angeles');
-
-jobs.push(PacificSundayJob);
-
-var EasternSundayJob = new CronJob('00 00 12 * * 0', function() {
-  sendAppropriateSundayPushes('America/New_York');
-}, null, true, 'America/New_York');
-
-jobs.push(EasternSundayJob);
-
-var AtlanticSundayJob = new CronJob('00 00 12 * * 0', function() {
-  sendAppropriateSundayPushes('America/Puerto_Rico');
-}, null, true, 'America/Puerto_Rico');
-
-jobs.push(AtlanticSundayJob);
-
-var MountainSundayJob = new CronJob('00 00 12 * * 0', function() {
-  sendAppropriateSundayPushes('America/Denver');
-}, null, true, 'America/Denver');
-
-jobs.push(MountainSundayJob);
-
-var MSTSundayJob = new CronJob('00 00 12 * * 0', function() {
-  sendAppropriateSundayPushes('America/Phoenix');
-}, null, true, 'America/Phoenix');
-
-jobs.push(MSTSundayJob);
-
-var AlaskaSundayJob = new CronJob('00 00 12 * * 0', function() {
-  sendAppropriateSundayPushes('America/Anchorage');
-}, null, true, 'America/Anchorage');
-
-jobs.push(AlaskaSundayJob);
-
-var HawaiiSundayJob = new CronJob('00 00 12 * * 0', function() {
-  sendAppropriateSundayPushes('Pacific/Honolulu');
-}, null, true, 'Pacific/Honolulu');
-
-jobs.push(HawaiiSundayJob);
+var PacificDailyJob = new CronJob('00 00 00 * * 1-6', function() {
+  //sendAppropriateDailyPushes();
+  postOptions.body = {
+    "tokens": ["cJXJhBwUYLw:APA91bES5Tt28SCLp-gvdAtiMBSH96eurTl3nq3DuvbsnJWT384LrJeKp3psWVhxlCwizUDd6ONFRtZaf83DZ2UcNMPBlp9u_EiVT2Pjj_ICYufjGBxkrTriiJ9_70jSoLBXCrzkhi_t"],
+    "profile": "dev",
+    "notification": {
+      "message": "Hey Hi"
+    }
+  };
+  request(postOptions, function(err, response, body) {
+    console.log('error', err);
+    //console.log('response', response);
+    console.log('body', body);
+    console.log('data', body.data);
+  });
+}, null, true, 'Etc/UTC');
 
 module.exports.pushNotificationJobs = jobs;
