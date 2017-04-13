@@ -11,9 +11,42 @@ var timezoneService = require('../../util/timezones');
 var securityService = require('../../util/security');
 var socialService = require('../lib/socialService');
 
+var Promise = require('bluebird');
 var mongoose = require('mongoose');
+Promise.promisifyAll(mongoose);
 var db = require('../../database');
 var User = db.users;
+
+/*router.post('/transformEmails', function(req, res, next) {
+  //if socialEmail, then email = socialEmail
+  User.model.find({socialEmail: {$exists: true}}, function(err, users) {
+    if(err) {
+      console.log('error: ', err);
+      return next(err);
+    }
+    var savePromises = [];
+    for (var i = users.length - 1; i >= 0; i--) {
+      users[i].email = users[i].socialEmail;
+      savePromises.push(users[i].save());
+    }
+    Promise.all(savePromises).then(function(results) {
+      res.json({results: results});
+    }).catch(function(error) {
+      console.log('error: ', error);
+      return next(err);
+    });
+  });
+});*/
+
+router.post('/addTestUser', function(req, res, next) {
+  User.model.create(req.body.user, function(err, user) {
+    if(err) {
+      console.log('err: ', err);
+      return next(err);
+    }
+    res.json({user: user});
+  });
+});
 
 router.post('/registerDevice', function(req, res, next) {
   logger.info('START POST api/users/registerDevice');
@@ -50,27 +83,108 @@ router.post('/registerDevice', function(req, res, next) {
 /*Note: for socialLogin and socialSignup, probably can be more judicious about when
 FB API call is made??*/
 
+function getUserFromUsers(users) {
+  //anticipating only 1 and 2 - 3 is a different, emergency case
+  if(users.length == 1) {
+    return users[0];
+  }
+  if(users.length == 2) {
+    var newUser, deleteUser, deleteUserIndex;
+
+    if(users[0].deviceUUID) {
+      deleteUserIndex = 0;
+    } else if(users[1].deviceUUID) {
+      deleteUserIndex = 1;
+    } else {
+      deleteUserIndex = -1;
+    }
+    if(deleteUserIndex === -1) {
+      //assumes then that filled in userInformation is on users[1]
+      User.model.deleteOne({_id: users[1]._id}, function(err) {});
+      return users[0];
+    }
+    var nonDeleteUserIndex = Math.abs(deleteUserIndex - 1);
+    //assumes then that filled in userInformation is on users[1]
+    newUser = users[nonDeleteUserIndex];
+    newUser.deviceUUID = users[deleteUserIndex].deviceUUID;
+    newUser.pushToken = users[deleteUserIndex].pushToken;
+    newUser.timezoneString = users[deleteUserIndex].timezoneString;
+    newUser.haveSentInactivityNotification = users[deleteUserIndex].haveSentInactivityNotification;
+    newUser.actualTimezoneString = users[deleteUserIndex].actualTimezoneString;
+    User.model.deleteOne({_id: users[deleteUserIndex]._id}, function(err) {});
+    return newUser;
+  }
+  for (var i = users.length - 1; i >= 1; i--) {
+    User.model.deleteOne({_id: users[i]._id}, function(err) {});
+  }
+  return users[0];
+}
+
 router.post('/socialLogin', function(req, res, next) {
   logger.info('START POST api/users/socialLogin');
   try {
     var query;
-    console.log('req.body', req.body);
     switch(req.body.socialType) {
+      //don't believe difference is relevant for query lookup
       case constants.SIGN_IN_SOURCES.FACEBOOK:
         query = {
-          deviceUUID: req.body.deviceUUID,
           $or: [
-            {facebookId: req.body.socialId},
-            {email: req.body.email}
+            {deviceUUID: {$exists: true, $eq: req.body.deviceUUID}},
+            {$and: [
+                {$or: [{deviceUUID: {$exists: false}}, {deviceUUID: {$type: 10}}]},
+                {email: {$exists: true, $eq: req.body.email}}
+              ]},
+            {facebookId: req.body.facebookId},
+            {$and: [{socialName: req.body.name},
+              {
+                $or: 
+                [
+                  {email: {$type: 10}}, {email: {$exists: false}}
+                ]
+              }, {
+                $or: 
+                [
+                  {facebookId: {$type: 10}}, {facebookId: {$exists: false}}
+                ]
+              }, {
+                $or: 
+                [
+                  {googleId: {$type: 10}}, {googleId: {$exists: false}}
+                ]
+              }
+              ]
+            }
           ]
         };
         break;
       case constants.SIGN_IN_SOURCES.GOOGLE:
         query = {
-          deviceUUID: req.body.deviceUUID,
           $or: [
-            {googleId: req.body.socialId},
-            {email: req.body.email}
+            {deviceUUID: {$exists: true, $eq: req.body.deviceUUID}},
+            {$and: [
+                {$or: [{deviceUUID: {$exists: false}}, {deviceUUID: {$type: 10}}]},
+                {email: {$exists: true, $eq: req.body.email}}
+              ]},
+            {googleId: req.body.googleId},
+            {$and: [{socialName: req.body.name},
+              {
+                $or: 
+                [
+                  {email: {$type: 10}}, {email: {$exists: false}}
+                ]
+              }, {
+                $or: 
+                [
+                  {facebookId: {$type: 10}}, {facebookId: {$exists: false}}
+                ]
+              }, {
+                $or: 
+                [
+                  {googleId: {$type: 10}}, {googleId: {$exists: false}}
+                ]
+              }
+              ]
+            }
           ]
         };
         break;
@@ -82,13 +196,13 @@ router.post('/socialLogin', function(req, res, next) {
         mailingService.mailServerError({error: err, location: 'POST api/users/socialLogin', extra: 'unrecognized socialType: ' + req.body.socialType});
         return next(error);
     }
-    User.model.findOne(query, function(err, user) {
+    User.model.find(query, function(err, users) {
       if(err) {
         logger.error('ERROR POST api/users/socialLogin/', {error: err});
         mailingService.mailServerError({error: err, location: 'POST api/users/socialLogin'});
         return next(err);
       }
-      if(!user) {
+      if(!users) {
         var error = {
           status: constants.STATUS_CODES.UNPROCESSABLE,
           message: 'No user for given id'
@@ -97,17 +211,19 @@ router.post('/socialLogin', function(req, res, next) {
         mailingService.mailServerError({error: err, location: 'POST api/users/socialLogin', extra: 'no user found for id ' + req.body.userId});
         return next(error);
       }
+      //parse out and delete users here
+      var user = getUserFromUsers(users);
       user.curToken = req.body.token;
       var fbAppSecretProof = securityService.getFacebookAppSecretProof(req.body.token);
-      console.log('appSecret: ', fbAppSecretProof);
       socialService.getFacebookUserAPIPromise(fbAppSecretProof, req.body.fbAccessToken, req.body.socialId, constants.FB_LOGIN_FIELDS).then(function(response, body) {
-        console.log('response.body: ', response[0].body);
         if(response[0] && response[0].body && response[0].body.gender) {
           user.gender = response[0].body.gender;
         }
+        user.deviceUUID = req.body.deviceUUID;
         user.lastLoginDate = Date.parse(new Date().toUTCString());
         if(req.body.email && req.body.email !== "") {
           user.socialEmail = req.body.email;
+          user.email = req.body.email;
         }
         if(req.body.name && req.body.name !== "") {
           user.socialName = req.body.name;
@@ -152,63 +268,83 @@ router.post('/socialLogin', function(req, res, next) {
 router.post('/socialSignup', function(req, res, next) {
   logger.info('START POST api/users/socialSignup');
   try {
-    var user = {};
-    console.log('req.body', req.body);
-    switch(req.body.socialType) {
-      case constants.SIGN_IN_SOURCES.FACEBOOK:
-        user.facebookId = req.body.socialId;
-        user.signInSource = constants.SIGN_IN_SOURCES.FACEBOOK;
-        break;
-      case constants.SIGN_IN_SOURCES.GOOGLE:
-        user.googleId = req.body.socialId;
-        user.signInSource = constants.SIGN_IN_SOURCES.GOOGLE;
-        break;
-      default:
-        //unrecognized socialType - should probably do some sort of appropriate handling
-        var error = {message: 'unrecognized socialType for socialSignup', socialType: req.body.socialType};
-        error.status = constants.STATUS_CODES.UNPROCESSABLE;
-        logger.error('ERROR POST api/users/socialSignup/', {error: error});
-        mailingService.mailServerError({error: err, location: 'POST api/users/socialSignup', extra: 'unrecognized socialType: ' + req.body.socialType});
-        return next(error);
-    }
-    user.dateCreated = Date.parse(new Date().toUTCString());
-    user.lastLoginDate = Date.parse(new Date().toUTCString());
-    user.curToken = req.body.token;
-    //test
-    var fbAppSecretProof = securityService.getFacebookAppSecretProof(req.body.token);
-    console.log('appSecret: ', fbAppSecretProof);
-    socialService.getFacebookUserAPIPromise(fbAppSecretProof, req.body.fbAccessToken, req.body.socialId, constants.FB_LOGIN_FIELDS).then(function(response, body) {
-      console.log('response.body: ', response.body);
-      if(response[0] && response[0].body && response[0].body.gender) {
-        user.gender = response[0].body.gender;
+    //if found, then update - else, then create
+    var query = {
+      $or: [
+        {deviceUUID: req.body.deviceUUID},
+        {email: req.body.email},
+        {googleId: req.body.socialId},
+        {facebookId: req.body.socialId}
+      ]
+    };
+    User.model.find(query, function(err, users) {
+      if(err) {
+        logger.error('ERROR POST api/users/socialSignup', {error: err});
+         mailingService.mailServerError({error: err, location: 'POST api/users/socialSignup'});
+        return next(err);
       }
-      user.socialEmail = req.body.email;
-      user.socialName = req.body.name;
-      user.firstName = req.body.firstName;
-      user.lastName = req.body.lastName;
-      user.socialUsername = req.body.username;
-      user.deviceUUID = req.body.deviceUUID;
-      var query = {deviceUUID: req.body.deviceUUID};
-      var options = {
-        new: true,
-        upsert: true,
-        setDefaultsOnInsert: true
-      };
-      //find by uuid first - findOneAndUpdate
-      User.model.findOneAndUpdate(query, user, options, function(err, user) {
-        if(err) {
-          logger.error('ERROR POST api/users/socialSignup', {error: err});
-           mailingService.mailServerError({error: err, location: 'POST api/users/socialSignup'});
-          return next(err);
+      var user;
+      if(users.length === 0) {
+        //then create a user
+        user = {};
+      } else {
+        //then users exist
+        user = getUserFromUsers(users);
+      }
+      switch(req.body.socialType) {
+        case constants.SIGN_IN_SOURCES.FACEBOOK:
+          user.facebookId = req.body.socialId;
+          user.signInSource = constants.SIGN_IN_SOURCES.FACEBOOK;
+          break;
+        case constants.SIGN_IN_SOURCES.GOOGLE:
+          user.googleId = req.body.socialId;
+          user.signInSource = constants.SIGN_IN_SOURCES.GOOGLE;
+          break;
+        default:
+          //unrecognized socialType - should probably do some sort of appropriate handling
+          var error = {message: 'unrecognized socialType for socialSignup', socialType: req.body.socialType};
+          error.status = constants.STATUS_CODES.UNPROCESSABLE;
+          logger.error('ERROR POST api/users/socialSignup/', {error: error});
+          mailingService.mailServerError({error: err, location: 'POST api/users/socialSignup', extra: 'unrecognized socialType: ' + req.body.socialType});
+          return next(error);
+      }
+      user.dateCreated = Date.parse(new Date().toUTCString());
+      user.lastLoginDate = Date.parse(new Date().toUTCString());
+      user.curToken = req.body.token;
+      var fbAppSecretProof = securityService.getFacebookAppSecretProof(req.body.token);
+      socialService.getFacebookUserAPIPromise(fbAppSecretProof, req.body.fbAccessToken, req.body.socialId, constants.FB_LOGIN_FIELDS).then(function(response, body) {
+        if(response[0] && response[0].body && response[0].body.gender) {
+          user.gender = response[0].body.gender;
         }
-        logger.info('END POST api/users/socialSignup');
-        res.json({data: user});
+        user.email = req.body.email;
+        user.socialEmail = req.body.email;
+        user.socialName = req.body.name;
+        user.firstName = req.body.firstName;
+        user.lastName = req.body.lastName;
+        user.socialUsername = req.body.username;
+        user.deviceUUID = req.body.deviceUUID;
+        var options = {
+          new: true,
+          upsert: true,
+          setDefaultsOnInsert: true
+        };
+        //find by uuid first - findOneAndUpdate
+        User.model.findOneAndUpdate(query, user, options, function(err, user) {
+          if(err) {
+            logger.error('ERROR POST api/users/socialSignup', {error: err});
+             mailingService.mailServerError({error: err, location: 'POST api/users/socialSignup'});
+            return next(err);
+          }
+          logger.info('END POST api/users/socialSignup');
+          res.json({data: user});
+        });
+      }).catch(function(error) {
+        logger.error('ERROR POST api/users/socialSignup in FacebookAPI call', {error: error});
+        mailingService.mailServerError({error: error, location: 'POST api/users/socialSignup FacebookAPI call'});
+        return next(error);
       });
-    }).catch(function(error) {
-      logger.error('ERROR POST api/users/socialSignup in FacebookAPI call', {error: error});
-      mailingService.mailServerError({error: error, location: 'POST api/users/socialSignup FacebookAPI call'});
-      return next(error);
     });
+    
   } catch (error) {
     logger.error('ERROR - exception in POST api/users/socialSignup', {error: error});
      mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/users/socialSignup'});
@@ -219,13 +355,19 @@ router.post('/socialSignup', function(req, res, next) {
 router.post('/emailLogin', function(req, res, next) {
   logger.info('START POST api/users/emailLogin');
   try {
-    User.model.findOne({email: req.body.email}, function(err, user) {
+    var query = {
+      $or: [
+        {deviceUUID: {$exists: true, $eq: req.body.deviceUUID}},
+        {$and: [{$or: [{deviceUUID: {$exists: false}}, {deviceUUID: {$type: 10}}]}, {email: {$exists: true, $eq: req.body.email}}]}
+      ]
+    };
+    User.model.find(query, function(err, users) {
       if(err) {
         logger.error('ERROR POST api/users/emailLogin', {error: err});
          mailingService.mailServerError({error: err, location: 'POST api/users/emailLogin'});
         return next(err);
       }
-      if(!user) {
+      if(users.length === 0) {
         var error = {
           status: constants.STATUS_CODES.UNPROCESSABLE,
           message: 'No user for given id'
@@ -234,6 +376,7 @@ router.post('/emailLogin', function(req, res, next) {
         mailingService.mailServerError({error: err, location: 'POST api/users/emailLogin', extra: 'no user found for email ' + req.body.email});
         return next(error);
       }
+      var user = getUserFromUsers(users);
       user.curToken = req.body.token;
       user.deviceUUID = req.body.deviceUUID;
       user.lastLoginDate = Date.parse(new Date().toUTCString());
@@ -257,27 +400,50 @@ router.post('/emailLogin', function(req, res, next) {
 router.post('/emailSignup', function(req, res, next) {
   logger.info('START POST api/users/emailSignup');
   try {
-    var user = {};
-    user.email = req.body.email;
-    user.curToken = req.body.token;
-    user.signInSource = constants.SIGN_IN_SOURCES.EMAIL;
-    user.dateCreated = Date.parse(new Date().toUTCString());
-    user.lastLoginDate = Date.parse(new Date().toUTCString());
-    user.deviceUUID = req.body.deviceUUID;
-    var query = {deviceUUID: req.body.deviceUUID};
-    var options = {
-      new: true,
-      upsert: true,
-      setDefaultsOnInsert: true
+    var query = {
+      $or: [
+        {deviceUUID: req.body.deviceUUID},
+        {email: req.body.email}
+      ]
     };
-    User.model.findOneAndUpdate(query, user, options, function(err, user) {
+    User.model.find(query, function(err, users) {
       if(err) {
         logger.error('ERROR POST api/users/emailSignup', {error: err});
         mailingService.mailServerError({error: err, location: 'POST api/users/emailSignup'});
         return next(err);
       }
-      logger.info('END POST api/users/emailSignup');
-      res.json({data: user});
+      var user;
+      if(users.length === 0) {
+        user = {};
+      } else {
+        user = getUserFromUsers(users);
+      }
+      user.email = req.body.email;
+      user.curToken = req.body.token;
+      user.signInSource = constants.SIGN_IN_SOURCES.EMAIL;
+      user.dateCreated = Date.parse(new Date().toUTCString());
+      user.lastLoginDate = Date.parse(new Date().toUTCString());
+      user.deviceUUID = req.body.deviceUUID;
+      var query = {
+        $or: [
+          {deviceUUID: req.body.deviceUUID},
+          {email: req.body.email}
+        ]
+      };
+      var options = {
+        new: true,
+        upsert: true,
+        setDefaultsOnInsert: true
+      };
+      User.model.findOneAndUpdate(query, user, options, function(err, user) {
+        if(err) {
+          logger.error('ERROR POST api/users/emailSignup', {error: err});
+          mailingService.mailServerError({error: err, location: 'POST api/users/emailSignup'});
+          return next(err);
+        }
+        logger.info('END POST api/users/emailSignup');
+        res.json({data: user});
+      });
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/users/emailSignup', {error: error});
