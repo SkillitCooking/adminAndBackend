@@ -120,6 +120,67 @@ function getUserFromUsers(users) {
   return users[0];
 }
 
+function fillOutAndSaveUserSocialLogin(req, res, next, user) {
+  user.deviceUUID = req.body.deviceUUID;
+  user.lastLoginDate = Date.parse(new Date().toUTCString());
+  if(req.body.email && req.body.email !== "") {
+    user.socialEmail = req.body.email;
+    user.email = req.body.email;
+  }
+  if(req.body.name && req.body.name !== "") {
+    user.socialName = req.body.name;
+  }
+  if(req.body.firstName && req.body.firstName !== "") {
+    user.firstName = req.body.firstName;
+  }
+  if(req.body.lastName && req.body.lastName !== "") {
+    user.lastName = req.body.lastName;
+  }
+  if(req.body.username && req.body.username !== "") {
+    user.socialUsername = req.body.username;
+  }
+  if(req.body.googleId && req.body.googleId !== "") {
+    user.googleId = req.body.googleId;
+  }
+  if(req.body.facebookId && req.body.facebookId) {
+    user.facebookId = req.body.facebookId;
+  }
+  user.save(function(err, user, numAffected) {
+    if(err) {
+      logger.error('ERROR POST api/users/socialLogin in user.save', {error: err});
+      mailingService.mailServerError({error: err, location: 'POST api/users/socialLogin', extra: 'User.save'});
+      return next(err);
+    }
+    logger.info('END POST api/users/socialLogin');
+    res.json({data: user});
+  });
+}
+
+function fillOutAndSaveUserSocialSignUp(req, res, next, user) {
+  user.email = req.body.email;
+  user.socialEmail = req.body.email;
+  user.socialName = req.body.name;
+  user.firstName = req.body.firstName;
+  user.lastName = req.body.lastName;
+  user.socialUsername = req.body.username;
+  user.deviceUUID = req.body.deviceUUID;
+  var options = {
+    new: true,
+    upsert: true,
+    setDefaultsOnInsert: true
+  };
+  //find by uuid first - findOneAndUpdate
+  User.model.findOneAndUpdate(query, user, options, function(err, user) {
+    if(err) {
+      logger.error('ERROR POST api/users/socialSignup', {error: err});
+       mailingService.mailServerError({error: err, location: 'POST api/users/socialSignup'});
+      return next(err);
+    }
+    logger.info('END POST api/users/socialSignup');
+    res.json({data: user});
+  });
+}
+
 router.post('/socialLogin', function(req, res, next) {
   logger.info('START POST api/users/socialLogin');
   try {
@@ -214,49 +275,22 @@ router.post('/socialLogin', function(req, res, next) {
       //parse out and delete users here
       var user = getUserFromUsers(users);
       user.curToken = req.body.token;
-      var fbAppSecretProof = securityService.getFacebookAppSecretProof(req.body.token);
-      socialService.getFacebookUserAPIPromise(fbAppSecretProof, req.body.fbAccessToken, req.body.socialId, constants.FB_LOGIN_FIELDS).then(function(response, body) {
-        if(response[0] && response[0].body && response[0].body.gender) {
-          user.gender = response[0].body.gender;
-        }
-        user.deviceUUID = req.body.deviceUUID;
-        user.lastLoginDate = Date.parse(new Date().toUTCString());
-        if(req.body.email && req.body.email !== "") {
-          user.socialEmail = req.body.email;
-          user.email = req.body.email;
-        }
-        if(req.body.name && req.body.name !== "") {
-          user.socialName = req.body.name;
-        }
-        if(req.body.firstName && req.body.firstName !== "") {
-          user.firstName = req.body.firstName;
-        }
-        if(req.body.lastName && req.body.lastName !== "") {
-          user.lastName = req.body.lastName;
-        }
-        if(req.body.username && req.body.username !== "") {
-          user.socialUsername = req.body.username;
-        }
-        if(req.body.googleId && req.body.googleId !== "") {
-          user.googleId = req.body.googleId;
-        }
-        if(req.body.facebookId && req.body.facebookId) {
-          user.facebookId = req.body.facebookId;
-        }
-        user.save(function(err, user, numAffected) {
-          if(err) {
-            logger.error('ERROR POST api/users/socialLogin in user.save', {error: err});
-            mailingService.mailServerError({error: err, location: 'POST api/users/socialLogin', extra: 'User.save'});
-            return next(err);
+      //need equivalent for GOOGLE here...
+      if(req.body.socialType === constants.SIGN_IN_SOURCES.FACEBOOK) {
+        var fbAppSecretProof = securityService.getFacebookAppSecretProof(req.body.token);
+        socialService.getFacebookUserAPIPromise(fbAppSecretProof, req.body.fbAccessToken, req.body.socialId, constants.FB_LOGIN_FIELDS).then(function(response, body) {
+          if(response[0] && response[0].body && response[0].body.gender) {
+            user.gender = response[0].body.gender;
           }
-          logger.info('END POST api/users/socialLogin');
-          res.json({data: user});
+          fillOutAndSaveUserSocialLogin(req, res, next, user);
+        }).catch(function(error) {
+          logger.error('ERROR POST api/users/socialLogin in FacebookAPI call', {error: error});
+          mailingService.mailServerError({error: error, location: 'POST api/users/socialLogin FacebookAPI call'});
+          return next(error);
         });
-      }).catch(function(error) {
-        logger.error('ERROR POST api/users/socialLogin in FacebookAPI call', {error: error});
-        mailingService.mailServerError({error: error, location: 'POST api/users/socialLogin FacebookAPI call'});
-        return next(error);
-      });
+      } else {
+        fillOutAndSaveUserSocialLogin(req, res, next, user);
+      }
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/users/socialLogin', {error: error});
@@ -311,38 +345,21 @@ router.post('/socialSignup', function(req, res, next) {
       user.dateCreated = Date.parse(new Date().toUTCString());
       user.lastLoginDate = Date.parse(new Date().toUTCString());
       user.curToken = req.body.token;
-      var fbAppSecretProof = securityService.getFacebookAppSecretProof(req.body.token);
+      if(req.body.socialType === constants.SIGN_IN_SOURCES.FACEBOOK) {
+        var fbAppSecretProof = securityService.getFacebookAppSecretProof(req.body.token);
       socialService.getFacebookUserAPIPromise(fbAppSecretProof, req.body.fbAccessToken, req.body.socialId, constants.FB_LOGIN_FIELDS).then(function(response, body) {
-        if(response[0] && response[0].body && response[0].body.gender) {
-          user.gender = response[0].body.gender;
-        }
-        user.email = req.body.email;
-        user.socialEmail = req.body.email;
-        user.socialName = req.body.name;
-        user.firstName = req.body.firstName;
-        user.lastName = req.body.lastName;
-        user.socialUsername = req.body.username;
-        user.deviceUUID = req.body.deviceUUID;
-        var options = {
-          new: true,
-          upsert: true,
-          setDefaultsOnInsert: true
-        };
-        //find by uuid first - findOneAndUpdate
-        User.model.findOneAndUpdate(query, user, options, function(err, user) {
-          if(err) {
-            logger.error('ERROR POST api/users/socialSignup', {error: err});
-             mailingService.mailServerError({error: err, location: 'POST api/users/socialSignup'});
-            return next(err);
+          if(response[0] && response[0].body && response[0].body.gender) {
+            user.gender = response[0].body.gender;
           }
-          logger.info('END POST api/users/socialSignup');
-          res.json({data: user});
+          fillOutAndSaveUserSocialSignUp(req, res, next, user);
+        }).catch(function(error) {
+          logger.error('ERROR POST api/users/socialSignup in FacebookAPI call', {error: error});
+          mailingService.mailServerError({error: error, location: 'POST api/users/socialSignup FacebookAPI call'});
+          return next(error);
         });
-      }).catch(function(error) {
-        logger.error('ERROR POST api/users/socialSignup in FacebookAPI call', {error: error});
-        mailingService.mailServerError({error: error, location: 'POST api/users/socialSignup FacebookAPI call'});
-        return next(error);
-      });
+      } else {
+        fillOutAndSaveUserSocialSignUp(req, res, next, user);
+      }
     });
     
   } catch (error) {

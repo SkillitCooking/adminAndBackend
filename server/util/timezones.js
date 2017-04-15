@@ -40,7 +40,7 @@ service.convertTimezone = function(timezone) {
   if(typeof conversion === 'undefined') {
     conversion = constants.TIMEZONES.DEFAULT;
   }
-  return coversion;
+  return conversion;
 };
 
 module.exports = service;

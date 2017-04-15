@@ -43,15 +43,17 @@ module.exports = Object.freeze({
   },
   PUSH_NOTIFICATIONS: {
     GENERAL: [
-      'Yo NAME, you got dinner plans tonight? We\'re free (and a bit lonely).',
+      'Yo **NAME**, you got dinner plans tonight? We\'re free (and a bit lonely).',
       'A home-cooked meal is nature\'s most powerful aphrodisiac. We\'re here to help. You can thank us later.'
     ],
     SUNDAYS: [
-      'Get ready for the week wiht some meal prep. Guaranteed to make your Monday suck less.'
+      'Get ready for the week with some meal prep. Guaranteed to make your Monday suck less.'
     ],
     INACTIVE: [
-      'Hey NAME, haven\'t seen you in a while. Just want to make sure you aren\'t starving. Lots of new recipes to explore.'
-    ]
+      'Hey **NAME**, haven\'t seen you in a while. Just want to make sure you aren\'t starving. Lots of new recipes to explore.'
+    ],
+    DEFAULT_NAMES: ['boss', 'friend', 'dude', 'you', 'beautiful'],
+    TITLES: ['What\'s cookin\'?']
   },
   TIMEZONES: {
     NO_TIMEZONE: 'NO_TIMEZONE',
@@ -59,8 +61,14 @@ module.exports = Object.freeze({
   },
   IONIC_API_TOKEN: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjNTA4N2YxNS1hNDkzLTQ1ZWItODhjYi1mMmZlM2E4YzBlYWEifQ.kyVV756xmtyftjsFmjZDDSjNXpJ3fDRT6lMLUnirGwA',
   FACEBOOK_APP_SECRET: '85e2e4b309752c7f3329808d4acbc6ff',
+  NOT_FB_SOURCE: 'NOT_FB_SOURCE',
   FB_LOGIN_FIELDS: ['gender', 'age_range'],
   BSON_TYPES: {
-    NULL: 10
+    NULL: 10,
+    STRING: 2
+  },
+  PUSH_TIMES: {
+    DAILY: 18,
+    SUNDAY: 12
   }
 });
