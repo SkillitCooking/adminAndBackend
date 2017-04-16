@@ -10,6 +10,7 @@ var mailingService = require('../lib/mailingService');
 var timezoneService = require('../../util/timezones');
 var securityService = require('../../util/security');
 var socialService = require('../lib/socialService');
+var libraryFunctions = require('../lib/libraryFunctions');
 
 var Promise = require('bluebird');
 var mongoose = require('mongoose');
@@ -85,7 +86,9 @@ FB API call is made??*/
 
 function getUserFromUsers(users) {
   //anticipating only 1 and 2 - 3 is a different, emergency case
-  if(users.length == 1) {
+  //Now, the DB should be clear... so extra handling code should 
+  //not be necessary
+  /*if(users.length == 1) {
     return users[0];
   }
   if(users.length == 2) {
@@ -116,11 +119,12 @@ function getUserFromUsers(users) {
   }
   for (var i = users.length - 1; i >= 1; i--) {
     User.model.deleteOne({_id: users[i]._id}, function(err) {});
-  }
+  }*/
   return users[0];
 }
 
 function fillOutAndSaveUserSocialLogin(req, res, next, user) {
+  var isEmpty = libraryFunctions.isEmpty(user);
   user.deviceUUID = req.body.deviceUUID;
   user.lastLoginDate = Date.parse(new Date().toUTCString());
   if(req.body.email && req.body.email !== "") {
@@ -139,21 +143,37 @@ function fillOutAndSaveUserSocialLogin(req, res, next, user) {
   if(req.body.username && req.body.username !== "") {
     user.socialUsername = req.body.username;
   }
-  if(req.body.googleId && req.body.googleId !== "") {
+  if((req.body.socialId && req.body.socialType === constants.SIGN_IN_SOURCES.GOOGLE)|| 
+    (req.body.googleId && req.body.googleId !== "")) {
     user.googleId = req.body.googleId;
+    user.signInSource = constants.SIGN_IN_SOURCES.GOOGLE;
   }
-  if(req.body.facebookId && req.body.facebookId) {
+  if((req.body.socialId && req.body.socialType === constants.SIGN_IN_SOURCES.FACEBOOK)||
+    (req.body.facebookId && req.body.facebookId)) {
     user.facebookId = req.body.facebookId;
+    user.signInSource = constants.SIGN_IN_SOURCES.FACEBOOK;
   }
-  user.save(function(err, user, numAffected) {
-    if(err) {
-      logger.error('ERROR POST api/users/socialLogin in user.save', {error: err});
-      mailingService.mailServerError({error: err, location: 'POST api/users/socialLogin', extra: 'User.save'});
-      return next(err);
-    }
-    logger.info('END POST api/users/socialLogin');
-    res.json({data: user});
-  });
+  if(isEmpty) {
+    User.model.create(user, function(err, user) {
+      if(err) {
+        logger.error('ERROR POST api/users/socialLogin in user.create', {error: err});
+        mailingService.mailServerError({error: err, location: 'POST api/users/socialLogin', extra: 'User.create'});
+        return next(err);
+      }
+      logger.info('END POST api/users/socialLogin');
+      res.json({data: user});
+    });
+  } else {
+    user.save(function(err, user, numAffected) {
+      if(err) {
+        logger.error('ERROR POST api/users/socialLogin in user.save', {error: err});
+        mailingService.mailServerError({error: err, location: 'POST api/users/socialLogin', extra: 'User.save'});
+        return next(err);
+      }
+      logger.info('END POST api/users/socialLogin');
+      res.json({data: user});
+    });
+  }
 }
 
 function fillOutAndSaveUserSocialSignUp(req, res, next, user) {
@@ -263,17 +283,12 @@ router.post('/socialLogin', function(req, res, next) {
         mailingService.mailServerError({error: err, location: 'POST api/users/socialLogin'});
         return next(err);
       }
-      if(!users) {
-        var error = {
-          status: constants.STATUS_CODES.UNPROCESSABLE,
-          message: 'No user for given id'
-        };
-        logger.error('ERROR POST api/users/socialLogin - no user found', {error: error});
-        mailingService.mailServerError({error: err, location: 'POST api/users/socialLogin', extra: 'no user found for id ' + req.body.userId});
-        return next(error);
+      var user;
+      if(!users || users.length === 0) {
+        user = {};
+      } else {
+        user = getUserFromUsers(users);
       }
-      //parse out and delete users here
-      var user = getUserFromUsers(users);
       user.curToken = req.body.token;
       //need equivalent for GOOGLE here...
       if(req.body.socialType === constants.SIGN_IN_SOURCES.FACEBOOK) {
@@ -318,7 +333,7 @@ router.post('/socialSignup', function(req, res, next) {
         return next(err);
       }
       var user;
-      if(users.length === 0) {
+      if(!users || users.length === 0) {
         //then create a user
         user = {};
       } else {
@@ -384,28 +399,49 @@ router.post('/emailLogin', function(req, res, next) {
          mailingService.mailServerError({error: err, location: 'POST api/users/emailLogin'});
         return next(err);
       }
-      if(users.length === 0) {
-        var error = {
+      var user;
+      if(!users || users.length === 0) {
+        //instead, just make new user - especially given new query nature...
+        /*var error = {
           status: constants.STATUS_CODES.UNPROCESSABLE,
           message: 'No user for given id'
         };
         logger.error('ERROR POST api/users/emailLogin - no user found', {error: error});
         mailingService.mailServerError({error: err, location: 'POST api/users/emailLogin', extra: 'no user found for email ' + req.body.email});
-        return next(error);
+        return next(error);*/
+        user = {};
+      } else {
+        //then users exist
+        user = getUserFromUsers(users);
       }
-      var user = getUserFromUsers(users);
+      var isEmpty = libraryFunctions.isEmpty(user);
       user.curToken = req.body.token;
       user.deviceUUID = req.body.deviceUUID;
       user.lastLoginDate = Date.parse(new Date().toUTCString());
-      user.save(function(err, user, numAffected) {
-        if(err) {
-          logger.error('ERROR POST api/users/emailLogin in save user', {error: err});
-          mailingService.mailServerError({error: err, location: 'POST api/users/emailLogin', extra: 'User.save'});
-          return next(err);
-        }
-        logger.info('END POST api.users/emailLogin');
-        res.json({data: user});
-      });
+      if(isEmpty) {
+        user.email = req.body.email;
+        user.signInSource = constants.SIGN_IN_SOURCES.EMAIL;
+        user.dateCreated = Date.parse(new Date().toUTCString());
+        User.model.create(user, function(err, user) {
+          if(err) {
+            logger.error('ERROR POST api/users/emailLogin in create user', {error: err});
+            mailingService.mailServerError({error: err, location: 'POST api/users/emailLogin', extra: 'User.create'});
+            return next(err);
+          }
+          logger.info('END POST api/users/emailLogin');
+          res.json({data: user});
+        });
+      } else {
+        user.save(function(err, user, numAffected) {
+          if(err) {
+            logger.error('ERROR POST api/users/emailLogin in save user', {error: err});
+            mailingService.mailServerError({error: err, location: 'POST api/users/emailLogin', extra: 'User.save'});
+            return next(err);
+          }
+          logger.info('END POST api/users/emailLogin');
+          res.json({data: user});
+        });
+      }
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/users/emailLogin', {error: error});
