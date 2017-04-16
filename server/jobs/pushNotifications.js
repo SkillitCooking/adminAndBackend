@@ -3,7 +3,7 @@ var moment = require('moment');
 var request = require('request');
 var db = require('../database');
 var CronJob = require('cron').CronJob;
-var mailingService = require('../lib/mailingService');
+var mailingService = require('../router/lib/mailingService');
 var libraryFunctions = require('../util/libraryFunctions');
 var curUTCDate = require('../util/dateLib').curUTCDate;
 
