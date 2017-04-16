@@ -10,8 +10,7 @@ var helmet = require('helmet');
 //set daily ish
 //var dailyContentJobs = require('./jobs/setDailyContent');
 var dateJobs = require('./jobs/setDates');
-//var pushNotificationJobs = require('./jobs/pushNotifications');
-//var testNotifications = require('./jobs/pushNotifications');
+var pushNotificationJobs = require('./jobs/pushNotifications');
 
 var app = express();
 
