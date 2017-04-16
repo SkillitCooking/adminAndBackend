@@ -38,7 +38,7 @@ var User = db.users;
   });
 });*/
 
-router.post('/addTestUser', function(req, res, next) {
+/*router.post('/addTestUser', function(req, res, next) {
   User.model.create(req.body.user, function(err, user) {
     if(err) {
       console.log('err: ', err);
@@ -46,7 +46,7 @@ router.post('/addTestUser', function(req, res, next) {
     }
     res.json({user: user});
   });
-});
+});*/
 
 router.post('/registerDevice', function(req, res, next) {
   logger.info('START POST api/users/registerDevice');
