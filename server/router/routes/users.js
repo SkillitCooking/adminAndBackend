@@ -10,7 +10,7 @@ var mailingService = require('../lib/mailingService');
 var timezoneService = require('../../util/timezones');
 var securityService = require('../../util/security');
 var socialService = require('../lib/socialService');
-var libraryFunctions = require('../lib/libraryFunctions');
+var libraryFunctions = require('../../util/libraryFunctions');
 
 var Promise = require('bluebird');
 var mongoose = require('mongoose');
