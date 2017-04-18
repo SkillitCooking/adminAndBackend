@@ -277,22 +277,18 @@ router.post('/socialLogin', function(req, res, next) {
         mailingService.mailServerError({error: err, location: 'POST api/users/socialLogin', extra: 'unrecognized socialType: ' + req.body.socialType});
         return next(error);
     }
-    User.model.find(query, function(err, users) {
+    User.model.findOne(query, function(err, user) {
       if(err) {
         logger.error('ERROR POST api/users/socialLogin/', {error: err});
         mailingService.mailServerError({error: err, location: 'POST api/users/socialLogin'});
         return next(err);
       }
-      var user;
-      if(!users || users.length === 0) {
+      if(!user) {
         user = {};
-      } else {
-        user = getUserFromUsers(users);
       }
       user.curToken = req.body.token;
-      //need equivalent for GOOGLE here...
       if(req.body.socialType === constants.SIGN_IN_SOURCES.FACEBOOK) {
-        var fbAppSecretProof = securityService.getFacebookAppSecretProof(req.body.token);
+        var fbAppSecretProof = securityService.getFacebookAppSecretProof(req.body.fbAccessToken);
         socialService.getFacebookUserAPIPromise(fbAppSecretProof, req.body.fbAccessToken, req.body.socialId, constants.FB_LOGIN_FIELDS).then(function(response, body) {
           if(response[0] && response[0].body && response[0].body.gender) {
             user.gender = response[0].body.gender;
@@ -361,7 +357,7 @@ router.post('/socialSignup', function(req, res, next) {
       user.lastLoginDate = Date.parse(new Date().toUTCString());
       user.curToken = req.body.token;
       if(req.body.socialType === constants.SIGN_IN_SOURCES.FACEBOOK) {
-        var fbAppSecretProof = securityService.getFacebookAppSecretProof(req.body.token);
+        var fbAppSecretProof = securityService.getFacebookAppSecretProof(req.body.fbAccessToken);
       socialService.getFacebookUserAPIPromise(fbAppSecretProof, req.body.fbAccessToken, req.body.socialId, constants.FB_LOGIN_FIELDS).then(function(response, body) {
           if(response[0] && response[0].body && response[0].body.gender) {
             user.gender = response[0].body.gender;
@@ -393,14 +389,13 @@ router.post('/emailLogin', function(req, res, next) {
         {$and: [{$or: [{deviceUUID: {$exists: false}}, {deviceUUID: {$type: 10}}]}, {email: {$exists: true, $eq: req.body.email}}]}
       ]
     };
-    User.model.find(query, function(err, users) {
+    User.model.findOne(query, function(err, user) {
       if(err) {
         logger.error('ERROR POST api/users/emailLogin', {error: err});
          mailingService.mailServerError({error: err, location: 'POST api/users/emailLogin'});
         return next(err);
       }
-      var user;
-      if(!users || users.length === 0) {
+      if(!user) {
         //instead, just make new user - especially given new query nature...
         /*var error = {
           status: constants.STATUS_CODES.UNPROCESSABLE,
@@ -410,16 +405,13 @@ router.post('/emailLogin', function(req, res, next) {
         mailingService.mailServerError({error: err, location: 'POST api/users/emailLogin', extra: 'no user found for email ' + req.body.email});
         return next(error);*/
         user = {};
-      } else {
-        //then users exist
-        user = getUserFromUsers(users);
       }
       var isEmpty = libraryFunctions.isEmpty(user);
       user.curToken = req.body.token;
       user.deviceUUID = req.body.deviceUUID;
       user.lastLoginDate = Date.parse(new Date().toUTCString());
+      user.email = req.body.email;
       if(isEmpty) {
-        user.email = req.body.email;
         user.signInSource = constants.SIGN_IN_SOURCES.EMAIL;
         user.dateCreated = Date.parse(new Date().toUTCString());
         User.model.create(user, function(err, user) {
@@ -459,17 +451,14 @@ router.post('/emailSignup', function(req, res, next) {
         {email: req.body.email}
       ]
     };
-    User.model.find(query, function(err, users) {
+    User.model.findOne(query, function(err, user) {
       if(err) {
         logger.error('ERROR POST api/users/emailSignup', {error: err});
         mailingService.mailServerError({error: err, location: 'POST api/users/emailSignup'});
         return next(err);
       }
-      var user;
-      if(users.length === 0) {
+      if(!user) {
         user = {};
-      } else {
-        user = getUserFromUsers(users);
       }
       user.email = req.body.email;
       user.curToken = req.body.token;
@@ -613,29 +602,34 @@ router.post('/getPersonalInfo', function(req, res, next) {
   try {
     User.model.findById(req.body.userId, function(err, user) {
       if (err) {
+        console.log('err', err);
         logger.error('ERROR POST api/users/getPersonalInfo', {error: err});
         mailingService.mailServerError({error: err, location: 'POST api/users/getPersonalInfo'});
         return next(err);
       }
       if(!user) {
+        //here, send error handling response... but keep the whole backend reporting and mailing...
         var error = {
           status: constants.STATUS_CODES.UNPROCESSABLE,
           message: 'No user for given id'
         };
         logger.error('ERROR POST api/users/getPersonalInfo - no user found', {error: error});
         mailingService.mailServerError({error: err, location: 'POST api/users/getPersonalInfo', extra: 'No user found for id ' + req.body.userId});
-        return next(err);
+        //don't error out here, given how it's called
+        //as an initial script on the client side
+        res.json({invalidUser: true});
+      } else {
+        if(req.body.token !== user.curToken) {
+          /*var error = {
+            status: constants.STATUS_CODES.UNAUTHORIZED,
+            message: 'Credentials for method are missing'
+          };
+          logger.error('ERROR POST api/users/getPersonalInfo - token', {error: error});
+          return next(error);*/
+        }
+        logger.info('END POST api/users/getPersonalInfo');
+        res.json({data: user});
       }
-      if(req.body.token !== user.curToken) {
-        /*var error = {
-          status: constants.STATUS_CODES.UNAUTHORIZED,
-          message: 'Credentials for method are missing'
-        };
-        logger.error('ERROR POST api/users/getPersonalInfo - token', {error: error});
-        return next(error);*/
-      }
-      logger.info('END POST api/users/getPersonalInfo');
-      res.json({data: user});
     });
   } catch (error) {
     logger.error('ERROR - exception in POST api/users/getPersonalInfo', {error: error});
