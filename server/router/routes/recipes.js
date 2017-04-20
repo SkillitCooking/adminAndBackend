@@ -677,7 +677,8 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
             };
             logger.error('ERROR POST api/recipes/getRecipesWithIngredients - no user found', {error: error});
             mailingService.mailServerError({error: err, location: 'POST api/recipes/getRecipesWithIngredients', extra: 'no user found for id ' + req.body.userId});
-            return next(error);
+            //janky bad userid handling
+            //return next(error);
           }
           if(req.body.userToken !== user.curToken) {
             /*var error = {
@@ -688,8 +689,10 @@ router.post('/getRecipesWithIngredients', function(req, res, next) {
             return next(error);*/
           }
           var outlawIngredients = [];
-          for (var i = user.dietaryPreferences.length - 1; i >= 0; i--) {
-            outlawIngredients = outlawIngredients.concat(user.dietaryPreferences[i].outlawIngredients);
+          if(user && user.dietaryPreferences) {
+            for (var i = user.dietaryPreferences.length - 1; i >= 0; i--) {
+              outlawIngredients = outlawIngredients.concat(user.dietaryPreferences[i].outlawIngredients);
+            }
           }
           var recipesToReturn = {
             [constants.RECIPE_TYPES.ALACARTE]: [],
@@ -936,7 +939,8 @@ router.post('/getRecipesWithIngredientsNew', function(req, res, next) {
             };
             logger.error('ERROR POST api/recipes/getRecipesWithIngredients - no user found', {error: error});
             mailingService.mailServerError({error: err, location: 'POST api/recipes/getRecipesWithIngredients', extra: 'no user found for id ' + req.body.userId});
-            return next(error);
+            //janky bad userId handling
+            //return next(error);
           }
           if(req.body.userToken !== user.curToken) {
             /*var error = {
@@ -947,8 +951,10 @@ router.post('/getRecipesWithIngredientsNew', function(req, res, next) {
             return next(error);*/
           }
           var outlawIngredients = [];
-          for (var i = user.dietaryPreferences.length - 1; i >= 0; i--) {
-            outlawIngredients = outlawIngredients.concat(user.dietaryPreferences[i].outlawIngredients);
+          if(user && user.dietaryPreferences) {
+            for (var i = user.dietaryPreferences.length - 1; i >= 0; i--) {
+              outlawIngredients = outlawIngredients.concat(user.dietaryPreferences[i].outlawIngredients);
+            }
           }
           var returnObject = processRecipes(recipes, req.body.ingredientIds, outlawIngredients);
           var retVal = {
