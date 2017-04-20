@@ -407,37 +407,53 @@ router.post('/getCollectionsForItemType', function(req, res, next) {
           };
           logger.error('ERROR POST api/itemCollections/getCollectionsForItemType - no user found', {error: error});
           mailingService.mailServerError({error: err, location: 'POST api/itemCollection/getCollectionsForItemType', extra: 'no user found for id ' + req.body.userId});
-          return next(error);
-        }
-        if(req.body.userToken !== user.curToken) {
-          /*var error = {
-            status: constants.STATUS_CODES.UNAUTHORIZED,
-            message: 'Credentials for method are missing'
-          };
-          logger.error('ERROR POST api/itemCollections/getCollectionsForItemType - token', {error: error});
-          return next(error);*/
-        }
-        var dietaryPreferenceIds = [];
-        for (var i = user.dietaryPreferences.length - 1; i >= 0; i--) {
-          dietaryPreferenceIds.push(user.dietaryPreferences[i]._id);
-        }
-        ItemCollection.model.find({
-          "dietaryPreferenceIds": {
-            "$nin": dietaryPreferenceIds
-          },
-          "itemType": req.body.itemType
-        }, function(err, collections) {
-          if(err) {
-            logger.error('ERROR POST api/itemCollections/getCollectionsForItemType', {error: err});
-            mailingService.mailServerError({error: err, location: 'POST api/itemCollection/getCollectionsForItemType'});
-            return next(err);
+          //Alternative HANDLING HERE
+          //return next(error);
+          ItemCollection.model.find({
+            "itemType": req.body.itemType
+          }, function(err, collections) {
+            if(err) {
+              logger.error('ERROR POST api/itemCollections/getCollectionsForItemType', {error: err, body: req.body});
+              mailingService.mailServerError({error: err, location: 'POST api/itemCollection/getCollectionsForItemType'});
+              return next(err);
+            }
+            var retVal = {
+              data: collections
+            };
+            logger.info('END POST api/itemCollections/getCollectionsForItemType');
+            res.json(retVal);
+          });
+        } else {
+          if(req.body.userToken !== user.curToken) {
+            /*var error = {
+              status: constants.STATUS_CODES.UNAUTHORIZED,
+              message: 'Credentials for method are missing'
+            };
+            logger.error('ERROR POST api/itemCollections/getCollectionsForItemType - token', {error: error});
+            return next(error);*/
           }
-          var retVal = {
-            data: collections
-          };
-          logger.info('END POST api/itemCollections/getCollectionsForItemType');
-          res.json(retVal);
-        });
+          var dietaryPreferenceIds = [];
+          for (var i = user.dietaryPreferences.length - 1; i >= 0; i--) {
+            dietaryPreferenceIds.push(user.dietaryPreferences[i]._id);
+          }
+          ItemCollection.model.find({
+            "dietaryPreferenceIds": {
+              "$nin": dietaryPreferenceIds
+            },
+            "itemType": req.body.itemType
+          }, function(err, collections) {
+            if(err) {
+              logger.error('ERROR POST api/itemCollections/getCollectionsForItemType', {error: err});
+              mailingService.mailServerError({error: err, location: 'POST api/itemCollection/getCollectionsForItemType'});
+              return next(err);
+            }
+            var retVal = {
+              data: collections
+            };
+            logger.info('END POST api/itemCollections/getCollectionsForItemType');
+            res.json(retVal);
+          });
+        }
       });
     } else {
       ItemCollection.model.find({

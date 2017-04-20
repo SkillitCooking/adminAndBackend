@@ -40,7 +40,8 @@ router.post('/', function(req, res, next) {
           };
           logger.error('ERROR POST api/ingredientsUsed/', {error: error, userId: req.body.userId});
           mailingService.mailServerError({error: err, location: 'POST api/ingredientsUsed/', extra: 'no user found from id ' + req.params.id});
-          return next(error);
+          /* INSTEAD: just set as anonymous user for handling*/
+          //return next(error);
         }
       });
     }

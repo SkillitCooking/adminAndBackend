@@ -53,7 +53,9 @@ router.post('/getFavoriteRecipesForUser', function(req, res, next) {
         };
         logger.error('ERROR POST api/favoriteRecipes/getFavoriteRecipesForUser', {error: error, userId: req.body.userId});
         mailingService.mailServerError({error: err, location: 'POST api/favoriteRecipes/getFavoriteRecipesForUser', extra: 'no user for id' + req.body.userId});
-        return next(error);
+        //for userId issue fire stopping
+        res.json({data: []});
+        //return next(error);
       }
     });
   } catch (error) {
@@ -102,7 +104,9 @@ router.post('/saveFavoriteRecipeForUser', function(req, res, next) {
         };
         logger.error('ERROR POST api/favoriteRecipes/saveFavoriteRecipeForUser', {error: error, userId: req.body.userId});
         mailingService.mailServerError({error: err, location: 'POST api/favoriteRecipes/getFavoriteRecipesForUser', extra: 'no user found for id' + req.body.userId});
-        return next(error);
+        //return next(error);
+        //for userId ish fire stopping
+        res.json({data: {}});
       }
     });
   } catch (error) {
@@ -161,7 +165,9 @@ router.post('/favoriteRecipeUsedForUser', function(req, res, next) {
         };
         logger.error('ERROR POST api/favoriteRecipes/favoriteRecipeUsedForUser', {error: error, userId: req.body.userId});
         mailingService.mailServerError({error: err, location: 'POST api/favoriteRecipes/favoriteRecipeUsedForUser', extra: 'no user found for id ' + req.body.userId});
-        return next(error);
+        //return next(error);
+        //no userId fire stopping
+        res.json({data: {}});
       }
     });
   } catch (error) {
@@ -224,7 +230,9 @@ router.post('/unfavoriteRecipe', function(req, res, next) {
         };
         logger.error('ERROR POST api/favoriteRecipes/unfavoriteRecipe', {error: error, userId: req.body.userId});
         mailingService.mailServerError({error: err, location: 'POST api/favoriteRecipes/unfavoriteRecipe', extra: 'no user found from id ' + req.body.userId});
-        return next(error);
+        //return next(error);
+        //UserId based firestopping
+        res.json({data: {}});
       }
     })
   } catch (error) {

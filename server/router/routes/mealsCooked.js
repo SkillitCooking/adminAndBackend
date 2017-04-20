@@ -39,7 +39,25 @@ router.post('/', function(req, res, next) {
           };
           logger.error('ERROR POST api/mealsCooked/', {error: error, userId: req.body.userId});
           mailingService.mailServerError({error: err, location: 'POST api/mealsCooked/', extra: 'no user found for id ' + req.body.userId});
-          return next(error);
+          //handling for bad user ids
+          //return next(error);
+          var cookedMeal = {
+            recipeIds: req.body.recipeIds,
+            source: req.body.source,
+            userId: req.body.userId,
+            ingredientsChosenIds: req.body.ingredientsChosenIds,
+            deviceToken: req.body.deviceToken,
+            isAnonymous: true
+          };
+          MealsCooked.model.create(cookedMeal, function(err, meal) {
+            if(err) {
+              logger.error('ERROR POST api/mealsCooked/', {error: err});
+              mailingService.mailServerError({error: err, location: 'POST api/mealsCooked/'});
+              return next(err);
+            }
+            logger.info('END POST api/mealsCooked/');
+            res.json({data: meal});
+          });
         }
       });
     }

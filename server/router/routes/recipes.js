@@ -287,7 +287,8 @@ router.post('/getRecipesOfType', function(req, res, next) {
           };
           logger.error('ERROR POST api/recipes/getRecipesOfType - no user found', {error: error});
           mailingService.mailServerError({error: err, location: 'POST api/recipes/getSingleRecipe', extra: 'no user found for id ' + req.body.userId});
-          return next(error);
+          //janky handling for bad userIds
+          //return next(error);
         }
         if(req.body.userToken !== user.curToken) {
           /*var error = {
@@ -372,7 +373,8 @@ router.post('/getRecipesForCollection', function(req, res, next) {
           };
           logger.error('ERROR POST api/recipes/getRecipesForCollection - no user found', {error: error});
           mailingService.mailServerError({error: err, location: 'POST api/recipes/getRecipesForCollection', extra: 'no user found for id ' + req.body.userId});
-          return next(error);
+          //handling for anticipated bad userIds
+          //return next(error);
         }
         if(req.body.userToken !== user.curToken) {
           /*var error = {
@@ -383,8 +385,11 @@ router.post('/getRecipesForCollection', function(req, res, next) {
           return next(error);*/
         }
         var outlawIngredients = [];
-        for (var i = user.dietaryPreferences.length - 1; i >= 0; i--) {
-          outlawIngredients = outlawIngredients.concat(user.dietaryPreferences[i].outlawIngredients);
+        //handling for bad userId case
+        if(!user || !user.dietaryPreferences) {
+          for (var i = user.dietaryPreferences.length - 1; i >= 0; i--) {
+            outlawIngredients = outlawIngredients.concat(user.dietaryPreferences[i].outlawIngredients);
+          }
         }
         logger.info('outlawIngredients', {outlaw: outlawIngredients});
         var query;

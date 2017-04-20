@@ -34,6 +34,21 @@ router.post('/', function(req, res, next) {
             logger.error('ERROR POST api/seasoningUsed/ - token', {error: error});
             return next(error);*/
           }
+          var usedSeasoning = {
+            seasoningId: req.body.seasoningId,
+            mealCookedId: req.body.mealCookedId,
+            isAnonymous: req.body.isAnonymous,
+            userId: req.body.userId
+          };
+          SeasoningUsed.model.create(usedSeasoning, function(err, usedSeasoning) {
+            if(err) {
+              logger.error('ERROR POST api/seasoningUsed/', {error: err});
+              mailingService.mailServerError({error: err, location: 'POST api/seasoningUsed/'});
+              return next(err);
+            }
+            logger.info('END POST api/seasoningUsed/');
+            res.json({message: 'success'});
+          });
         } else {
           //error - no user found from id
           var error = {
@@ -41,26 +56,43 @@ router.post('/', function(req, res, next) {
             message: 'No user found from supplied id'
           };
           logger.error('ERROR POST api/seasoningUsed/', {error: error, userId: req.body.userId});
-          mailingService.mailServerError({error: err, location: 'POST api/seasoningUsed/', extra: 'no user found for id ' + req.boyd.userId});
-          return next(error);
+          mailingService.mailServerError({error: err, location: 'POST api/seasoningUsed/', extra: 'no user found for id ' + req.body.userId});
+          //janky handling for bad userIds
+          var usedSeasoning = {
+            seasoningId: req.body.seasoningId,
+            mealCookedId: req.body.mealCookedId,
+            isAnonymous: true,
+            userId: req.body.userId
+          };
+          SeasoningUsed.model.create(usedSeasoning, function(err, usedSeasoning) {
+            if(err) {
+              logger.error('ERROR POST api/seasoningUsed/', {error: err});
+              mailingService.mailServerError({error: err, location: 'POST api/seasoningUsed/'});
+              return next(err);
+            }
+            logger.info('END POST api/seasoningUsed/');
+            res.json({message: 'success'});
+          });
+          //return next(error);
         }
       });
+    } else {
+      var usedSeasoning = {
+        seasoningId: req.body.seasoningId,
+        mealCookedId: req.body.mealCookedId,
+        isAnonymous: req.body.isAnonymous,
+        userId: req.body.userId
+      };
+      SeasoningUsed.model.create(usedSeasoning, function(err, usedSeasoning) {
+        if(err) {
+          logger.error('ERROR POST api/seasoningUsed/', {error: err});
+          mailingService.mailServerError({error: err, location: 'POST api/seasoningUsed/'});
+          return next(err);
+        }
+        logger.info('END POST api/seasoningUsed/');
+        res.json({message: 'success'});
+      });
     }
-    var usedSeasoning = {
-      seasoningId: req.body.seasoningId,
-      mealCookedId: req.body.mealCookedId,
-      isAnonymous: req.body.isAnonymous,
-      userId: req.body.userId
-    };
-    SeasoningUsed.model.create(usedSeasoning, function(err, usedSeasoning) {
-      if(err) {
-        logger.error('ERROR POST api/seasoningUsed/', {error: err});
-        mailingService.mailServerError({error: err, location: 'POST api/seasoningUsed/'});
-        return next(err);
-      }
-      logger.info('END POST api/seasoningUsed/');
-      res.json({message: 'success'});
-    });
   } catch (error) {
     logger.error('ERROR - exception in POST api/seasoningUsed/');
     mailingService.mailServerError({error: error, location: 'EXCEPTION POST api/seasoningUsed/'});
