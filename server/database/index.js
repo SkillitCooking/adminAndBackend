@@ -39,10 +39,9 @@ if(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'staging')
   //ssl information
   var devCa = [fs.readFileSync(path.resolve(path.join(__dirname, 'ssl', 'devca.pem')))];
   var devO = {
-    server: {
-      ssl: true,
-      sslCA: devCa
-    }
+    ssl: true,
+    sslCA: devCa,
+    useMongoClient: true
   };
   usedDB = devDB;
   mongoose.connect(usedDB, devO);
@@ -53,10 +52,9 @@ if(process.env.NODE_ENV === 'production') {
   //ssl information
   var ca = [fs.readFileSync(path.resolve(path.join(__dirname, 'ssl', 'prodca.pem')))];
   var o = {
-    server: {
-      ssl: true,
-      sslCA: ca
-    }
+    ssl: true,
+    sslCA: ca,
+    useMongoClient: true
   };
   usedDB = productionDB;
   mongoose.connect(usedDB, o);

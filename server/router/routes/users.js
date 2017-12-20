@@ -190,6 +190,7 @@ function fillOutAndSaveUserSocialSignUp(req, res, next, user) {
     setDefaultsOnInsert: true
   };
   //find by uuid first - findOneAndUpdate
+  let query = {deviceUUID: user.deviceUUID};
   User.model.findOneAndUpdate(query, user, options, function(err, user) {
     if(err) {
       logger.error('ERROR POST api/users/socialSignup', {error: err});
